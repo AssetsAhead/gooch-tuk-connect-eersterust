@@ -17,26 +17,46 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* South African inspired color palette */
+    --primary: 39 100% 50%; /* Golden yellow - taxi colors */
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 120 100% 25%; /* South African green */
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 100% 50%; /* Red for alerts/danger */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 39 100% 50%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Custom Tuk Tuk themed colors */
+    --tuk-orange: 25 100% 50%;
+    --tuk-blue: 220 100% 50%;
+    --success: 120 100% 25%;
+    --warning: 39 100% 50%;
+    --danger: 0 100% 50%;
+    
+    /* Gradients for modern look */
+    --gradient-primary: linear-gradient(135deg, hsl(39 100% 50%), hsl(25 100% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(120 100% 25%), hsl(120 100% 35%));
+    --gradient-hero: linear-gradient(135deg, hsl(39 100% 50%), hsl(220 100% 50%));
+    
+    /* Shadows with South African flair */
+    --shadow-tuk: 0 4px 20px hsl(39 100% 50% / 0.3);
+    --shadow-success: 0 4px 15px hsl(120 100% 25% / 0.2);
+    
+    /* Animation transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 

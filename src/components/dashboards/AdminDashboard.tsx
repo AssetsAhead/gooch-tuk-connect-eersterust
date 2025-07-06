@@ -1,0 +1,310 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MapPin, Car, User, Settings } from "lucide-react";
+
+export const AdminDashboard = () => {
+  const pendingApprovals = [
+    { name: "Lucky Mthembu", type: "New Driver", vehicle: "TT012", status: "pending" },
+    { name: "Grace Sibeko", type: "New Owner", vehicles: "2", status: "pending" },
+    { name: "John Mokgosi", type: "License Renewal", vehicle: "TT005", status: "urgent" }
+  ];
+
+  const recentIncidents = [
+    { id: "INC001", type: "Theft Report", reporter: "Sipho M.", severity: "high", status: "investigating" },
+    { id: "INC002", type: "Lost Item", reporter: "Mary K.", severity: "low", status: "resolved" },
+    { id: "INC003", type: "Vehicle Damage", reporter: "Thabo N.", severity: "medium", status: "pending" }
+  ];
+
+  const systemStats = {
+    totalDrivers: 127,
+    activeDrivers: 89,
+    totalVehicles: 95,
+    activeVehicles: 67,
+    totalOwners: 45,
+    todayRides: 234,
+    monthlyRevenue: "R45,670",
+    platformFees: "R2,280"
+  };
+
+  return (
+    <div className="min-h-screen bg-background p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-primary mb-2">Admin Dashboard - Eagle Eye</h1>
+          <p className="text-muted-foreground">Complete oversight of the Gooch Tuk Service ecosystem</p>
+        </div>
+
+        {/* Key Metrics */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Card className="border-success/20">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-success">{systemStats.totalDrivers}</div>
+              <p className="text-xs text-muted-foreground">Total Drivers</p>
+              <Badge variant="outline" className="text-xs mt-1 border-success text-success">
+                {systemStats.activeDrivers} Active
+              </Badge>
+            </CardContent>
+          </Card>
+          <Card className="border-primary/20">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-primary">{systemStats.totalVehicles}</div>
+              <p className="text-xs text-muted-foreground">Total Vehicles</p>
+              <Badge variant="outline" className="text-xs mt-1 border-primary text-primary">
+                {systemStats.activeVehicles} Active
+              </Badge>
+            </CardContent>
+          </Card>
+          <Card className="border-tuk-orange/20">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-tuk-orange">{systemStats.todayRides}</div>
+              <p className="text-xs text-muted-foreground">Today's Rides</p>
+            </CardContent>
+          </Card>
+          <Card className="border-tuk-blue/20">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-tuk-blue">{systemStats.monthlyRevenue}</div>
+              <p className="text-xs text-muted-foreground">Monthly Revenue</p>
+              <div className="text-xs text-muted-foreground mt-1">Fees: {systemStats.platformFees}</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Tabs defaultValue="approvals" className="space-y-8">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="approvals">Approvals</TabsTrigger>
+            <TabsTrigger value="monitoring">Live Monitoring</TabsTrigger>
+            <TabsTrigger value="incidents">Incidents</TabsTrigger>
+            <TabsTrigger value="reports">Reports</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="approvals" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <User className="mr-2 h-5 w-5" />
+                  Pending Approvals
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {pendingApprovals.map((approval, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                      <div>
+                        <div className="font-medium">{approval.name}</div>
+                        <p className="text-sm text-muted-foreground">
+                          {approval.type} - {approval.vehicle || `${approval.vehicles} vehicles`}
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant={approval.status === "urgent" ? "destructive" : "outline"}>
+                          {approval.status}
+                        </Badge>
+                        <Button size="sm" className="bg-success hover:bg-success/90">
+                          Approve
+                        </Button>
+                        <Button size="sm" variant="outline" className="border-danger text-danger">
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Blacklist Management</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Input placeholder="Search drivers/owners..." />
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-2 bg-danger/10 rounded">
+                      <span className="text-sm">Moses Tshwane (TT008)</span>
+                      <Badge variant="destructive">Blacklisted</Badge>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-warning/10 rounded">
+                      <span className="text-sm">Peter Mabaso (TT015)</span>
+                      <Badge className="bg-warning text-white">Under Review</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Champion Recognition</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-2 bg-success/10 rounded">
+                      <span className="text-sm">Sipho Mthembu (TT001)</span>
+                      <Badge className="bg-success text-white">Champion</Badge>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-tuk-blue/10 rounded">
+                      <span className="text-sm">Maria Santos (TT009)</span>
+                      <Badge className="bg-tuk-blue text-white">Rising Star</Badge>
+                    </div>
+                  </div>
+                  <Button variant="outline" className="w-full">
+                    Send Recognition Awards
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="monitoring" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <MapPin className="mr-2 h-5 w-5" />
+                    Live Vehicle Tracking
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted/30 rounded-lg p-4 text-center">
+                    <Car className="h-12 w-12 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">
+                      Live GPS tracking map would be integrated here
+                    </p>
+                    <Button variant="outline" className="mt-2">
+                      View Full Map
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Real-time Alerts</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2 p-2 bg-danger/10 rounded">
+                      <div className="w-2 h-2 bg-danger rounded-full"></div>
+                      <span className="text-sm">TT007 - Speed limit exceeded</span>
+                      <Badge variant="destructive" className="ml-auto">HIGH</Badge>
+                    </div>
+                    <div className="flex items-center space-x-2 p-2 bg-warning/10 rounded">
+                      <div className="w-2 h-2 bg-warning rounded-full"></div>
+                      <span className="text-sm">TT003 - Route deviation</span>
+                      <Badge className="ml-auto bg-warning text-white">MEDIUM</Badge>
+                    </div>
+                    <div className="flex items-center space-x-2 p-2 bg-tuk-blue/10 rounded">
+                      <div className="w-2 h-2 bg-tuk-blue rounded-full"></div>
+                      <span className="text-sm">TT012 - Maintenance due</span>
+                      <Badge variant="outline" className="ml-auto">INFO</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="incidents" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Settings className="mr-2 h-5 w-5" />
+                  Recent Incidents
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentIncidents.map((incident) => (
+                    <div key={incident.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <Badge variant="outline">{incident.id}</Badge>
+                          <span className="font-medium">{incident.type}</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Reported by: {incident.reporter}
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge 
+                          variant={incident.severity === "high" ? "destructive" : 
+                                 incident.severity === "medium" ? "default" : "outline"}
+                        >
+                          {incident.severity.toUpperCase()}
+                        </Badge>
+                        <Badge variant={incident.status === "resolved" ? "default" : "outline"}>
+                          {incident.status}
+                        </Badge>
+                        <Button size="sm" variant="outline">
+                          Details
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="reports" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Generate Reports</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button variant="outline" className="w-full justify-start">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Daily Operations Report
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <User className="mr-2 h-4 w-4" />
+                    Driver Performance Report
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <Car className="mr-2 h-4 w-4" />
+                    Vehicle Utilization Report
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <MapPin className="mr-2 h-4 w-4" />
+                    Route Analysis Report
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>System Health</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span>App Uptime</span>
+                      <Badge className="bg-success text-white">99.8%</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Payment Success Rate</span>
+                      <Badge className="bg-success text-white">97.2%</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>GPS Accuracy</span>
+                      <Badge className="bg-tuk-blue text-white">95.5%</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>User Satisfaction</span>
+                      <Badge className="bg-primary text-white">4.6/5</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
