@@ -9,6 +9,11 @@ import { ReputationSystem } from "@/components/ReputationSystem";
 import { CrimeMap } from "@/components/CrimeMap";
 import { FinancialServices } from "@/components/FinancialServices";
 import { SocialProof } from "@/components/SocialProof";
+import { GovernmentServices } from "@/components/GovernmentServices";
+import { LoadSheddingTracker } from "@/components/LoadSheddingTracker";
+import { FinancialInclusion } from "@/components/FinancialInclusion";
+import { MultiLanguageAssistant } from "@/components/MultiLanguageAssistant";
+import { TownshipEconomy } from "@/components/TownshipEconomy";
 
 export const DriverDashboard = () => {
   const [shiftStarted, setShiftStarted] = useState(false);

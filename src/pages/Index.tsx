@@ -118,17 +118,22 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Business Portal CTA */}
-            <div className="max-w-2xl mx-auto">
-              <Link to="/business-portal">
-                <Button className="w-full bg-gradient-to-r from-primary to-tuk-orange hover:from-primary/90 hover:to-tuk-orange/90 text-white font-bold py-4 px-8 text-lg">
-                  🏢 Join Business Heroes Portal - Showcase Your Good Deeds! 🌟
-                </Button>
-              </Link>
-              <p className="text-sm text-muted-foreground mt-2 text-center">
-                For businesses, shops, and community champions
-              </p>
-            </div>
+        {/* Enhanced CTAs */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          <Link to="/business-portal">
+            <Button className="w-full bg-gradient-to-r from-primary to-tuk-orange hover:from-primary/90 hover:to-tuk-orange/90 text-white font-bold py-4 px-8 text-lg">
+              🏢 Business Heroes Portal 🌟
+            </Button>
+          </Link>
+          <Button className="w-full bg-gradient-to-r from-success to-tuk-blue hover:from-success/90 hover:to-tuk-blue/90 text-white font-bold py-4 px-8 text-lg">
+            🤖 AI Assistant (11 Languages) 💬
+          </Button>
+        </div>
+        <div className="text-center mt-4">
+          <p className="text-sm text-muted-foreground">
+            🏛️ Government Services • ⚡ Load Shedding Intelligence • 🏪 Township Economy • 🛡️ Crime Prevention Network
+          </p>
+        </div>
           </div>
           <div className="text-center text-muted-foreground">
             <p className="mb-2">Serving Eersterust • Silverton • Eastlynne • Mamelodi</p>
