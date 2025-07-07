@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { RoleCard } from "@/components/RoleCard";
 import { OwnerDashboard } from "@/components/dashboards/OwnerDashboard";
 import { DriverDashboard } from "@/components/dashboards/DriverDashboard";
@@ -104,7 +106,7 @@ const Index = () => {
             <p className="text-xl md:text-2xl text-muted-foreground mb-6">
               Transforming Eersterust's Tuk Tuk ecosystem through digital innovation
             </p>
-            <div className="flex flex-wrap justify-center gap-4 text-sm md:text-base">
+            <div className="flex flex-wrap justify-center gap-4 text-sm md:text-base mb-8">
               <div className="bg-success/10 text-success px-4 py-2 rounded-full border border-success/20">
                 Safe & Reliable Transport
               </div>
@@ -114,6 +116,18 @@ const Index = () => {
               <div className="bg-tuk-blue/10 text-tuk-blue px-4 py-2 rounded-full border border-tuk-blue/20">
                 Community Focused
               </div>
+            </div>
+            
+            {/* Business Portal CTA */}
+            <div className="max-w-2xl mx-auto">
+              <Link to="/business-portal">
+                <Button className="w-full bg-gradient-to-r from-primary to-tuk-orange hover:from-primary/90 hover:to-tuk-orange/90 text-white font-bold py-4 px-8 text-lg">
+                  🏢 Join Business Heroes Portal - Showcase Your Good Deeds! 🌟
+                </Button>
+              </Link>
+              <p className="text-sm text-muted-foreground mt-2 text-center">
+                For businesses, shops, and community champions
+              </p>
             </div>
           </div>
           <div className="text-center text-muted-foreground">
