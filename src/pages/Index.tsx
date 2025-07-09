@@ -99,12 +99,11 @@ const Index = () => {
         <div className="text-center mb-12">
           <div className="mb-8">
             <h1 className="text-5xl md:text-6xl font-bold mb-4">
-              <span className="text-primary">Gooch</span>{" "}
-              <span className="text-secondary">Tuk</span>{" "}
-              <span className="text-tuk-orange">Service</span>
+              <span className="text-primary">Poort</span>
+              <span className="text-secondary">Link</span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-6">
-              Transforming Eersterust's Tuk Tuk ecosystem through digital innovation
+              Connecting local hustle to national movement
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm md:text-base mb-8">
               <div className="bg-success/10 text-success px-4 py-2 rounded-full border border-success/20">
