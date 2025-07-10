@@ -187,25 +187,25 @@ const Index = () => {
           <h2 className="text-3xl font-bold text-center mb-12 text-primary">Platform Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🚗</span>
               </div>
-              <h3 className="text-xl font-bold mb-2">Safe & Reliable Transport</h3>
-              <p className="text-muted-foreground">Tuk tuks are more than just transport, they're a cultural experience, giving you a close-up view of the vibrant streets. Choose well-maintained vehicles with Association emblems and alert, polite drivers. Negotiate fairly and use our app for the best experience.</p>
-            </div>
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">📡</span>
-              </div>
               <h3 className="text-xl font-bold mb-2">Real-time Tracking</h3>
-              <p className="text-muted-foreground">Vehicles and drivers are satellite tracked. When you book on the app, you can be tracked too and share your live location with someone you know via "Share Location" - that's triple security.</p>
+              <p className="text-muted-foreground">GPS tracking for vehicles and drivers with live location updates</p>
             </div>
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-tuk-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🤝</span>
+              <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">💰</span>
               </div>
-              <h3 className="text-xl font-bold mb-2">Community Focused</h3>
-              <p className="text-muted-foreground">Previously the trusted ol' Tuk Tuk was seen as a menace and a danger, but with PoortLink, this menace is now a guardian. Security companies can join our network for enhanced response times and real-time tracking beacons.</p>
+              <h3 className="text-xl font-bold mb-2">Automated Payments</h3>
+              <p className="text-muted-foreground">60/40 revenue split automation with multiple payment options</p>
+            </div>
+            <div className="text-center p-6">
+              <div className="w-16 h-16 bg-danger/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🛡️</span>
+              </div>
+              <h3 className="text-xl font-bold mb-2">Safety & Security</h3>
+              <p className="text-muted-foreground">Emergency alerts, incident reporting, and driver verification</p>
             </div>
           </div>
         </div>
