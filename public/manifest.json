@@ -1,0 +1,51 @@
+{
+  "name": "PoortLink - Connecting Local Hustle to National Movement",
+  "short_name": "PoortLink",
+  "description": "Digital transport innovation for South African townships",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["transportation", "finance", "utilities"],
+  "lang": "en-ZA",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Request Ride",
+      "short_name": "Ride",
+      "description": "Quickly request a taxi ride",
+      "url": "/?action=request-ride",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Driver Mode",
+      "short_name": "Drive",
+      "description": "Switch to driver dashboard",
+      "url": "/?role=driver",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

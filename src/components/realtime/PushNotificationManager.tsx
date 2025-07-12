@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Bell, BellOff, Smartphone, Volume2, VolumeX } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Bell, BellOff, Smartphone, Volume2, VolumeX, CheckCircle, XCircle, Clock } from "lucide-react";
+import { toast } from "sonner";
 
 interface NotificationSettings {
   rideUpdates: boolean;
@@ -32,13 +32,14 @@ export const PushNotificationManager = ({ userId, userType }: PushNotificationMa
     vibration: true,
   });
   const [subscriptionStatus, setSubscriptionStatus] = useState<'subscribed' | 'unsubscribed' | 'pending'>('unsubscribed');
-  const { toast } = useToast();
+  const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
   useEffect(() => {
     // Check if push notifications are supported
     if ('Notification' in window && 'serviceWorker' in navigator) {
       setIsSupported(true);
       setPermission(Notification.permission);
+      registerServiceWorker();
     }
 
     // Load saved settings from localStorage
@@ -48,13 +49,23 @@ export const PushNotificationManager = ({ userId, userType }: PushNotificationMa
     }
   }, [userId]);
 
+  const registerServiceWorker = async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      setSwRegistration(registration);
+      console.log('Service Worker registered:', registration);
+      
+      // Check if already subscribed
+      const existingSubscription = await registration.pushManager.getSubscription();
+      setSubscriptionStatus(existingSubscription ? 'subscribed' : 'unsubscribed');
+    } catch (error) {
+      console.error('Service Worker registration failed:', error);
+    }
+  };
+
   const requestPermission = async () => {
     if (!isSupported) {
-      toast({
-        title: "Not Supported",
-        description: "Push notifications are not supported in this browser",
-        variant: "destructive",
-      });
+      toast.error("Push notifications are not supported in this browser");
       return;
     }
 
@@ -63,37 +74,46 @@ export const PushNotificationManager = ({ userId, userType }: PushNotificationMa
       setPermission(permission);
       
       if (permission === 'granted') {
-        setSubscriptionStatus('subscribed');
-        toast({
-          title: "Notifications Enabled",
-          description: "You'll now receive push notifications for important updates",
-        });
-        
-        // Test notification
+        await subscribeToPush();
+        toast.success("Push notifications enabled!");
         showTestNotification();
       } else {
-        toast({
-          title: "Notifications Denied",
-          description: "You won't receive push notifications. You can enable them in browser settings.",
-          variant: "destructive",
-        });
+        toast.error("Push notifications denied. You can enable them later in your browser settings.");
       }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
-      toast({
-        title: "Error",
-        description: "Failed to request notification permission",
-        variant: "destructive",
+      toast.error("Failed to request notification permission");
+    }
+  };
+
+  const subscribeToPush = async () => {
+    if (!swRegistration) {
+      console.error('Service Worker not registered');
+      return;
+    }
+
+    try {
+      // For demo purposes, using a dummy VAPID key
+      const subscription = await swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: 'BEl62iUYgUivxIkv69yViEuiBIa40HI0sVgHbc62Y4z-5q1P9LNbYpfb4X-J4n46NxZX0KzpjpGN6wJ6fI_KS_c'
       });
+
+      console.log('Push subscription:', subscription);
+      setSubscriptionStatus('subscribed');
+      toast.success("Successfully subscribed to push notifications!");
+    } catch (error) {
+      console.error('Push subscription failed:', error);
+      toast.error("Failed to subscribe to push notifications");
     }
   };
 
   const showTestNotification = () => {
     if (permission === 'granted') {
-      new Notification('TukTuk Community', {
+      new Notification('PoortLink', {
         body: '🚗 Push notifications are now enabled! You\'ll receive updates about your rides.',
-        icon: '/favicon.ico',
-        badge: '/favicon.ico',
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
         tag: 'test-notification',
         requireInteraction: false,
       });
@@ -107,19 +127,21 @@ export const PushNotificationManager = ({ userId, userType }: PushNotificationMa
     // Save to localStorage
     localStorage.setItem(`notification-settings-${userId}`, JSON.stringify(newSettings));
     
-    toast({
-      title: "Settings Updated",
-      description: `${key.replace(/([A-Z])/g, ' $1').toLowerCase()} notifications ${value ? 'enabled' : 'disabled'}`,
-    });
+    const settingNames = {
+      rideUpdates: 'Ride Updates',
+      safetyAlerts: 'Safety Alerts',
+      messages: 'Messages',
+      promotions: 'Promotions',
+      sound: 'Sound',
+      vibration: 'Vibration'
+    };
+    
+    toast.success(`${settingNames[key]} ${value ? 'enabled' : 'disabled'}`);
   };
 
   const simulateNotification = (type: string) => {
     if (permission !== 'granted') {
-      toast({
-        title: "Enable Notifications",
-        description: "Please enable push notifications to receive updates",
-        variant: "destructive",
-      });
+      toast.error("Please enable push notifications to receive updates");
       return;
     }
 
@@ -151,16 +173,17 @@ export const PushNotificationManager = ({ userId, userType }: PushNotificationMa
     if (notificationData) {
       new Notification(notificationData.title, {
         body: notificationData.body,
-        icon: '/favicon.ico',
-        badge: '/favicon.ico',
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
         tag: notificationData.tag,
         requireInteraction: type === 'safety'
       });
 
       // Show sound/vibration based on settings
       if (settings.sound) {
-        // In a real app, you'd play a notification sound
-        console.log('🔊 Notification sound played');
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmsbCjiS2/LTeCIFKITK8diINwgZaLvt559NEAxQp+PwtmMcBjiS2/LTeCIFK');
+        audio.volume = 0.3;
+        audio.play().catch(() => {});
       }
       
       if (settings.vibration && 'vibrate' in navigator) {
@@ -172,11 +195,11 @@ export const PushNotificationManager = ({ userId, userType }: PushNotificationMa
   const getPermissionBadge = () => {
     switch (permission) {
       case 'granted':
-        return <Badge className="bg-success text-white">Enabled</Badge>;
+        return <Badge variant="default" className="gap-1"><CheckCircle className="h-3 w-3" />Enabled</Badge>;
       case 'denied':
-        return <Badge variant="destructive">Denied</Badge>;
+        return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" />Denied</Badge>;
       default:
-        return <Badge variant="outline">Not Set</Badge>;
+        return <Badge variant="secondary" className="gap-1"><Clock className="h-3 w-3" />Pending</Badge>;
     }
   };
 
