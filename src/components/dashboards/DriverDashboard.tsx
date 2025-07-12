@@ -14,6 +14,11 @@ import { DriverIncentives } from "@/components/DriverIncentives";
 import { useRealTimeTracking } from "@/hooks/useRealTimeTracking";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { RealTimeMap } from "@/components/realtime/RealTimeMap";
+import { LiveNotifications } from "@/components/realtime/LiveNotifications";
+import { RideChat } from "@/components/realtime/RideChat";
+import { LiveActivityFeed } from "@/components/realtime/LiveActivityFeed";
+import { PushNotificationManager } from "@/components/realtime/PushNotificationManager";
 
 export const DriverDashboard = () => {
   const [shiftStarted, setShiftStarted] = useState(false);
@@ -137,8 +142,9 @@ export const DriverDashboard = () => {
         </div>
 
         <Tabs defaultValue="rides" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="rides">🚗 Rides</TabsTrigger>
+            <TabsTrigger value="realtime">📍 Live</TabsTrigger>
             <TabsTrigger value="incentives">🎯 Incentives</TabsTrigger>
             <TabsTrigger value="reputation">🏆 Reputation</TabsTrigger>
             <TabsTrigger value="safety">🛡️ Safety</TabsTrigger>
@@ -343,6 +349,37 @@ export const DriverDashboard = () => {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="realtime" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <RealTimeMap 
+                rideId={activeRide?.id} 
+                userType="driver" 
+                showDrivers={true} 
+              />
+              <LiveNotifications 
+                userId={user?.id || 'driver-001'} 
+                userType="driver" 
+              />
+            </div>
+            
+            {activeRide && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <RideChat 
+                  rideId={activeRide.id}
+                  userId={user?.id || 'driver-001'}
+                  userType="driver"
+                  passengerName="Passenger"
+                />
+                <PushNotificationManager 
+                  userId={user?.id || 'driver-001'} 
+                  userType="driver" 
+                />
+              </div>
+            )}
+            
+            <LiveActivityFeed />
           </TabsContent>
 
           <TabsContent value="incentives">

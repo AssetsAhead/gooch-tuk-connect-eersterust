@@ -18,6 +18,11 @@ import { useSassaDiscount } from "@/hooks/useSassaDiscount";
 import { supabase } from "@/integrations/supabase/client";
 import { MapsButton } from "@/components/MapsButton";
 import { useToast } from "@/hooks/use-toast";
+import { RealTimeMap } from "@/components/realtime/RealTimeMap";
+import { LiveNotifications } from "@/components/realtime/LiveNotifications";
+import { RideChat } from "@/components/realtime/RideChat";
+import { LiveActivityFeed } from "@/components/realtime/LiveActivityFeed";
+import { PushNotificationManager } from "@/components/realtime/PushNotificationManager";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
@@ -102,8 +107,9 @@ export const PassengerDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="booking">🚗 Book Ride</TabsTrigger>
+            <TabsTrigger value="realtime">📍 Live</TabsTrigger>
             <TabsTrigger value="community">🛡️ Community</TabsTrigger>
             <TabsTrigger value="safety">🚨 Safety</TabsTrigger>
             <TabsTrigger value="rewards">⭐ Rewards</TabsTrigger>
@@ -358,6 +364,38 @@ export const PassengerDashboard = () => {
                 </div>
               </Button>
             </div>
+          </TabsContent>
+
+          {/* Real-time Tab */}
+          <TabsContent value="realtime" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <RealTimeMap 
+                rideId={activeRide?.id} 
+                userType="passenger" 
+                showDrivers={true} 
+              />
+              <LiveNotifications 
+                userId={user?.id || 'passenger-001'} 
+                userType="passenger" 
+              />
+            </div>
+            
+            {activeRide && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <RideChat 
+                  rideId={activeRide.id}
+                  userId={user?.id || 'passenger-001'}
+                  userType="passenger"
+                  driverName="Driver"
+                />
+                <PushNotificationManager 
+                  userId={user?.id || 'passenger-001'} 
+                  userType="passenger" 
+                />
+              </div>
+            )}
+            
+            <LiveActivityFeed />
           </TabsContent>
 
           {/* Community Tab */}
