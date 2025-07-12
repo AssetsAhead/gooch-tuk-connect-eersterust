@@ -11,6 +11,7 @@ import { CrimeMap } from "@/components/CrimeMap";
 import { SocialProof } from "@/components/SocialProof";
 import { SassaVerification } from "@/components/SassaVerification";
 import { useRealTimeTracking } from "@/hooks/useRealTimeTracking";
+import { useSassaDiscount } from "@/hooks/useSassaDiscount";
 import { supabase } from "@/integrations/supabase/client";
 import { MapsButton } from "@/components/MapsButton";
 import { useToast } from "@/hooks/use-toast";
@@ -27,6 +28,8 @@ export const PassengerDashboard = () => {
     user?.id, 
     'passenger'
   );
+  
+  const { discountInfo, calculateDiscountedPrice, loading: discountLoading } = useSassaDiscount(user?.id);
 
   // Get current user
   useEffect(() => {
@@ -71,8 +74,9 @@ export const PassengerDashboard = () => {
       return;
     }
 
-    const price = Math.floor(Math.random() * 30 + 15);
-    await createRide(pickup, destination, "standard", price);
+    const originalPrice = Math.floor(Math.random() * 30 + 15);
+    const { finalPrice } = calculateDiscountedPrice(originalPrice);
+    await createRide(pickup, destination, "standard", finalPrice);
   };
 
   const quickDestinations = [
@@ -105,16 +109,49 @@ export const PassengerDashboard = () => {
           {/* Booking Tab */}
           <TabsContent value="booking" className="space-y-6">{/* ... keep existing code (booking content) */}
 
+            {/* SASSA Discount Banner */}
+            {discountInfo.isVerified && (
+              <Card className="mb-6 border-success/50 bg-success/5">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+                      <span className="text-success text-sm">✓</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-success">SASSA Verified - {discountInfo.discountPercentage}% Discount Applied</h3>
+                      <p className="text-xs text-muted-foreground">
+                        {discountInfo.grantType?.replace(/_/g, ' ').toUpperCase()} - Automatic discounts on all rides
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Pricing Info */}
             <Card className="mb-8 border-primary/20">
               <CardContent className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-semibold">Standard Pricing</h3>
+                  {discountInfo.isVerified && (
+                    <span className="text-xs bg-success/20 text-success px-2 py-1 rounded-full">
+                      -{discountInfo.discountPercentage}% SASSA Discount
+                    </span>
+                  )}
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                   <div>
-                    <div className="text-xl font-bold text-success">R15</div>
+                    <div className="text-xl font-bold text-success">
+                      R{discountInfo.isVerified ? calculateDiscountedPrice(15).finalPrice : 15}
+                      {discountInfo.isVerified && <span className="text-xs text-muted-foreground line-through ml-1">R15</span>}
+                    </div>
                     <p className="text-xs text-muted-foreground">In-Poort (Day)</p>
                   </div>
                   <div>
-                    <div className="text-xl font-bold text-tuk-orange">R25</div>
+                    <div className="text-xl font-bold text-tuk-orange">
+                      R{discountInfo.isVerified ? calculateDiscountedPrice(25).finalPrice : 25}
+                      {discountInfo.isVerified && <span className="text-xs text-muted-foreground line-through ml-1">R25</span>}
+                    </div>
                     <p className="text-xs text-muted-foreground">Out-of-Township</p>
                   </div>
                   <div>
