@@ -19,6 +19,7 @@ import { LiveNotifications } from "@/components/realtime/LiveNotifications";
 import { RideChat } from "@/components/realtime/RideChat";
 import { LiveActivityFeed } from "@/components/realtime/LiveActivityFeed";
 import { PushNotificationManager } from "@/components/realtime/PushNotificationManager";
+import PaymentCollection from "@/components/payments/PaymentCollection";
 
 export const DriverDashboard = () => {
   const [shiftStarted, setShiftStarted] = useState(false);
@@ -400,7 +401,7 @@ export const DriverDashboard = () => {
           </TabsContent>
 
           <TabsContent value="wallet">
-            <FinancialServices userType="driver" currentBalance={450} />
+            <PaymentCollection userType="driver" userId={user?.id || ''} />
           </TabsContent>
 
           <TabsContent value="community">
