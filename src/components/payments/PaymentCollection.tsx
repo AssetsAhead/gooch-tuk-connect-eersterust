@@ -93,40 +93,61 @@ export default function PaymentCollection({ userType, userId }: PaymentCollectio
 
     try {
       setCollectingPayment(true);
-      
-      // For now, create a payment record without a specific ride
-      // In a real scenario, this would be linked to a completed ride
       const amount = parseFloat(paymentAmount);
-      const driverShare = amount * 0.7; // 70% to driver
-      const ownerShare = amount * 0.2;  // 20% to owner
-      const platformFee = amount * 0.1; // 10% platform fee
-
-      const { error } = await supabase
-        .from('transactions')
-        .insert({
-          amount,
-          driver_share: driverShare,
-          owner_share: ownerShare,
-          platform_fee: platformFee,
-          payment_method: selectedMethod,
-          status: 'completed',
-          ride_type: 'taxi' // Default for manual entries
+      
+      // If payment method is card, redirect to Yoco
+      if (selectedMethod === 'card') {
+        const { data, error } = await supabase.functions.invoke('create-yoco-payment', {
+          body: {
+            amount,
+            description: `Manual payment collection - ${userType}`,
+          },
         });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Payment Recorded",
-        description: `Payment of R${paymentAmount} recorded successfully`,
-      });
+        // Redirect to Yoco checkout
+        window.open(data.redirect_url, '_blank');
+        
+        toast({
+          title: "Redirecting to Payment",
+          description: "You'll be redirected to complete the card payment",
+        });
+        
+        setPaymentAmount('');
+      } else {
+        // Handle cash/mobile payments locally
+        const driverShare = amount * 0.7; // 70% to driver
+        const ownerShare = amount * 0.2;  // 20% to owner
+        const platformFee = amount * 0.1; // 10% platform fee
 
-      setPaymentAmount('');
-      fetchPayments();
+        const { error } = await supabase
+          .from('transactions')
+          .insert({
+            amount,
+            driver_share: driverShare,
+            owner_share: ownerShare,
+            platform_fee: platformFee,
+            payment_method: selectedMethod,
+            status: 'completed',
+            ride_type: 'taxi' // Default for manual entries
+          });
+
+        if (error) throw error;
+
+        toast({
+          title: "Payment Recorded",
+          description: `${selectedMethod.charAt(0).toUpperCase() + selectedMethod.slice(1)} payment of R${paymentAmount} recorded successfully`,
+        });
+
+        setPaymentAmount('');
+        fetchPayments();
+      }
     } catch (error) {
-      console.error('Error recording payment:', error);
+      console.error('Error processing payment:', error);
       toast({
         title: "Error",
-        description: "Failed to record payment",
+        description: "Failed to process payment",
         variant: "destructive"
       });
     } finally {

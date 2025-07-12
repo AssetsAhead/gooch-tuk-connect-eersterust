@@ -1,0 +1,2 @@
+-- Create edge function for Yoco payment processing
+-- This will be handled by the edge function creation, no DB changes needed for now
