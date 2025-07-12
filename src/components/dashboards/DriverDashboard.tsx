@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Car, User, Settings, Trophy, Wallet } from "lucide-react";
+import { MapsButton } from "@/components/MapsButton";
 import { useState } from "react";
 import { PanicButton } from "@/components/PanicButton";
 import { ReputationSystem } from "@/components/ReputationSystem";
@@ -144,22 +145,28 @@ export const DriverDashboard = () => {
                           </div>
                           <p className="text-sm text-muted-foreground">Distance: {ride.distance} • ETA: ~12 min</p>
                         </div>
-                        <div className="flex items-center space-x-4">
-                          <div className="text-right">
-                            <div className="font-bold text-success text-lg">{ride.fare}</div>
-                            <div className="text-xs text-muted-foreground">+5 points</div>
-                          </div>
-                          <Button 
-                            size="sm" 
-                            className={`${
-                              ride.surge 
-                                ? "bg-warning hover:bg-warning/90 animate-pulse" 
-                                : "bg-primary hover:bg-primary/90"
-                            }`}
-                          >
-                            Accept Ride
-                          </Button>
-                        </div>
+                         <div className="flex items-center space-x-2">
+                           <MapsButton 
+                             destination={ride.destination}
+                             startLocation={ride.pickup}
+                             variant="outline"
+                             size="sm"
+                           />
+                           <div className="text-right">
+                             <div className="font-bold text-success text-lg">{ride.fare}</div>
+                             <div className="text-xs text-muted-foreground">+5 points</div>
+                           </div>
+                           <Button 
+                             size="sm" 
+                             className={`${
+                               ride.surge 
+                                 ? "bg-warning hover:bg-warning/90 animate-pulse" 
+                                 : "bg-primary hover:bg-primary/90"
+                             }`}
+                           >
+                             Accept Ride
+                           </Button>
+                         </div>
                       </div>
                     ))}
                   </div>
