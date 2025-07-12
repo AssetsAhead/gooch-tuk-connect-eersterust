@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Car, User, Shield, Heart } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -23,7 +24,8 @@ export const PassengerDashboard = () => {
   const [destination, setDestination] = useState("");
   const [activeTab, setActiveTab] = useState("booking");
   const [nearbyDrivers, setNearbyDrivers] = useState([]);
-  const [user, setUser] = useState(null);
+  
+  const { user, userProfile, signOut } = useAuth();
   const { toast } = useToast();
   
   const { activeRide, rideUpdates, createRide, isLoading } = useRealTimeTracking(
@@ -33,15 +35,6 @@ export const PassengerDashboard = () => {
   
   const { discountInfo, calculateDiscountedPrice, loading: discountLoading } = useSassaDiscount(user?.id);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-
-  // Get current user
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    getUser();
-  }, []);
 
   // Fetch nearby drivers
   useEffect(() => {
@@ -95,9 +88,16 @@ export const PassengerDashboard = () => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">Passenger Dashboard</h1>
-          <p className="text-muted-foreground">Safe, affordable transport & community safety</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-primary mb-2">
+              Welcome, {userProfile?.display_name || userProfile?.name || user?.email}
+            </h1>
+            <p className="text-muted-foreground">Safe, affordable transport & community safety</p>
+          </div>
+          <Button variant="outline" onClick={signOut}>
+            Sign Out
+          </Button>
         </div>
 
         {/* Tabs */}

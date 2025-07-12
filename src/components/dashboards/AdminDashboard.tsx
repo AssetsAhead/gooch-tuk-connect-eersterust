@@ -7,11 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Car, User, Settings, Shield, CheckCircle, XCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
   const [loading, setLoading] = useState(false);
+  
+  const { user, userProfile, signOut } = useAuth();
   const { toast } = useToast();
   
   const pendingApprovals = [
@@ -99,9 +102,16 @@ export const AdminDashboard = () => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">Admin Dashboard - Eagle Eye</h1>
-          <p className="text-muted-foreground">Complete oversight of the Gooch Tuk Service ecosystem</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-primary mb-2">
+              Admin Dashboard - {userProfile?.display_name || user?.email}
+            </h1>
+            <p className="text-muted-foreground">Complete oversight of the Gooch Tuk Service ecosystem</p>
+          </div>
+          <Button variant="outline" onClick={signOut}>
+            Sign Out
+          </Button>
         </div>
 
         {/* Key Metrics */}
