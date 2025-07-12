@@ -221,6 +221,42 @@ export type Database = {
           },
         ]
       }
+      sassa_verifications: {
+        Row: {
+          card_photo_url: string | null
+          created_at: string
+          grant_type: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+          verification_notes: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          card_photo_url?: string | null
+          created_at?: string
+          grant_type: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          verification_notes?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          card_photo_url?: string | null
+          created_at?: string
+          grant_type?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          verification_notes?: string | null
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number

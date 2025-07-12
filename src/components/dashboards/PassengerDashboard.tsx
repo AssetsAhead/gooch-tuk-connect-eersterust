@@ -9,6 +9,7 @@ import { PanicButton } from "@/components/PanicButton";
 import { ReputationSystem } from "@/components/ReputationSystem";
 import { CrimeMap } from "@/components/CrimeMap";
 import { SocialProof } from "@/components/SocialProof";
+import { SassaVerification } from "@/components/SassaVerification";
 import { useRealTimeTracking } from "@/hooks/useRealTimeTracking";
 import { supabase } from "@/integrations/supabase/client";
 import { MapsButton } from "@/components/MapsButton";
@@ -320,6 +321,7 @@ export const PassengerDashboard = () => {
 
           {/* Community Tab */}
           <TabsContent value="community" className="space-y-6">
+            <SassaVerification />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <PanicButton userType="passenger" userId="passenger-001" currentLocation="Eersterust Shopping Centre" />
               <SocialProof />
