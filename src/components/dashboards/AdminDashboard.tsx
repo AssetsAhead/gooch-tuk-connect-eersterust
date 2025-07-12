@@ -3,14 +3,80 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Car, User, Settings } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { MapPin, Car, User, Settings, Shield, CheckCircle, XCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export const AdminDashboard = () => {
+  const [sassaVerifications, setSassaVerifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  
   const pendingApprovals = [
     { name: "Lucky Mthembu", type: "New Driver", vehicle: "TT012", status: "pending" },
     { name: "Grace Sibeko", type: "New Owner", vehicles: "2", status: "pending" },
     { name: "John Mokgosi", type: "License Renewal", vehicle: "TT005", status: "urgent" }
   ];
+
+  useEffect(() => {
+    fetchSassaVerifications();
+  }, []);
+
+  const fetchSassaVerifications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('sassa_verifications')
+        .select(`
+          id,
+          user_id,
+          status,
+          grant_type,
+          card_photo_url,
+          verification_notes,
+          created_at,
+          profiles!inner(display_name)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setSassaVerifications(data || []);
+    } catch (error) {
+      console.error('Error fetching SASSA verifications:', error);
+    }
+  };
+
+  const handleVerificationAction = async (id, status, notes = '') => {
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('sassa_verifications')
+        .update({
+          status,
+          verification_notes: notes,
+          verified_at: status === 'approved' ? new Date().toISOString() : null
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: `SASSA verification ${status}`,
+        description: `The verification has been ${status} successfully.`,
+      });
+
+      fetchSassaVerifications();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `Failed to ${status} verification: ${error.message}`,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const recentIncidents = [
     { id: "INC001", type: "Theft Report", reporter: "Sipho M.", severity: "high", status: "investigating" },
@@ -74,8 +140,9 @@ export const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="approvals" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="approvals">Approvals</TabsTrigger>
+            <TabsTrigger value="sassa">SASSA Review</TabsTrigger>
             <TabsTrigger value="monitoring">Live Monitoring</TabsTrigger>
             <TabsTrigger value="incidents">Incidents</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
@@ -157,6 +224,35 @@ export const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="sassa" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Shield className="mr-2 h-5 w-5" />
+                  SASSA Verification Review
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {sassaVerifications.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No SASSA verifications to review
+                    </div>
+                  ) : (
+                    sassaVerifications.map((verification) => (
+                      <SassaVerificationReview
+                        key={verification.id}
+                        verification={verification}
+                        onAction={handleVerificationAction}
+                        loading={loading}
+                      />
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="monitoring" className="space-y-6">
@@ -305,6 +401,108 @@ export const AdminDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
+    </div>
+  );
+};
+
+const SassaVerificationReview = ({ verification, onAction, loading }) => {
+  const [notes, setNotes] = useState(verification.verification_notes || '');
+  const [showNotes, setShowNotes] = useState(false);
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'approved':
+        return <Badge className="bg-success text-white">Approved</Badge>;
+      case 'rejected':
+        return <Badge variant="destructive">Rejected</Badge>;
+      default:
+        return <Badge variant="outline">Pending</Badge>;
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-ZA', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  return (
+    <div className="border rounded-lg p-4 space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="font-medium">{verification.profiles?.display_name || 'Unknown User'}</div>
+          <p className="text-sm text-muted-foreground">
+            Grant Type: {verification.grant_type} • Submitted: {formatDate(verification.created_at)}
+          </p>
+        </div>
+        {getStatusBadge(verification.status)}
+      </div>
+
+      {verification.card_photo_url && (
+        <div className="space-y-2">
+          <p className="text-sm font-medium">SASSA Card Photo:</p>
+          <img 
+            src={verification.card_photo_url} 
+            alt="SASSA Card" 
+            className="max-w-xs rounded border"
+          />
+        </div>
+      )}
+
+      {verification.verification_notes && (
+        <div className="bg-muted/30 p-3 rounded">
+          <p className="text-sm"><strong>Admin Notes:</strong> {verification.verification_notes}</p>
+        </div>
+      )}
+
+      {verification.status === 'pending' && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => setShowNotes(!showNotes)}
+              variant="outline"
+            >
+              {showNotes ? 'Hide' : 'Add'} Notes
+            </Button>
+          </div>
+
+          {showNotes && (
+            <Textarea
+              placeholder="Add verification notes (optional)..."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="w-full"
+            />
+          )}
+
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => onAction(verification.id, 'approved', notes)}
+              disabled={loading}
+              className="bg-success hover:bg-success/90"
+            >
+              <CheckCircle className="h-4 w-4 mr-1" />
+              Approve
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => onAction(verification.id, 'rejected', notes)}
+              disabled={loading}
+              variant="outline"
+              className="border-danger text-danger hover:bg-danger/10"
+            >
+              <XCircle className="h-4 w-4 mr-1" />
+              Reject
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
