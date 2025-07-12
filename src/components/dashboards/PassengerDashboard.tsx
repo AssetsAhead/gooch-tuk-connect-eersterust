@@ -4,21 +4,75 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Car, User, Shield, Heart } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PanicButton } from "@/components/PanicButton";
 import { ReputationSystem } from "@/components/ReputationSystem";
 import { CrimeMap } from "@/components/CrimeMap";
 import { SocialProof } from "@/components/SocialProof";
+import { useRealTimeTracking } from "@/hooks/useRealTimeTracking";
+import { supabase } from "@/integrations/supabase/client";
+import { MapsButton } from "@/components/MapsButton";
+import { useToast } from "@/hooks/use-toast";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
   const [destination, setDestination] = useState("");
   const [activeTab, setActiveTab] = useState("booking");
-  const [nearbyDrivers] = useState([
-    { id: "TT001", driver: "Sipho M.", rating: 4.8, distance: "0.2km", eta: "3 min", fare: "R15" },
-    { id: "TT003", driver: "Nomsa D.", rating: 4.5, distance: "0.5km", eta: "5 min", fare: "R18" },
-    { id: "TT007", driver: "Thabo N.", rating: 4.2, distance: "0.8km", eta: "7 min", fare: "R20" }
-  ]);
+  const [nearbyDrivers, setNearbyDrivers] = useState([]);
+  const [user, setUser] = useState(null);
+  const { toast } = useToast();
+  
+  const { activeRide, rideUpdates, createRide, isLoading } = useRealTimeTracking(
+    user?.id, 
+    'passenger'
+  );
+
+  // Get current user
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+  }, []);
+
+  // Fetch nearby drivers
+  useEffect(() => {
+    const fetchNearbyDrivers = async () => {
+      const { data, error } = await supabase
+        .from('drivers')
+        .select('*')
+        .eq('status', 'online')
+        .limit(5);
+      
+      if (!error && data) {
+        setNearbyDrivers(data.map(driver => ({
+          id: driver.id,
+          driver: driver.name,
+          rating: driver.rating || 4.5,
+          distance: `${Math.random() * 2 + 0.1}km`,
+          eta: `${Math.floor(Math.random() * 10 + 3)} min`,
+          fare: `R${Math.floor(Math.random() * 15 + 15)}`
+        })));
+      }
+    };
+    
+    fetchNearbyDrivers();
+  }, []);
+
+  const handleBookRide = async () => {
+    if (!pickup || !destination) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter both pickup and destination",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const price = Math.floor(Math.random() * 30 + 15);
+    await createRide(pickup, destination, "standard", price);
+  };
 
   const quickDestinations = [
     { name: "Denlyn Mall", fare: "R15", time: "5 min" },
@@ -102,8 +156,12 @@ export const PassengerDashboard = () => {
                     onChange={(e) => setDestination(e.target.value)}
                   />
                 </div>
-                <Button className="w-full bg-primary hover:bg-primary/90">
-                  Find Available Rides
+                <Button 
+                  className="w-full bg-primary hover:bg-primary/90"
+                  onClick={handleBookRide}
+                  disabled={!user || !!activeRide}
+                >
+                  {activeRide ? "Ride in Progress" : "Book Ride"}
                 </Button>
               </CardContent>
             </Card>
@@ -133,47 +191,109 @@ export const PassengerDashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Nearby Drivers */}
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Car className="mr-2 h-5 w-5" />
-                  Nearby Drivers
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {nearbyDrivers.map((driver) => (
-                    <div key={driver.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                          {driver.driver.charAt(0)}
-                        </div>
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <span className="font-medium">{driver.driver}</span>
-                            <Badge variant="outline" className="text-xs">{driver.id}</Badge>
-                          </div>
-                          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                            <span>★ {driver.rating}</span>
-                            <span>•</span>
-                            <span>{driver.distance} away</span>
-                            <span>•</span>
-                            <span>{driver.eta}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold text-success mb-2">{driver.fare}</div>
-                        <Button size="sm" className="bg-primary hover:bg-primary/90">
-                          Book Now
-                        </Button>
-                      </div>
+            {/* Active Ride Tracking */}
+            {activeRide && (
+              <Card className="mb-8 border-primary/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Car className="mr-2 h-5 w-5" />
+                      Current Ride
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    <Badge className={`${
+                      activeRide.status === 'accepted' ? 'bg-warning' :
+                      activeRide.status === 'in_progress' ? 'bg-primary' :
+                      'bg-secondary'
+                    } text-white`}>
+                      {activeRide.status?.toUpperCase()}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-primary/5 rounded-lg">
+                    <div>
+                      <div className="font-medium">{activeRide.pickup_location} → {activeRide.destination}</div>
+                      <div className="text-sm text-muted-foreground">Fare: R{activeRide.price}</div>
+                    </div>
+                    <MapsButton 
+                      destination={activeRide.destination}
+                      startLocation={activeRide.pickup_location}
+                      variant="outline"
+                      size="sm"
+                    />
+                  </div>
+                  
+                  {rideUpdates.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-sm">Real-time Updates:</h4>
+                      {rideUpdates.slice(0, 3).map((update) => (
+                        <div key={update.id} className="p-3 bg-muted/30 rounded-lg">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              {update.status_message && (
+                                <p className="text-sm">{update.status_message}</p>
+                              )}
+                              {update.estimated_arrival && (
+                                <p className="text-xs text-muted-foreground">
+                                  ETA: {new Date(update.estimated_arrival).toLocaleTimeString()}
+                                </p>
+                              )}
+                            </div>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(update.created_at).toLocaleTimeString()}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Nearby Drivers */}
+            {!activeRide && (
+              <Card className="mb-8">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Car className="mr-2 h-5 w-5" />
+                    Nearby Drivers
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {nearbyDrivers.map((driver) => (
+                      <div key={driver.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold">
+                            {driver.driver.charAt(0)}
+                          </div>
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium">{driver.driver}</span>
+                              <Badge variant="outline" className="text-xs">{driver.id}</Badge>
+                            </div>
+                            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                              <span>★ {driver.rating}</span>
+                              <span>•</span>
+                              <span>{driver.distance} away</span>
+                              <span>•</span>
+                              <span>{driver.eta}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-success mb-2">{driver.fare}</div>
+                          <Button size="sm" className="bg-primary hover:bg-primary/90">
+                            Book Now
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
             
             {/* Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

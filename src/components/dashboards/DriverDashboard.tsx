@@ -4,25 +4,113 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Car, User, Settings, Trophy, Wallet } from "lucide-react";
 import { MapsButton } from "@/components/MapsButton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PanicButton } from "@/components/PanicButton";
 import { ReputationSystem } from "@/components/ReputationSystem";
 import { CrimeMap } from "@/components/CrimeMap";
 import { FinancialServices } from "@/components/FinancialServices";
 import { SocialProof } from "@/components/SocialProof";
-import { GovernmentServices } from "@/components/GovernmentServices";
-import { LoadSheddingTracker } from "@/components/LoadSheddingTracker";
-import { FinancialInclusion } from "@/components/FinancialInclusion";
-import { MultiLanguageAssistant } from "@/components/MultiLanguageAssistant";
-import { TownshipEconomy } from "@/components/TownshipEconomy";
+import { useRealTimeTracking } from "@/hooks/useRealTimeTracking";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export const DriverDashboard = () => {
   const [shiftStarted, setShiftStarted] = useState(false);
-  const [availableRides] = useState([
-    { id: 1, pickup: "Denlyn Mall", destination: "Municipal Clinic", fare: "R25", distance: "2.1km", surge: true },
-    { id: 2, pickup: "Pick n Pay Complex", destination: "Highlands Park", fare: "R15", distance: "1.8km", surge: false },
-    { id: 3, pickup: "Silverton", destination: "Eastlynne", fare: "R30", distance: "3.2km", surge: true }
-  ]);
+  const [availableRides, setAvailableRides] = useState([]);
+  const [user, setUser] = useState(null);
+  const { toast } = useToast();
+  
+  const { activeRide, rideUpdates, acceptRide, updateDriverLocation, updateRideStatus } = useRealTimeTracking(
+    user?.id, 
+    'driver'
+  );
+
+  // Get current user
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+  }, []);
+
+  // Fetch available rides when shift is started
+  useEffect(() => {
+    if (!shiftStarted || !user) return;
+
+    const fetchAvailableRides = async () => {
+      const { data, error } = await supabase
+        .from('rides')
+        .select('*')
+        .eq('status', 'requested')
+        .is('driver_id', null)
+        .limit(5);
+      
+      if (!error && data) {
+        setAvailableRides(data.map(ride => ({
+          id: ride.id,
+          pickup: ride.pickup_location,
+          destination: ride.destination,
+          fare: `R${ride.price}`,
+          distance: `${Math.random() * 3 + 1}km`,
+          surge: Math.random() > 0.6
+        })));
+      }
+    };
+    
+    fetchAvailableRides();
+    
+    // Subscribe to new rides
+    const ridesChannel = supabase
+      .channel('new-rides')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'rides',
+          filter: 'status=eq.requested',
+        },
+        () => fetchAvailableRides()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(ridesChannel);
+    };
+  }, [shiftStarted, user]);
+
+  const handleAcceptRide = async (rideId: string) => {
+    const success = await acceptRide(rideId);
+    if (success) {
+      setAvailableRides(prev => prev.filter(ride => ride.id !== rideId));
+    }
+  };
+
+  const handleLocationUpdate = () => {
+    if (navigator.geolocation && activeRide) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          updateDriverLocation(
+            {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            },
+            new Date(Date.now() + 10 * 60 * 1000), // ETA: 10 minutes from now
+            "On my way to pickup location"
+          );
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          toast({
+            title: "Location Error",
+            description: "Unable to get your location",
+            variant: "destructive",
+          });
+        }
+      );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -111,16 +199,81 @@ export const DriverDashboard = () => {
               </Card>
             </div>
 
+            {/* Active Ride */}
+            {activeRide && (
+              <Card className="mb-8 border-success/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Car className="mr-2 h-5 w-5" />
+                      Active Ride
+                    </div>
+                    <Badge className={`${
+                      activeRide.status === 'accepted' ? 'bg-warning' :
+                      activeRide.status === 'in_progress' ? 'bg-primary' :
+                      'bg-secondary'
+                    } text-white`}>
+                      {activeRide.status?.toUpperCase()}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-success/5 rounded-lg">
+                    <div>
+                      <div className="font-medium">{activeRide.pickup_location} → {activeRide.destination}</div>
+                      <div className="text-sm text-muted-foreground">Fare: R{activeRide.price}</div>
+                    </div>
+                    <MapsButton 
+                      destination={activeRide.destination}
+                      startLocation={activeRide.pickup_location}
+                      variant="outline"
+                      size="sm"
+                    />
+                  </div>
+                  
+                  <div className="flex space-x-2">
+                    <Button 
+                      onClick={handleLocationUpdate}
+                      variant="outline"
+                      size="sm"
+                    >
+                      Update Location
+                    </Button>
+                    {activeRide.status === 'accepted' && (
+                      <Button 
+                        onClick={() => updateRideStatus('in_progress')}
+                        className="bg-primary hover:bg-primary/90"
+                        size="sm"
+                      >
+                        Start Trip
+                      </Button>
+                    )}
+                    {activeRide.status === 'in_progress' && (
+                      <Button 
+                        onClick={() => updateRideStatus('completed')}
+                        className="bg-success hover:bg-success/90"
+                        size="sm"
+                      >
+                        Complete Trip
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Available Rides */}
-            {shiftStarted && (
+            {shiftStarted && !activeRide && (
               <Card className="mb-8 border-primary/20">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <div className="flex items-center">
                       <MapPin className="mr-2 h-5 w-5" />
-                      🔥 Hot Rides Available
+                      🔥 Available Rides
                     </div>
-                    <Badge className="bg-primary text-white animate-pulse">3 surge areas</Badge>
+                    <Badge className="bg-primary text-white">
+                      {availableRides.length} rides
+                    </Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -163,6 +316,7 @@ export const DriverDashboard = () => {
                                  ? "bg-warning hover:bg-warning/90 animate-pulse" 
                                  : "bg-primary hover:bg-primary/90"
                              }`}
+                             onClick={() => handleAcceptRide(ride.id)}
                            >
                              Accept Ride
                            </Button>
@@ -170,6 +324,12 @@ export const DriverDashboard = () => {
                       </div>
                     ))}
                   </div>
+                  
+                  {availableRides.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No rides available at the moment. Check back soon!
+                    </div>
+                  )}
                   
                   <div className="mt-4 p-3 bg-gradient-to-r from-primary/10 to-success/10 rounded-lg">
                     <div className="flex items-center justify-center space-x-2">

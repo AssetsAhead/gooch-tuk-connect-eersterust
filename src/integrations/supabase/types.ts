@@ -135,6 +135,41 @@ export type Database = {
         }
         Relationships: []
       }
+      ride_updates: {
+        Row: {
+          created_at: string
+          driver_location: Json | null
+          estimated_arrival: string | null
+          id: string
+          ride_id: string
+          status_message: string | null
+        }
+        Insert: {
+          created_at?: string
+          driver_location?: Json | null
+          estimated_arrival?: string | null
+          id?: string
+          ride_id: string
+          status_message?: string | null
+        }
+        Update: {
+          created_at?: string
+          driver_location?: Json | null
+          estimated_arrival?: string | null
+          id?: string
+          ride_id?: string
+          status_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ride_updates_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: false
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rides: {
         Row: {
           created_at: string | null
