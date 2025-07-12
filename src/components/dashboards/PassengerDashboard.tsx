@@ -23,6 +23,11 @@ import { LiveNotifications } from "@/components/realtime/LiveNotifications";
 import { RideChat } from "@/components/realtime/RideChat";
 import { LiveActivityFeed } from "@/components/realtime/LiveActivityFeed";
 import { PushNotificationManager } from "@/components/realtime/PushNotificationManager";
+import { FinancialInclusion } from "@/components/FinancialInclusion";
+import { TownshipEconomy } from "@/components/TownshipEconomy";
+import { EnhancedMultiLanguageAssistant } from "@/components/EnhancedMultiLanguageAssistant";
+import { CrimePreventionNetwork } from "@/components/CrimePreventionNetwork";
+import { EnhancedFinancialInclusion } from "@/components/EnhancedFinancialInclusion";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
@@ -107,11 +112,13 @@ export const PassengerDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8">
+          <TabsList className="grid w-full grid-cols-8 mb-8">
             <TabsTrigger value="booking">🚗 Book Ride</TabsTrigger>
             <TabsTrigger value="realtime">📍 Live</TabsTrigger>
             <TabsTrigger value="community">🛡️ Community</TabsTrigger>
             <TabsTrigger value="safety">🚨 Safety</TabsTrigger>
+            <TabsTrigger value="economy">🏪 Economy</TabsTrigger>
+            <TabsTrigger value="assistant">🗣️ Assistant</TabsTrigger>
             <TabsTrigger value="rewards">⭐ Rewards</TabsTrigger>
             <TabsTrigger value="payments">💰 Payments</TabsTrigger>
           </TabsList>
@@ -410,6 +417,10 @@ export const PassengerDashboard = () => {
 
           {/* Safety Tab */}
           <TabsContent value="safety" className="space-y-6">
+            <CrimeMap />
+            <CrimePreventionNetwork />
+            <PanicButton userType="passenger" userId={user?.id || 'passenger-001'} currentLocation="Current Location" />
+            
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="border-danger/20">
                 <CardHeader>
@@ -457,6 +468,17 @@ export const PassengerDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Economy Tab */}
+          <TabsContent value="economy" className="space-y-6">
+            <TownshipEconomy />
+            <EnhancedFinancialInclusion />
+          </TabsContent>
+
+          {/* Assistant Tab */}
+          <TabsContent value="assistant" className="space-y-6">
+            <EnhancedMultiLanguageAssistant />
           </TabsContent>
 
           {/* Rewards Tab */}

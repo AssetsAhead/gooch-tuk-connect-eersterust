@@ -9,6 +9,11 @@ import { PanicButton } from "@/components/PanicButton";
 import { ReputationSystem } from "@/components/ReputationSystem";
 import { CrimeMap } from "@/components/CrimeMap";
 import { FinancialServices } from "@/components/FinancialServices";
+import { TownshipEconomy } from "@/components/TownshipEconomy";
+import { FinancialInclusion } from "@/components/FinancialInclusion";
+import { CrimePreventionNetwork } from "@/components/CrimePreventionNetwork";
+import { EnhancedMultiLanguageAssistant } from "@/components/EnhancedMultiLanguageAssistant";
+import { EnhancedFinancialInclusion } from "@/components/EnhancedFinancialInclusion";
 import { SocialProof } from "@/components/SocialProof";
 import { DriverIncentives } from "@/components/DriverIncentives";
 import { useRealTimeTracking } from "@/hooks/useRealTimeTracking";
@@ -144,13 +149,15 @@ export const DriverDashboard = () => {
         </div>
 
         <Tabs defaultValue="rides" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-9">
+          <TabsList className="grid w-full grid-cols-11">
             <TabsTrigger value="rides">🚗 Rides</TabsTrigger>
             <TabsTrigger value="location">📍 Location</TabsTrigger>
             <TabsTrigger value="realtime">📡 Live</TabsTrigger>
             <TabsTrigger value="incentives">🎯 Incentives</TabsTrigger>
             <TabsTrigger value="reputation">🏆 Reputation</TabsTrigger>
             <TabsTrigger value="safety">🛡️ Safety</TabsTrigger>
+            <TabsTrigger value="economy">🏪 Economy</TabsTrigger>
+            <TabsTrigger value="assistant">🗣️ Assistant</TabsTrigger>
             <TabsTrigger value="wallet">💰 Wallet</TabsTrigger>
             <TabsTrigger value="community">👥 Community</TabsTrigger>
             <TabsTrigger value="emergency">🚨 Emergency</TabsTrigger>
@@ -408,6 +415,16 @@ export const DriverDashboard = () => {
 
           <TabsContent value="safety">
             <CrimeMap />
+            <CrimePreventionNetwork />
+          </TabsContent>
+
+          <TabsContent value="economy">
+            <TownshipEconomy />
+            <EnhancedFinancialInclusion />
+          </TabsContent>
+
+          <TabsContent value="assistant">
+            <EnhancedMultiLanguageAssistant />
           </TabsContent>
 
           <TabsContent value="wallet">
