@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
@@ -150,8 +151,9 @@ export const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="approvals" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="approvals">Approvals</TabsTrigger>
+            <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
             <TabsTrigger value="sassa">SASSA Review</TabsTrigger>
             <TabsTrigger value="monitoring">Live Monitoring</TabsTrigger>
             <TabsTrigger value="incidents">Incidents</TabsTrigger>
@@ -234,6 +236,10 @@ export const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <AnalyticsDashboard />
           </TabsContent>
 
           <TabsContent value="sassa" className="space-y-6">

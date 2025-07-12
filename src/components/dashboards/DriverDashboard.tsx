@@ -10,6 +10,7 @@ import { ReputationSystem } from "@/components/ReputationSystem";
 import { CrimeMap } from "@/components/CrimeMap";
 import { FinancialServices } from "@/components/FinancialServices";
 import { SocialProof } from "@/components/SocialProof";
+import { DriverIncentives } from "@/components/DriverIncentives";
 import { useRealTimeTracking } from "@/hooks/useRealTimeTracking";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -136,8 +137,9 @@ export const DriverDashboard = () => {
         </div>
 
         <Tabs defaultValue="rides" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="rides">🚗 Rides</TabsTrigger>
+            <TabsTrigger value="incentives">🎯 Incentives</TabsTrigger>
             <TabsTrigger value="reputation">🏆 Reputation</TabsTrigger>
             <TabsTrigger value="safety">🛡️ Safety</TabsTrigger>
             <TabsTrigger value="wallet">💰 Wallet</TabsTrigger>
@@ -341,6 +343,10 @@ export const DriverDashboard = () => {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="incentives">
+            <DriverIncentives />
           </TabsContent>
 
           <TabsContent value="reputation">

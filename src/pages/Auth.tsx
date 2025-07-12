@@ -152,7 +152,7 @@ export const AuthPage = () => {
           </div>
           <CardTitle>Welcome to TukTuk Community</CardTitle>
           <CardDescription>
-            Safe, affordable transport with SASSA integration
+            Safe, affordable transport with SASSA integration. Verify with your phone number - just like WhatsApp!
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -196,13 +196,53 @@ export const AuthPage = () => {
 
             <TabsContent value="signin" className="mt-6">
               <div className="text-center text-sm text-muted-foreground mb-4">
-                Choose your preferred sign-in method
+                Enter your phone number to continue
               </div>
             </TabsContent>
 
             <div className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="phone">Phone Number</Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="0XX XXX XXXX"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  We'll send you a code via SMS - just like WhatsApp verification
+                </div>
+              </div>
+
+              <Button
+                onClick={handlePhoneAuth}
+                disabled={loading || !phone}
+                className="w-full"
+              >
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Phone className="h-4 w-4 mr-2" />
+                )}
+                {authMode === 'signup' ? 'Get Started' : 'Continue'} with Phone
+              </Button>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">or use email</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address (Alternative)</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -219,6 +259,7 @@ export const AuthPage = () => {
               <Button
                 onClick={handleEmailAuth}
                 disabled={loading || !email}
+                variant="outline"
                 className="w-full"
               >
                 {loading ? (
@@ -226,47 +267,7 @@ export const AuthPage = () => {
                 ) : (
                   <Mail className="h-4 w-4 mr-2" />
                 )}
-                {authMode === 'signup' ? 'Sign Up' : 'Sign In'} with Email
-              </Button>
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">OR</span>
-                </div>
-              </div>
-
-              {authMode === 'signup' && (
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number (Optional)</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="0XX XXX XXXX"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-              )}
-
-              <Button
-                onClick={handlePhoneAuth}
-                disabled={loading || !phone}
-                variant="outline"
-                className="w-full"
-              >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <Phone className="h-4 w-4 mr-2" />
-                )}
-                {authMode === 'signup' ? 'Sign Up' : 'Sign In'} with Phone
+                Continue with Email
               </Button>
             </div>
           </Tabs>
