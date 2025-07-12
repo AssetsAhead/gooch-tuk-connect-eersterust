@@ -10,6 +10,8 @@ import { ReputationSystem } from "@/components/ReputationSystem";
 import { CrimeMap } from "@/components/CrimeMap";
 import { SocialProof } from "@/components/SocialProof";
 import { SassaVerification } from "@/components/SassaVerification";
+import { NotificationSystem } from "@/components/NotificationSystem";
+import { SassaPaymentCalendar } from "@/components/SassaPaymentCalendar";
 import { useRealTimeTracking } from "@/hooks/useRealTimeTracking";
 import { useSassaDiscount } from "@/hooks/useSassaDiscount";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,6 +32,7 @@ export const PassengerDashboard = () => {
   );
   
   const { discountInfo, calculateDiscountedPrice, loading: discountLoading } = useSassaDiscount(user?.id);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   // Get current user
   useEffect(() => {
@@ -99,11 +102,12 @@ export const PassengerDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="booking">🚗 Book Ride</TabsTrigger>
             <TabsTrigger value="community">🛡️ Community</TabsTrigger>
             <TabsTrigger value="safety">🚨 Safety</TabsTrigger>
             <TabsTrigger value="rewards">⭐ Rewards</TabsTrigger>
+            <TabsTrigger value="payments">💰 Payments</TabsTrigger>
           </TabsList>
 
           {/* Booking Tab */}
@@ -425,6 +429,24 @@ export const PassengerDashboard = () => {
               currentLevel={1} 
               badges={["perfect_week"]} 
             />
+          </TabsContent>
+
+          {/* Payments Tab */}
+          <TabsContent value="payments" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <SassaPaymentCalendar 
+                  userGrantType={discountInfo.grantType || undefined}
+                  onNotificationToggle={setNotificationsEnabled}
+                />
+              </div>
+              <div>
+                <NotificationSystem 
+                  userGrantType={discountInfo.grantType || undefined}
+                  notificationsEnabled={notificationsEnabled}
+                />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
