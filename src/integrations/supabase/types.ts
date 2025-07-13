@@ -99,6 +99,131 @@ export type Database = {
           },
         ]
       }
+      municipal_bills: {
+        Row: {
+          amount: number
+          bill_date: string
+          bill_number: string | null
+          consumption: number | null
+          created_at: string
+          document_url: string | null
+          due_date: string
+          id: string
+          meter_reading: string | null
+          payment_date: string | null
+          payment_reference: string | null
+          payment_status: string | null
+          previous_reading: string | null
+          service_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          bill_date: string
+          bill_number?: string | null
+          consumption?: number | null
+          created_at?: string
+          document_url?: string | null
+          due_date: string
+          id?: string
+          meter_reading?: string | null
+          payment_date?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
+          previous_reading?: string | null
+          service_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          bill_date?: string
+          bill_number?: string | null
+          consumption?: number | null
+          created_at?: string
+          document_url?: string | null
+          due_date?: string
+          id?: string
+          meter_reading?: string | null
+          payment_date?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
+          previous_reading?: string | null
+          service_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "municipal_bills_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "municipal_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      municipal_services: {
+        Row: {
+          account_number: string
+          auto_pay_enabled: boolean | null
+          bill_period: string | null
+          consumption_units: string | null
+          created_at: string
+          current_balance: number | null
+          document_url: string | null
+          due_date: string | null
+          id: string
+          meter_reading: string | null
+          municipality: string
+          property_address: string
+          rate_per_unit: number | null
+          service_type: string
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_number: string
+          auto_pay_enabled?: boolean | null
+          bill_period?: string | null
+          consumption_units?: string | null
+          created_at?: string
+          current_balance?: number | null
+          document_url?: string | null
+          due_date?: string | null
+          id?: string
+          meter_reading?: string | null
+          municipality: string
+          property_address: string
+          rate_per_unit?: number | null
+          service_type: string
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_number?: string
+          auto_pay_enabled?: boolean | null
+          bill_period?: string | null
+          consumption_units?: string | null
+          created_at?: string
+          current_balance?: number | null
+          document_url?: string | null
+          due_date?: string | null
+          id?: string
+          meter_reading?: string | null
+          municipality?: string
+          property_address?: string
+          rate_per_unit?: number | null
+          service_type?: string
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

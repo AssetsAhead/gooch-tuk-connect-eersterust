@@ -14,9 +14,13 @@ import {
   Calendar,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  Zap,
+  Home,
+  CreditCard
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MunicipalServices from "./MunicipalServices";
 
 export const GovernmentServices = () => {
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -72,8 +76,9 @@ export const GovernmentServices = () => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="municipal" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="municipal">🏛️ Municipal</TabsTrigger>
+            <TabsTrigger value="bills">💳 Bills & Rates</TabsTrigger>
             <TabsTrigger value="civic">🗳️ Civic Services</TabsTrigger>
           </TabsList>
 
@@ -148,6 +153,10 @@ export const GovernmentServices = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="bills" className="space-y-4">
+            <MunicipalServices />
           </TabsContent>
 
           <TabsContent value="civic" className="space-y-4">
