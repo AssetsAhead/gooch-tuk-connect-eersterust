@@ -9,7 +9,7 @@ export const AuthPage = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState('passenger');
+  const [role, setRole] = useState('admin'); // Default to admin to help with initial setup
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [verificationSent, setVerificationSent] = useState(false);
   

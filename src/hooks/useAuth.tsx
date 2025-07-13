@@ -19,11 +19,12 @@ export const useAuth = () => {
     setLoading(true);
     try {
       if (name && role) {
-        // Sign up with email
+        // Sign up with email and magic link
         const { error } = await supabase.auth.signUp({
           email,
-          password: 'temp-password', // We'll use magic links primarily
+          password: 'temp-password-123!', // Temporary password for signup
           options: {
+            emailRedirectTo: `${window.location.origin}/`,
             data: {
               full_name: name,
               role: role,
@@ -33,28 +34,27 @@ export const useAuth = () => {
 
         if (error) throw error;
 
-        // Send magic link
-        const { error: magicError } = await supabase.auth.signInWithOtp({
-          email,
-          options: {
-            data: {
-              full_name: name,
-              role: role,
-            }
-          }
+        toast({
+          title: "Check Your Email",
+          description: "We've sent you a confirmation link to complete your registration",
         });
-
-        if (magicError) throw magicError;
       } else {
         // Sign in with magic link
-        const { error } = await supabase.auth.signInWithOtp({ email });
+        const { error } = await supabase.auth.signInWithOtp({ 
+          email,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`,
+          }
+        });
         if (error) throw error;
+
+        toast({
+          title: "Check Your Email", 
+          description: "We've sent you a magic link to sign in",
+        });
       }
 
-      toast({
-        title: "Check Your Email",
-        description: "We've sent you a magic link to sign in",
-      });
+      
       return true;
     } catch (error: any) {
       toast({
@@ -69,6 +69,15 @@ export const useAuth = () => {
   };
 
   const handlePhoneAuth = async (phone: string) => {
+    // Disable phone auth for now since it requires additional Supabase configuration
+    toast({
+      title: "Phone Authentication Unavailable",
+      description: "Please use email authentication for now. Phone authentication requires additional setup.",
+      variant: "destructive",
+    });
+    return false;
+    
+    /* Commented out until phone auth is properly configured in Supabase
     if (!phone) {
       toast({
         title: "Phone Required",
@@ -101,6 +110,7 @@ export const useAuth = () => {
     } finally {
       setLoading(false);
     }
+    */
   };
 
   return {
