@@ -34,8 +34,11 @@ const App = () => (
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             
+            {/* Public landing page */}
+            <Route path="/" element={<Index />} />
+            
             {/* Role-based redirect for authenticated users */}
-            <Route path="/" element={
+            <Route path="/dashboard" element={
               <ProtectedRoute>
                 <RoleBasedRedirect />
               </ProtectedRoute>
