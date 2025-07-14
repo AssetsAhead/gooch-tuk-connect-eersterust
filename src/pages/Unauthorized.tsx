@@ -22,7 +22,13 @@ export const UnauthorizedPage = () => {
           </p>
           <div className="space-y-2">
             <Button 
-              onClick={() => navigate(-1)} 
+              onClick={() => {
+                try {
+                  navigate(-1);
+                } catch {
+                  navigate('/');
+                }
+              }} 
               variant="outline" 
               className="w-full"
             >
