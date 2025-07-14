@@ -7,9 +7,12 @@ export const RoleBasedRedirect: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('RoleBasedRedirect - Auth state:', { loading, user: !!user, userProfile, userMetadata: user?.user_metadata });
+    
     if (!loading && user) {
       // Get role from userProfile first, fallback to user metadata
       const role = userProfile?.role || user.user_metadata?.role;
+      console.log('RoleBasedRedirect - Detected role:', role);
       
       switch (role) {
         case 'passenger':
@@ -31,9 +34,11 @@ export const RoleBasedRedirect: React.FC = () => {
           navigate('/police', { replace: true });
           break;
         default:
+          console.log('RoleBasedRedirect - No valid role found, defaulting to passenger');
           navigate('/passenger', { replace: true });
       }
     } else if (!loading && !user) {
+      console.log('RoleBasedRedirect - No user, redirecting to auth');
       navigate('/auth', { replace: true });
     }
   }, [user, userProfile, loading, navigate]);
