@@ -7,8 +7,9 @@ export const RoleBasedRedirect: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user && userProfile) {
-      const role = userProfile.role || user.user_metadata?.role;
+    if (!loading && user) {
+      // Get role from userProfile first, fallback to user metadata
+      const role = userProfile?.role || user.user_metadata?.role;
       
       switch (role) {
         case 'passenger':
