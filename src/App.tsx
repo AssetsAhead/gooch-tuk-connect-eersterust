@@ -44,7 +44,7 @@ const App = () => (
               </ProtectedRoute>
             } />
             
-            {/* Protected role-specific routes */}
+            {/* Protected role-specific routes with enhanced security */}
             <Route path="/passenger" element={
               <ProtectedRoute requiredRole={['passenger']}>
                 <PassengerDashboard />
