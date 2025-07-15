@@ -10,33 +10,36 @@ export const RoleBasedRedirect: React.FC = () => {
     console.log('RoleBasedRedirect - Auth state:', { loading, user: !!user, userProfile, userMetadata: user?.user_metadata });
     
     if (!loading && user) {
-      // Get role from userProfile first, fallback to user metadata
-      const role = userProfile?.role || user.user_metadata?.role;
+      // Get role from userProfile first, then user metadata, then default to admin
+      const role = userProfile?.role || user.user_metadata?.role || 'admin';
       console.log('RoleBasedRedirect - Detected role:', role);
       
-      switch (role) {
-        case 'passenger':
-          navigate('/passenger', { replace: true });
-          break;
-        case 'driver':
-          navigate('/driver', { replace: true });
-          break;
-        case 'owner':
-          navigate('/owner', { replace: true });
-          break;
-        case 'marshall':
-          navigate('/marshall', { replace: true });
-          break;
-        case 'admin':
-          navigate('/admin', { replace: true });
-          break;
-        case 'police':
-          navigate('/police', { replace: true });
-          break;
-        default:
-          console.log('RoleBasedRedirect - No valid role found, defaulting to passenger');
-          navigate('/passenger', { replace: true });
-      }
+      // Add a small delay to ensure smooth navigation after magic link
+      setTimeout(() => {
+        switch (role) {
+          case 'passenger':
+            navigate('/passenger', { replace: true });
+            break;
+          case 'driver':
+            navigate('/driver', { replace: true });
+            break;
+          case 'owner':
+            navigate('/owner', { replace: true });
+            break;
+          case 'marshall':
+            navigate('/marshall', { replace: true });
+            break;
+          case 'admin':
+            navigate('/admin', { replace: true });
+            break;
+          case 'police':
+            navigate('/police', { replace: true });
+            break;
+          default:
+            console.log('RoleBasedRedirect - No valid role found, defaulting to admin');
+            navigate('/admin', { replace: true });
+        }
+      }, 100);
     } else if (!loading && !user) {
       console.log('RoleBasedRedirect - No user, redirecting to auth');
       navigate('/auth', { replace: true });
