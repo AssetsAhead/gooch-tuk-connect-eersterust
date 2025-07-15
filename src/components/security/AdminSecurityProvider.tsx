@@ -1,10 +1,15 @@
 import React, { useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-export const AdminSecurityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, userProfile } = useAuth();
+interface AdminSecurityProviderProps {
+  children: React.ReactNode;
+  user: User | null;
+  userProfile: any | null;
+}
+
+export const AdminSecurityProvider: React.FC<AdminSecurityProviderProps> = ({ children, user, userProfile }) => {
   const { toast } = useToast();
 
   useEffect(() => {

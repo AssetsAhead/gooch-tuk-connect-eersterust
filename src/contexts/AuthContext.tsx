@@ -194,7 +194,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      <AdminSecurityProvider>
+      <AdminSecurityProvider user={user} userProfile={userProfile}>
         {children}
       </AdminSecurityProvider>
     </AuthContext.Provider>
