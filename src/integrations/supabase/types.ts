@@ -99,6 +99,33 @@ export type Database = {
           },
         ]
       }
+      location_logs: {
+        Row: {
+          accuracy: number | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          accuracy?: number | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          accuracy?: number | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       municipal_bills: {
         Row: {
           amount: number
@@ -220,6 +247,36 @@ export type Database = {
           service_type?: string
           status?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      panic_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          id: string
+          location: Json | null
+          resolved_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          location?: Json | null
+          resolved_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          location?: Json | null
+          resolved_at?: string | null
+          status?: string
           user_id?: string
         }
         Relationships: []
@@ -379,6 +436,63 @@ export type Database = {
           user_id?: string
           verification_notes?: string | null
           verified_at?: string | null
+        }
+        Relationships: []
+      }
+      security_incidents: {
+        Row: {
+          details: Json | null
+          id: string
+          incident_type: string
+          status: string
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          details?: Json | null
+          id?: string
+          incident_type: string
+          status?: string
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          details?: Json | null
+          id?: string
+          incident_type?: string
+          status?: string
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      security_logs: {
+        Row: {
+          details: Json | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          timestamp: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          details?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          details?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: []
       }
