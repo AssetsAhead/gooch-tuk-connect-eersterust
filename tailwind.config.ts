@@ -52,14 +52,45 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Tuk Tuk themed colors - Enhanced palette
-				'tuk-orange': 'hsl(var(--tuk-orange))',
-				'tuk-blue': 'hsl(var(--tuk-blue))',
+				// South African flag colors - Complete palette
+				'sa-green': {
+					DEFAULT: 'hsl(var(--sa-green))',
+					light: 'hsl(var(--sa-green-light))'
+				},
+				'sa-gold': {
+					DEFAULT: 'hsl(var(--sa-gold))',
+					light: 'hsl(var(--sa-gold-light))'
+				},
+				'sa-blue': {
+					DEFAULT: 'hsl(var(--sa-blue))',
+					light: 'hsl(var(--sa-blue-light))'
+				},
+				'sa-red': {
+					DEFAULT: 'hsl(var(--sa-red))',
+					light: 'hsl(var(--sa-red-light))'
+				},
+				'sa-black': 'hsl(var(--sa-black))',
+				'sa-white': 'hsl(var(--sa-white))',
+				
+				// Enhanced TukTuk colors
+				'tuk-orange': {
+					DEFAULT: 'hsl(var(--tuk-orange))',
+					light: 'hsl(var(--tuk-orange-light))'
+				},
+				'tuk-blue': {
+					DEFAULT: 'hsl(var(--tuk-blue))',
+					light: 'hsl(var(--tuk-blue-light))'
+				},
+				'tuk-green': {
+					DEFAULT: 'hsl(var(--tuk-green))',
+					light: 'hsl(var(--tuk-green-light))'
+				},
+				
+				// Functional colors
 				success: 'hsl(var(--success))',
 				warning: 'hsl(var(--warning))',
 				danger: 'hsl(var(--danger))',
 				info: 'hsl(var(--info))',
-				purple: 'hsl(var(--purple))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -70,6 +101,19 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				}
+			},
+			backgroundImage: {
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-secondary': 'var(--gradient-secondary)',
+				'gradient-sa-flag': 'var(--gradient-sa-flag)',
+				'gradient-hero': 'var(--gradient-hero)'
+			},
+			boxShadow: {
+				'primary': 'var(--shadow-primary)',
+				'secondary': 'var(--shadow-secondary)',
+				'sa-flag': 'var(--shadow-sa-flag)',
+				'colorful': 'var(--shadow-colorful)',
+				'glow': 'var(--shadow-glow)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

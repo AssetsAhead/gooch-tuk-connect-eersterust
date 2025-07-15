@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
+import { RoleSwitcher } from "@/components/RoleSwitcher";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
@@ -151,8 +152,9 @@ export const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="approvals" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="approvals">Approvals</TabsTrigger>
+            <TabsTrigger value="roles">Role Switch</TabsTrigger>
             <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
             <TabsTrigger value="sassa">SASSA Review</TabsTrigger>
             <TabsTrigger value="monitoring">Live Monitoring</TabsTrigger>
@@ -236,6 +238,23 @@ export const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="roles" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <User className="mr-2 h-5 w-5" />
+                  Role Management & Switching
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Switch between your available roles or request new ones. As an admin, you can access all dashboards.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <RoleSwitcher />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">

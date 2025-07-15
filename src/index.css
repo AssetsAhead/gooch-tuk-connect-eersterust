@@ -17,48 +17,82 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* South African inspired color palette - Enhanced with 25% more vibrance */
-    --primary: 39 100% 60%; /* Brighter golden yellow */
-    --primary-foreground: 0 0% 0%;
+    /* South African flag colors - Enhanced with 25% more vibrance */
+    --primary: 142 90% 35%; /* SA Green - more vibrant */
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 142 90% 50%;
 
-    --secondary: 120 100% 35%; /* Brighter South African green */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 47 95% 65%; /* SA Gold - brighter */
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 210 45% 92%; /* Softer but more present */
-    --muted-foreground: 215.4 20% 40%; /* Stronger contrast */
+    --muted: 210 45% 92%; 
+    --muted-foreground: 215.4 20% 40%; 
 
-    --accent: 0 100% 60%; /* Brighter red for alerts */
+    --accent: 0 90% 55%; /* SA Red - enhanced */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 90% 55%;
+    --destructive-foreground: 0 0% 100%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 39 100% 50%;
+    --ring: 142 90% 35%;
 
     --radius: 0.75rem;
 
-    /* Custom Tuk Tuk themed colors - Enhanced vibrance */
-    --tuk-orange: 25 100% 65%; /* More vibrant orange */
-    --tuk-blue: 220 100% 60%; /* Brighter blue */
-    --success: 120 100% 35%; /* Brighter success green */
-    --warning: 45 100% 60%; /* Warmer, brighter warning */
-    --danger: 0 100% 60%; /* Brighter danger red */
-    --info: 200 100% 50%; /* New info color */
-    --purple: 280 100% 60%; /* New vibrant purple */
+    /* South African flag colors - Complete palette */
+    --sa-green: 142 90% 35%;
+    --sa-green-light: 142 90% 50%;
+    --sa-gold: 47 95% 65%;
+    --sa-gold-light: 47 95% 80%;
+    --sa-blue: 217 90% 55%;
+    --sa-blue-light: 217 90% 70%;
+    --sa-red: 0 90% 55%;
+    --sa-red-light: 0 90% 70%;
+    --sa-black: 0 0% 8%;
+    --sa-white: 0 0% 98%;
+
+    /* Enhanced TukTuk colors with SA flag inspiration */
+    --tuk-orange: 24 95% 65%; /* Enhanced orange */
+    --tuk-orange-light: 24 95% 80%;
+    --tuk-blue: 217 90% 55%; /* SA Blue variant */
+    --tuk-blue-light: 217 90% 70%;
+    --tuk-green: 142 90% 35%; /* SA Green variant */
+    --tuk-green-light: 142 90% 50%;
     
-    /* Gradients for modern look */
-    --gradient-primary: linear-gradient(135deg, hsl(39 100% 50%), hsl(25 100% 50%));
-    --gradient-secondary: linear-gradient(135deg, hsl(120 100% 25%), hsl(120 100% 35%));
-    --gradient-hero: linear-gradient(135deg, hsl(39 100% 50%), hsl(220 100% 50%));
+    /* Functional colors with SA theme */
+    --success: 142 90% 35%;
+    --warning: 47 95% 65%;
+    --danger: 0 90% 55%;
+    --info: 217 90% 55%;
     
-    /* Shadows with South African flair */
-    --shadow-tuk: 0 4px 20px hsl(39 100% 50% / 0.3);
-    --shadow-success: 0 4px 15px hsl(120 100% 25% / 0.2);
+    /* Enhanced gradients with SA flag colors */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--sa-green)), hsl(var(--sa-green-light)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--sa-gold)), hsl(var(--tuk-orange)));
+    --gradient-sa-flag: linear-gradient(135deg, 
+      hsl(var(--sa-green)) 0%, 
+      hsl(var(--sa-gold)) 20%, 
+      hsl(var(--sa-blue)) 40%,
+      hsl(var(--sa-red)) 60%,
+      hsl(var(--sa-black)) 80%,
+      hsl(var(--sa-white)) 100%);
+    --gradient-hero: linear-gradient(135deg, 
+      hsl(var(--sa-green)) 0%, 
+      hsl(var(--sa-gold)) 25%, 
+      hsl(var(--sa-blue)) 50%,
+      hsl(var(--sa-red)) 75%,
+      hsl(var(--tuk-orange)) 100%);
+    
+    /* Enhanced shadows with SA flag colors */
+    --shadow-primary: 0 10px 30px -10px hsl(var(--sa-green) / 0.4);
+    --shadow-secondary: 0 10px 30px -10px hsl(var(--sa-gold) / 0.4);
+    --shadow-sa-flag: 0 20px 60px -20px hsl(var(--sa-green) / 0.3), 0 15px 40px -15px hsl(var(--sa-gold) / 0.2);
+    --shadow-colorful: 0 15px 40px -15px hsl(var(--sa-red) / 0.3), 0 10px 25px -10px hsl(var(--sa-blue) / 0.3);
+    --shadow-glow: 0 0 50px hsl(var(--sa-green-light) / 0.5);
     
     /* Animation transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --sidebar-background: 0 0% 98%;
 
@@ -87,24 +121,47 @@ All colors MUST be HSL.
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 142 90% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 142 90% 60%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 47 95% 70%;
+    --secondary-foreground: 0 0% 0%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 0 90% 65%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 90% 65%;
+    --destructive-foreground: 0 0% 100%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 142 90% 45%;
+    
+    /* SA colors in dark mode */
+    --sa-green: 142 90% 45%;
+    --sa-green-light: 142 90% 60%;
+    --sa-gold: 47 95% 70%;
+    --sa-gold-light: 47 95% 85%;
+    --sa-blue: 217 90% 65%;
+    --sa-blue-light: 217 90% 80%;
+    --sa-red: 0 90% 65%;
+    --sa-red-light: 0 90% 80%;
+    --tuk-orange: 24 95% 70%;
+    --tuk-orange-light: 24 95% 85%;
+    --tuk-blue: 217 90% 65%;
+    --tuk-blue-light: 217 90% 80%;
+    --tuk-green: 142 90% 45%;
+    --tuk-green-light: 142 90% 60%;
+    
+    /* Functional colors */
+    --success: 142 90% 45%;
+    --warning: 47 95% 70%;
+    --danger: 0 90% 65%;
+    --info: 217 90% 65%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;

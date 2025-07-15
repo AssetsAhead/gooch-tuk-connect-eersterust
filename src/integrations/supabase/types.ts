@@ -290,6 +290,7 @@ export type Database = {
           id: string
           notification_preferences: Json | null
           preferred_language: string | null
+          role: string | null
           updated_at: string
           user_id: string
         }
@@ -301,6 +302,7 @@ export type Database = {
           id?: string
           notification_preferences?: Json | null
           preferred_language?: string | null
+          role?: string | null
           updated_at?: string
           user_id: string
         }
@@ -312,6 +314,7 @@ export type Database = {
           id?: string
           notification_preferences?: Json | null
           preferred_language?: string | null
+          role?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -532,6 +535,33 @@ export type Database = {
           ride_id?: string | null
           ride_type?: string | null
           status?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          role: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          role?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
