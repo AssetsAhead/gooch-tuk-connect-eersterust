@@ -18,19 +18,27 @@ export const RoleBasedRedirect: React.FC = () => {
         return;
       }
 
-      const role = userProfile?.role || 'admin';
-      console.log('RoleBasedRedirect - Detected role:', role);
-      
-      // Admin gets unrestricted access - don't redirect automatically
-      const isAdmin = role === 'admin' || user?.email === 'assetsahead.sa@gmail.com';
+      // Check if user is admin first (bypasses role check)
+      const isAdmin = user?.email === 'assetsahead.sa@gmail.com';
       
       if (isAdmin) {
-        // Admin stays on current page or goes to admin dashboard by default
+        console.log('RoleBasedRedirect - Admin user detected, redirecting to admin dashboard');
         const currentPath = window.location.pathname;
         if (currentPath === '/' || currentPath === '/auth') {
+          setRedirected(true);
           navigate('/admin', { replace: true });
         }
-        // Don't redirect if admin is already on a dashboard
+        return;
+      }
+      
+      const role = userProfile?.role;
+      console.log('RoleBasedRedirect - Detected role:', role);
+      
+      // If no role found, redirect to auth
+      if (!role) {
+        console.log('RoleBasedRedirect - No role found, redirecting to auth');
+        setRedirected(true);
+        navigate('/auth', { replace: true });
         return;
       }
       
