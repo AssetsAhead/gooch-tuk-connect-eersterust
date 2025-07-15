@@ -44,36 +44,71 @@ export const AdminSecurityProvider: React.FC<{ children: React.ReactNode }> = ({
       });
     };
 
-    // Enhanced device fingerprinting for admin
+    // Enhanced device fingerprinting for admin with fallbacks
     const generateAdminFingerprint = () => {
-      const fingerprint = {
-        userAgent: navigator.userAgent,
-        language: navigator.language,
-        platform: navigator.platform,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        screen: `${screen.width}x${screen.height}`,
-        colorDepth: screen.colorDepth,
-        timestamp: Date.now()
-      };
-      
-      const adminFingerprint = btoa(JSON.stringify(fingerprint));
-      const storedFingerprint = localStorage.getItem('adminFingerprint');
-      
-      if (storedFingerprint && storedFingerprint !== adminFingerprint) {
+      try {
+        const fingerprint = {
+          userAgent: navigator?.userAgent || 'unknown',
+          language: navigator?.language || 'unknown',
+          platform: navigator?.platform || 'unknown',
+          timezone: (() => {
+            try {
+              return Intl.DateTimeFormat().resolvedOptions().timeZone;
+            } catch {
+              return 'unknown';
+            }
+          })(),
+          screen: (() => {
+            try {
+              return `${screen.width}x${screen.height}`;
+            } catch {
+              return 'unknown';
+            }
+          })(),
+          colorDepth: (() => {
+            try {
+              return screen.colorDepth;
+            } catch {
+              return 'unknown';
+            }
+          })(),
+          timestamp: Date.now()
+        };
+        
+        const adminFingerprint = btoa(JSON.stringify(fingerprint));
+        const storedFingerprint = localStorage.getItem('adminFingerprint');
+        
+        if (storedFingerprint && storedFingerprint !== adminFingerprint) {
+          toast({
+            title: "Security Alert",
+            description: "Admin device fingerprint changed. Enhanced monitoring active.",
+            variant: "destructive",
+            duration: 10000,
+          });
+          
+          logAdminAction('device_change', {
+            previousFingerprint: storedFingerprint,
+            newFingerprint: adminFingerprint
+          });
+        }
+        
+        localStorage.setItem('adminFingerprint', adminFingerprint);
+      } catch (error) {
+        // Fallback: use basic session-based tracking
+        const fallbackId = `admin_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem('adminFingerprint', fallbackId);
+        
         toast({
-          title: "Security Alert",
-          description: "Admin device fingerprint changed. Enhanced monitoring active.",
-          variant: "destructive",
-          duration: 10000,
+          title: "Security Notice",
+          description: "Device fingerprinting unavailable. Using session-based security.",
+          duration: 5000,
         });
         
-        logAdminAction('device_change', {
-          previousFingerprint: storedFingerprint,
-          newFingerprint: adminFingerprint
+        logAdminAction('fingerprint_fallback', {
+          error: error.message,
+          fallbackId
         });
       }
-      
-      localStorage.setItem('adminFingerprint', adminFingerprint);
     };
 
     // Show admin security notice
