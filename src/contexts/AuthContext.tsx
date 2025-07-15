@@ -110,18 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchUserProfile(session.user.id);
-        validateSession(session);
-      }
-      setLoading(false);
-    });
-
-    // Listen for auth changes
+    // Set up auth state listener FIRST to catch magic link events
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
@@ -144,20 +133,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Handle different auth events with enhanced security logging
       if (event === 'SIGNED_IN') {
-        // Login logging temporarily disabled until types are updated
-
         toast({
           title: "Welcome Back!",
           description: "You have successfully signed in securely",
         });
       } else if (event === 'SIGNED_OUT') {
-        // Logout logging temporarily disabled until types are updated
-
         toast({
           title: "Signed Out",
           description: "You have been securely signed out",
         });
       }
+    });
+
+    // THEN get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchUserProfile(session.user.id);
+        validateSession(session);
+      }
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
