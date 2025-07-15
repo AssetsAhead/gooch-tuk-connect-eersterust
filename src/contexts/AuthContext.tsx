@@ -112,7 +112,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Set up auth state listener FIRST to catch magic link events
     const {
-      data: { subscription },
+      data: { subscription: authSubscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -131,16 +131,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       setLoading(false);
 
-      // Handle different auth events with enhanced security logging
-      if (event === 'SIGNED_IN') {
+      // Only show welcome toast for magic link sign-ins, not regular page loads
+      if (event === 'SIGNED_IN' && session?.user) {
         toast({
-          title: "Welcome Back!",
-          description: "You have successfully signed in securely",
+          title: "Welcome to TukTuk Community!",
+          description: "You're now connected to South Africa's transport network",
         });
       } else if (event === 'SIGNED_OUT') {
         toast({
           title: "Signed Out",
-          description: "You have been securely signed out",
+          description: "Stay safe on the roads",
         });
       }
     });
@@ -156,7 +156,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => authSubscription.unsubscribe();
   }, [toast]);
 
   const signOut = async () => {

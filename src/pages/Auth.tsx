@@ -40,17 +40,60 @@ export const AuthPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Shield className="h-8 w-8 text-primary" />
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
+      <div className="container mx-auto flex flex-col items-center justify-center min-h-screen">
+        {/* Multi-stakeholder Header */}
+        <div className="text-center mb-8 max-w-4xl">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">
+            TukTuk Community Network
+          </h1>
+          <p className="text-lg text-muted-foreground mb-6">
+            Connecting South Africa's transport ecosystem - passengers, drivers, taxi owners, marshalls, police, and administrators
+          </p>
+          
+          {/* Stakeholder Icons */}
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-background/80 border">
+              <Shield className="h-4 w-4 text-primary" />
+              <span className="text-sm">Passengers</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-background/80 border">
+              <Shield className="h-4 w-4 text-accent" />
+              <span className="text-sm">Drivers</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-background/80 border">
+              <Shield className="h-4 w-4 text-primary" />
+              <span className="text-sm">Owners</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-background/80 border">
+              <Shield className="h-4 w-4 text-accent" />
+              <span className="text-sm">Marshalls</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-background/80 border">
+              <Shield className="h-4 w-4 text-primary" />
+              <span className="text-sm">Police</span>
+            </div>
           </div>
-          <CardTitle>Welcome to TukTuk Community</CardTitle>
-          <CardDescription>
-            Safe, affordable transport with SASSA integration. Verify with your phone number - just like WhatsApp!
-          </CardDescription>
-        </CardHeader>
+          
+          {/* Future Platform Integration Notice */}
+          <div className="bg-card/50 backdrop-blur-sm border rounded-lg p-4 mb-6">
+            <p className="text-sm text-muted-foreground">
+              🚀 <strong>Platform Integration Ready:</strong> Built for seamless integration with Uber, Bolt, and other transport platforms
+            </p>
+          </div>
+        </div>
+
+        {/* Auth Card */}
+        <Card className="w-full max-w-md backdrop-blur-sm bg-background/95 border shadow-xl">
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Shield className="h-8 w-8 text-primary" />
+            </div>
+            <CardTitle className="text-xl">Join the Network</CardTitle>
+            <CardDescription>
+              SASSA-verified transport • WhatsApp-style verification • Multi-platform ready
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           <AuthForm
             loading={loading}
@@ -72,7 +115,8 @@ export const AuthPage = () => {
             By continuing, you agree to our Terms of Service and Privacy Policy
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };
