@@ -12,6 +12,9 @@ import { AdminDashboard } from "@/components/dashboards/AdminDashboard";
 const Index = () => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const navigate = useNavigate();
+  
+  // Debug logging
+  console.log('Index component rendering, selectedRole:', selectedRole);
 
   const roles = [
     {

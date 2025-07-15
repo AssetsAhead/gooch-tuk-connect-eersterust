@@ -42,8 +42,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      // Try to get from profiles table first
-      const { data: profile, error: profileError } = await supabase
+      const { data: profile } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
@@ -51,17 +50,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (profile) {
         setUserProfile(profile);
-        
-        // Check if MFA is required for high-security roles
-        const highSecurityRoles = ['police', 'admin', 'marshall'];
-        // Note: role will be available after types are updated
-        setRequireMFA(false); // Temporarily disabled
-        
         return;
       }
 
-      // Fallback to users table if profiles doesn't exist
-      const { data: userData, error: userError } = await supabase
+      const { data: userData } = await supabase
         .from('users')
         .select('*')
         .eq('id', userId)
@@ -77,41 +69,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const validateSession = async (session: Session) => {
-    try {
-      // Enhanced session validation for South African security requirements
-      const deviceFingerprint = localStorage.getItem('deviceFingerprint');
-      const lastKnownIP = localStorage.getItem('lastKnownIP');
-      
-      // Check for session anomalies with timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-      
-      const response = await fetch('https://api.ipify.org?format=json', {
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-      
-      const currentIP = await response.json();
-      
-      if (lastKnownIP && lastKnownIP !== currentIP.ip) {
-        // Security logging temporarily disabled until types are updated
-        toast({
-          title: "Location Change Detected",
-          description: "We noticed you're logging in from a new location. If this wasn't you, please contact support.",
-          duration: 10000,
-        });
-      }
-      
-      localStorage.setItem('lastKnownIP', currentIP.ip);
-      setIsSecureSession(true);
-      
-    } catch (error) {
-      console.warn('Session validation failed:', error);
-      setIsSecureSession(false);
-    }
-  };
-
   const refreshProfile = async () => {
     if (user) {
       await fetchUserProfile(user.id);
@@ -119,63 +76,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    // Set up auth state listener FIRST to catch magic link events
-    const {
-      data: { subscription: authSubscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       
-      // Use setTimeout to defer Supabase calls and prevent deadlocks
       if (session?.user) {
         setTimeout(() => {
           fetchUserProfile(session.user.id);
-          validateSession(session);
         }, 0);
       } else {
         setUserProfile(null);
         setRequireMFA(false);
-        setIsSecureSession(false);
       }
       
       setLoading(false);
-
-      // Only show welcome toast for magic link sign-ins, not regular page loads
-      if (event === 'SIGNED_IN' && session?.user) {
-        toast({
-          title: "Welcome to TukTuk Community!",
-          description: "You're now connected to South Africa's transport network",
-        });
-      } else if (event === 'SIGNED_OUT') {
-        toast({
-          title: "Signed Out",
-          description: "Stay safe on the roads",
-        });
-      }
     });
 
-    // THEN get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchUserProfile(session.user.id);
-        validateSession(session);
       }
       setLoading(false);
     });
 
-    return () => authSubscription.unsubscribe();
-  }, [toast]);
+    return () => subscription.unsubscribe();
+  }, []);
 
   const signOut = async () => {
     try {
-      // Logout logging temporarily disabled until types are updated
-
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
-      // Clear security-related localStorage
       localStorage.removeItem('deviceFingerprint');
       localStorage.removeItem('lastKnownIP');
       

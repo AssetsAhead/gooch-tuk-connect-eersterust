@@ -33,68 +33,52 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Public routes */}
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
-          <Route path="/payment-success" element={<PaymentSuccess />} />
-          <Route path="/payment-cancelled" element={<PaymentCancelled />} />
-          <Route path="/auth/:role" element={<RoleAuth />} />
-            
-            {/* Public landing page */}
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-cancelled" element={<PaymentCancelled />} />
+            <Route path="/auth/:role" element={<RoleAuth />} />
             <Route path="/" element={<Index />} />
-            
-            {/* Role-based redirect for authenticated users */}
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <RoleBasedRedirect />
               </ProtectedRoute>
             } />
-            
-            {/* Protected role-specific routes with enhanced security */}
             <Route path="/passenger" element={
               <ProtectedRoute requiredRole={['passenger']}>
                 <PassengerDashboard />
               </ProtectedRoute>
             } />
-            
             <Route path="/driver" element={
               <ProtectedRoute requiredRole={['driver']}>
                 <DriverDashboard />
               </ProtectedRoute>
             } />
-            
             <Route path="/owner" element={
               <ProtectedRoute requiredRole={['owner']}>
                 <OwnerDashboard />
               </ProtectedRoute>
             } />
-            
             <Route path="/marshall" element={
               <ProtectedRoute requiredRole={['marshall']}>
                 <MarshallDashboard />
               </ProtectedRoute>
             } />
-            
             <Route path="/admin" element={
               <ProtectedRoute requiredRole={['admin']}>
                 <AdminDashboard />
               </ProtectedRoute>
             } />
-            
             <Route path="/police" element={
               <ProtectedRoute requiredRole={['police']}>
                 <PoliceDashboard />
               </ProtectedRoute>
             } />
-            
-            {/* Legacy routes - redirect to role-based */}
             <Route path="/business-portal" element={
               <ProtectedRoute>
                 <BusinessPortal />
               </ProtectedRoute>
             } />
-            
-            {/* Catch all */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
