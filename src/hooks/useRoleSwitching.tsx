@@ -41,8 +41,33 @@ export const useRoleSwitching = () => {
   const switchRole = async (newRole: string) => {
     if (!user || loading) return;
 
+    // Admin can access any role without restrictions
+    const isAdmin = userProfile?.role === 'admin' || user.email === 'assetsahead.sa@gmail.com';
+    
     setLoading(true);
     try {
+      if (isAdmin) {
+        // Admin doesn't need to switch roles in database, just navigate
+        toast({
+          title: "Admin Access",
+          description: `Accessing ${newRole} dashboard with full privileges`,
+        });
+        
+        // Admin can access any dashboard directly
+        const dashboardRoutes: { [key: string]: string } = {
+          passenger: '/passenger',
+          driver: '/driver', 
+          owner: '/owner',
+          marshall: '/marshall',
+          admin: '/admin',
+          police: '/police'
+        };
+        
+        if (dashboardRoutes[newRole]) {
+          window.location.href = dashboardRoutes[newRole];
+        }
+        return;
+      }
       // Update all roles to inactive first
       await supabase
         .from('user_roles')

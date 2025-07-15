@@ -30,6 +30,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Check role requirements
   if (requiredRole && userProfile) {
     const userRole = userProfile.role || userProfile.user_metadata?.role;
+    const isAdmin = userRole === 'admin' || user.email === 'assetsahead.sa@gmail.com';
+    
+    // Admin has unrestricted access to all routes
+    if (isAdmin) {
+      return <>{children}</>;
+    }
+    
     if (requiredRole.length > 0 && !requiredRole.includes(userRole)) {
       return <Navigate to="/unauthorized" replace />;
     }

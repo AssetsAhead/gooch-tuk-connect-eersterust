@@ -29,6 +29,8 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
+import { AdminSecurityProvider } from '@/components/security/AdminSecurityProvider';
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -192,7 +194,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      <AdminSecurityProvider>
+        {children}
+      </AdminSecurityProvider>
     </AuthContext.Provider>
   );
 };

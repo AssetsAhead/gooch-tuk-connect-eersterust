@@ -21,6 +21,19 @@ export const RoleBasedRedirect: React.FC = () => {
       const role = userProfile?.role || 'admin';
       console.log('RoleBasedRedirect - Detected role:', role);
       
+      // Admin gets unrestricted access - don't redirect automatically
+      const isAdmin = role === 'admin' || user?.email === 'assetsahead.sa@gmail.com';
+      
+      if (isAdmin) {
+        // Admin stays on current page or goes to admin dashboard by default
+        const currentPath = window.location.pathname;
+        if (currentPath === '/' || currentPath === '/auth') {
+          navigate('/admin', { replace: true });
+        }
+        // Don't redirect if admin is already on a dashboard
+        return;
+      }
+      
       setRedirected(true);
       
       // Navigate immediately since we have all the data we need

@@ -5,15 +5,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export const SessionMonitor = () => {
-  const { user, session } = useAuth();
+  const { user, session, userProfile } = useAuth();
   const [lastActivity, setLastActivity] = useState(Date.now());
   const { toast } = useToast();
 
   useEffect(() => {
     if (!user || !session) return;
 
-    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
-    const WARNING_TIME = 5 * 60 * 1000; // 5 minutes before timeout
+    // Admin gets shorter session timeout for enhanced security
+    const isAdmin = userProfile?.role === 'admin' || user.email === 'assetsahead.sa@gmail.com';
+    const SESSION_TIMEOUT = isAdmin ? 10 * 60 * 1000 : 30 * 60 * 1000; // 10 min for admin, 30 for others
+    const WARNING_TIME = isAdmin ? 2 * 60 * 1000 : 5 * 60 * 1000; // 2 min warning for admin
 
     let timeoutId: NodeJS.Timeout;
     let warningId: NodeJS.Timeout;
@@ -24,11 +26,12 @@ export const SessionMonitor = () => {
       clearTimeout(timeoutId);
       clearTimeout(warningId);
 
-      // Show warning 5 minutes before timeout
+      // Show warning before timeout
       warningId = setTimeout(() => {
+        const warningTime = isAdmin ? "2 minutes" : "5 minutes";
         toast({
           title: "Session Expiring Soon",
-          description: "Your session will expire in 5 minutes. Click anywhere to extend.",
+          description: `Your session will expire in ${warningTime}. Click anywhere to extend.`,
           duration: 10000,
         });
       }, SESSION_TIMEOUT - WARNING_TIME);
@@ -72,7 +75,7 @@ export const SessionMonitor = () => {
       });
       logSecurityEvent('session_end');
     };
-  }, [user, session, toast]);
+  }, [user, session, userProfile, toast]);
 
   return null; // This component only monitors, doesn't render anything
 };
