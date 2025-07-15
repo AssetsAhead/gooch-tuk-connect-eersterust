@@ -19,6 +19,8 @@ import { AdminDashboard } from "./components/dashboards/AdminDashboard";
 import { PoliceDashboard } from "./components/dashboards/PoliceDashboard";
 import BusinessPortal from "./pages/BusinessPortal";
 import NotFound from "./pages/NotFound";
+import { PaymentSuccess } from "./pages/PaymentSuccess";
+import { PaymentCancelled } from "./pages/PaymentCancelled";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,8 @@ const App = () => (
             {/* Public routes */}
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-cancelled" element={<PaymentCancelled />} />
             
             {/* Public landing page */}
             <Route path="/" element={<Index />} />
