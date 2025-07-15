@@ -29,7 +29,7 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-import { AdminSecurityProvider } from '@/components/security/AdminSecurityProvider';
+
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -83,8 +83,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const deviceFingerprint = localStorage.getItem('deviceFingerprint');
       const lastKnownIP = localStorage.getItem('lastKnownIP');
       
-      // Check for session anomalies
-      const response = await fetch('https://api.ipify.org?format=json');
+      // Check for session anomalies with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      
+      const response = await fetch('https://api.ipify.org?format=json', {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      
       const currentIP = await response.json();
       
       if (lastKnownIP && lastKnownIP !== currentIP.ip) {
@@ -194,9 +201,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      <AdminSecurityProvider user={user} userProfile={userProfile}>
-        {children}
-      </AdminSecurityProvider>
+      {children}
     </AuthContext.Provider>
   );
 };
