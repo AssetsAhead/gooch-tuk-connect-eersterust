@@ -21,6 +21,7 @@ import BusinessPortal from "./pages/BusinessPortal";
 import NotFound from "./pages/NotFound";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PaymentCancelled } from "./pages/PaymentCancelled";
+import { RoleAuth } from "./pages/RoleAuth";
 
 const queryClient = new QueryClient();
 
@@ -35,8 +36,9 @@ const App = () => (
             {/* Public routes */}
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
-            <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route path="/payment-cancelled" element={<PaymentCancelled />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment-cancelled" element={<PaymentCancelled />} />
+          <Route path="/auth/:role" element={<RoleAuth />} />
             
             {/* Public landing page */}
             <Route path="/" element={<Index />} />

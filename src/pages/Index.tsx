@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { RoleCard } from "@/components/RoleCard";
 import { OwnerDashboard } from "@/components/dashboards/OwnerDashboard";
@@ -11,6 +11,7 @@ import { AdminDashboard } from "@/components/dashboards/AdminDashboard";
 
 const Index = () => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const roles = [
     {
@@ -106,14 +107,17 @@ const Index = () => {
               Connecting local hustle to national movement
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm md:text-base mb-8">
-              <div className="bg-success/10 text-success px-4 py-2 rounded-full border border-success/20">
+            <div className="bg-success/20 text-success px-4 py-2 rounded-full border border-success/30 shadow-lg">
                 Safe & Reliable Transport
               </div>
-              <div className="bg-primary/10 text-primary px-4 py-2 rounded-full border border-primary/20">
+              <div className="bg-primary/20 text-primary px-4 py-2 rounded-full border border-primary/30 shadow-lg">
                 Real-time Tracking
               </div>
-              <div className="bg-tuk-blue/10 text-tuk-blue px-4 py-2 rounded-full border border-tuk-blue/20">
+              <div className="bg-tuk-blue/20 text-tuk-blue px-4 py-2 rounded-full border border-tuk-blue/30 shadow-lg">
                 Community Focused
+              </div>
+              <div className="bg-purple/20 text-purple px-4 py-2 rounded-full border border-purple/30 shadow-lg">
+                Multi-Platform Ready
               </div>
             </div>
             
@@ -149,7 +153,7 @@ const Index = () => {
               description={role.description}
               image={role.image}
               color={role.color}
-              onClick={() => setSelectedRole(role.id)}
+              onClick={() => navigate(`/auth/${role.id}`)}
             />
           ))}
         </div>

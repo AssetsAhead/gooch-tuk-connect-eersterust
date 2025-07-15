@@ -52,12 +52,14 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Tuk Tuk themed colors
+				// Tuk Tuk themed colors - Enhanced palette
 				'tuk-orange': 'hsl(var(--tuk-orange))',
 				'tuk-blue': 'hsl(var(--tuk-blue))',
 				success: 'hsl(var(--success))',
 				warning: 'hsl(var(--warning))',
 				danger: 'hsl(var(--danger))',
+				info: 'hsl(var(--info))',
+				purple: 'hsl(var(--purple))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

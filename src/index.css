@@ -17,17 +17,17 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* South African inspired color palette */
-    --primary: 39 100% 50%; /* Golden yellow - taxi colors */
+    /* South African inspired color palette - Enhanced with 25% more vibrance */
+    --primary: 39 100% 60%; /* Brighter golden yellow */
     --primary-foreground: 0 0% 0%;
 
-    --secondary: 120 100% 25%; /* South African green */
+    --secondary: 120 100% 35%; /* Brighter South African green */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 45% 92%; /* Softer but more present */
+    --muted-foreground: 215.4 20% 40%; /* Stronger contrast */
 
-    --accent: 0 100% 50%; /* Red for alerts/danger */
+    --accent: 0 100% 60%; /* Brighter red for alerts */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -39,12 +39,14 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    /* Custom Tuk Tuk themed colors */
-    --tuk-orange: 25 100% 50%;
-    --tuk-blue: 220 100% 50%;
-    --success: 120 100% 25%;
-    --warning: 39 100% 50%;
-    --danger: 0 100% 50%;
+    /* Custom Tuk Tuk themed colors - Enhanced vibrance */
+    --tuk-orange: 25 100% 65%; /* More vibrant orange */
+    --tuk-blue: 220 100% 60%; /* Brighter blue */
+    --success: 120 100% 35%; /* Brighter success green */
+    --warning: 45 100% 60%; /* Warmer, brighter warning */
+    --danger: 0 100% 60%; /* Brighter danger red */
+    --info: 200 100% 50%; /* New info color */
+    --purple: 280 100% 60%; /* New vibrant purple */
     
     /* Gradients for modern look */
     --gradient-primary: linear-gradient(135deg, hsl(39 100% 50%), hsl(25 100% 50%));
