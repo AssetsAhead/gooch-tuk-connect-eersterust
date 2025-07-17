@@ -18,6 +18,7 @@ import { MarshallDashboard } from "./components/dashboards/MarshallDashboard";
 import { AdminDashboard } from "./components/dashboards/AdminDashboard";
 import { PoliceDashboard } from "./components/dashboards/PoliceDashboard";
 import BusinessPortal from "./pages/BusinessPortal";
+import CommunitySafetyPortal from "./pages/CommunitySafetyPortal";
 import NotFound from "./pages/NotFound";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PaymentCancelled } from "./pages/PaymentCancelled";
@@ -79,6 +80,7 @@ const App = () => (
                 <BusinessPortal />
               </ProtectedRoute>
             } />
+            <Route path="/community-safety" element={<CommunitySafetyPortal />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

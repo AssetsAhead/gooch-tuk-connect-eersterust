@@ -125,10 +125,15 @@ const Index = () => {
             </div>
             
         {/* Enhanced CTAs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto">
           <Link to="/business-portal">
             <Button className="w-full bg-gradient-to-r from-primary to-tuk-orange hover:from-primary/90 hover:to-tuk-orange/90 text-white font-bold py-4 px-8 text-lg">
               🏢 Business Heroes Portal 🌟
+            </Button>
+          </Link>
+          <Link to="/community-safety">
+            <Button className="w-full bg-gradient-to-r from-danger to-primary hover:from-danger/90 hover:to-primary/90 text-white font-bold py-4 px-8 text-lg">
+              🛡️ Community Safety Portal 🏘️
             </Button>
           </Link>
           <Button className="w-full bg-gradient-to-r from-success to-tuk-blue hover:from-success/90 hover:to-tuk-blue/90 text-white font-bold py-4 px-8 text-lg">
