@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Car, User, Settings } from "lucide-react";
+import { MapPin, Car, User, Settings, FileText, Smartphone } from "lucide-react";
+import { DigitalFineIssuer } from "@/components/police/DigitalFineIssuer";
+import { FineManagement } from "@/components/police/FineManagement";
 
 export const PoliceDashboard = () => {
   const flaggedVehicles = [
@@ -80,13 +82,29 @@ export const PoliceDashboard = () => {
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="flagged" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs defaultValue="issue-fine" className="space-y-8">
+          <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="issue-fine" className="flex items-center space-x-1">
+              <Smartphone className="h-4 w-4" />
+              <span>Issue Fine</span>
+            </TabsTrigger>
+            <TabsTrigger value="manage-fines" className="flex items-center space-x-1">
+              <FileText className="h-4 w-4" />
+              <span>Manage Fines</span>
+            </TabsTrigger>
             <TabsTrigger value="flagged">Flagged Vehicles</TabsTrigger>
             <TabsTrigger value="compliance">License Compliance</TabsTrigger>
             <TabsTrigger value="incidents">Incident Reports</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="issue-fine" className="space-y-6">
+            <DigitalFineIssuer />
+          </TabsContent>
+
+          <TabsContent value="manage-fines" className="space-y-6">
+            <FineManagement />
+          </TabsContent>
 
           <TabsContent value="flagged" className="space-y-6">
             <Card>
