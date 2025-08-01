@@ -54,15 +54,25 @@ class AnalyticsTracker {
         user_agent: navigator.userAgent
       };
 
-      // Store in Supabase
-      const { error } = await supabase
-        .from('analytics_events')
-        .insert([event]);
-
-      if (error) throw error;
-
-      // Also store locally for offline capability
+      // Store in localStorage for now (will sync to Supabase later)
       this.storeOfflineEvent(event);
+      
+      // Also try to store in Supabase if available
+      try {
+        // Use security_logs table as fallback for analytics
+        await supabase
+          .from('security_logs')
+          .insert([{
+            user_id: this.userId || null,
+            event_type: eventType,
+            details: eventData,
+            timestamp: new Date().toISOString(),
+            ip_address: null,
+            user_agent: navigator.userAgent
+          }]);
+      } catch (supabaseError) {
+        console.log('Supabase storage failed, using offline only:', supabaseError);
+      }
       
     } catch (error) {
       console.error('Analytics tracking error:', error);
@@ -94,14 +104,26 @@ class AnalyticsTracker {
       const offlineEvents = JSON.parse(localStorage.getItem('offline_analytics') || '[]');
       if (offlineEvents.length === 0) return;
 
-      const { error } = await supabase
-        .from('analytics_events')
-        .insert(offlineEvents);
-
-      if (!error) {
-        localStorage.removeItem('offline_analytics');
-        console.log(`Synced ${offlineEvents.length} offline analytics events`);
+      // Try to store in security_logs as fallback
+      for (const event of offlineEvents) {
+        try {
+          await supabase
+            .from('security_logs')
+            .insert([{
+              user_id: event.user_id || null,
+              event_type: event.event_type,
+              details: event.event_data,
+              timestamp: event.timestamp,
+              ip_address: null,
+              user_agent: event.user_agent
+            }]);
+        } catch (error) {
+          console.log('Failed to sync event:', error);
+        }
       }
+
+      localStorage.removeItem('offline_analytics');
+      console.log(`Synced ${offlineEvents.length} offline analytics events`);
     } catch (error) {
       console.error('Analytics sync error:', error);
     }

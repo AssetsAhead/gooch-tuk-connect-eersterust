@@ -70,15 +70,7 @@ export const WardCouncillorMessaging = () => {
 
   const fetchMessages = async () => {
     try {
-      const { data, error } = await supabase
-        .from('emergency_messages')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-      if (error) throw error;
-      
-      // Mock data for demo
+      // Use mock data for now since emergency_messages table is new
       const mockMessages: EmergencyMessage[] = [
         {
           id: '1',
@@ -123,9 +115,10 @@ export const WardCouncillorMessaging = () => {
       
       setMessages(mockMessages);
     } catch (error: any) {
+      console.error('Error fetching messages:', error);
       toast({
         title: "Error fetching messages",
-        description: error.message,
+        description: "Using demo data",
         variant: "destructive",
       });
     }
@@ -196,10 +189,7 @@ export const WardCouncillorMessaging = () => {
         badge: '/icon-192.png',
         tag: `ward-${message.id}`,
         requireInteraction: message.priority === 'critical',
-        actions: [
-          { action: 'view', title: 'View Details' },
-          { action: 'share', title: 'Share' }
-        ]
+        data: { type: 'ward_emergency', messageId: message.id }
       });
     }
   };

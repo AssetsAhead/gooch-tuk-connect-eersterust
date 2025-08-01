@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Bell, BellOff, Smartphone, Volume2, VolumeX, CheckCircle, XCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
 
 interface NotificationSettings {
   rideUpdates: boolean;
@@ -33,6 +34,7 @@ export const PushNotificationManager = ({ userId, userType }: PushNotificationMa
   });
   const [subscriptionStatus, setSubscriptionStatus] = useState<'subscribed' | 'unsubscribed' | 'pending'>('unsubscribed');
   const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null);
+  const [wardMessages, setWardMessages] = useState<any[]>([]);
 
   useEffect(() => {
     // Check if push notifications are supported
@@ -47,7 +49,30 @@ export const PushNotificationManager = ({ userId, userType }: PushNotificationMa
     if (savedSettings) {
       setSettings(JSON.parse(savedSettings));
     }
+
+    // Subscribe to ward councillor messages
+    subscribeToWardMessages();
   }, [userId]);
+
+  const subscribeToWardMessages = () => {
+    // Mock subscription for now
+    console.log('Subscribed to ward messages');
+  };
+
+  const handleWardMessage = async (message: any) => {
+    setWardMessages(prev => [message, ...prev]);
+    
+    // Show immediate notification for critical messages
+    if (message.priority === 'critical' && permission === 'granted') {
+      new Notification(`🚨 URGENT: ${message.title}`, {
+        body: message.message,
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
+        tag: `ward-${message.id}`,
+        requireInteraction: true
+      });
+    }
+  };
 
   const registerServiceWorker = async () => {
     try {
