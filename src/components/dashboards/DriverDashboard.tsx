@@ -26,6 +26,7 @@ import { LiveActivityFeed } from "@/components/realtime/LiveActivityFeed";
 import { PushNotificationManager } from "@/components/realtime/PushNotificationManager";
 import PaymentCollection from "@/components/payments/PaymentCollection";
 import DriverLocationSharing from "@/components/location/DriverLocationSharing";
+import { CameraManagementSystem } from "@/components/camera/CameraManagementSystem";
 
 export const DriverDashboard = () => {
   const [shiftStarted, setShiftStarted] = useState(false);
@@ -149,8 +150,9 @@ export const DriverDashboard = () => {
         </div>
 
         <Tabs defaultValue="rides" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-11">
+          <TabsList className="grid w-full grid-cols-12">
             <TabsTrigger value="rides">🚗 Rides</TabsTrigger>
+            <TabsTrigger value="cameras">📹 Cameras</TabsTrigger>
             <TabsTrigger value="location">📍 Location</TabsTrigger>
             <TabsTrigger value="realtime">📡 Live</TabsTrigger>
             <TabsTrigger value="incentives">🎯 Incentives</TabsTrigger>
@@ -359,6 +361,10 @@ export const DriverDashboard = () => {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="cameras" className="space-y-6">
+            <CameraManagementSystem userRole="driver" vehicleId="TT001" />
           </TabsContent>
 
           <TabsContent value="location" className="space-y-6">
