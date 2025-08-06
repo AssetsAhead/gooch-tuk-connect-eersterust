@@ -4,7 +4,5 @@ import './index.css'
 import { AnalyticsProvider } from './components/AnalyticsTracker.tsx';
 
 createRoot(document.getElementById("root")!).render(
-  <AnalyticsProvider>
-    <App />
-  </AnalyticsProvider>
+  <App />
 );
