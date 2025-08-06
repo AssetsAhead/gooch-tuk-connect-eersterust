@@ -24,7 +24,7 @@ export const useAuth = () => {
           email,
           password: 'temp-password-123!', // Temporary password for signup
           options: {
-            emailRedirectTo: `${window.location.origin}/`,
+            emailRedirectTo: `${window.location.origin}/#/`,
             data: {
               full_name: name,
               role: role,
@@ -43,7 +43,7 @@ export const useAuth = () => {
         const { error } = await supabase.auth.signInWithOtp({ 
           email,
           options: {
-            emailRedirectTo: `${window.location.origin}/`,
+            emailRedirectTo: `${window.location.origin}/#/`,
           }
         });
         if (error) throw error;
