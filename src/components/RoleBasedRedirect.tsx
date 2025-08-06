@@ -22,12 +22,26 @@ export const RoleBasedRedirect: React.FC = () => {
       const isAdmin = user?.email === 'assetsahead.sa@gmail.com';
       
       if (isAdmin) {
-        console.log('RoleBasedRedirect - Admin user detected, redirecting to admin dashboard');
+        console.log('RoleBasedRedirect - Admin user detected');
         const currentPath = window.location.pathname;
-        if (currentPath === '/' || currentPath === '/auth' || currentPath.startsWith('/auth/') || currentPath === '/dashboard') {
+        
+        // Only redirect if on root, auth, or dashboard pages
+        if (currentPath === '/' || currentPath === '/auth' || currentPath === '/dashboard') {
           setRedirected(true);
           navigate('/admin', { replace: true });
+          return;
         }
+        
+        // If admin is on a specific role path, allow them to stay there
+        if (currentPath.startsWith('/auth/')) {
+          const rolePath = currentPath.replace('/auth/', '');
+          setRedirected(true);
+          navigate(`/${rolePath}`, { replace: true });
+          return;
+        }
+        
+        // Admin can access any route without further checks
+        setRedirected(true);
         return;
       }
       
