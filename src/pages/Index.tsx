@@ -82,7 +82,7 @@ const Index = () => {
 
   if (selectedRole) {
     return (
-      <div>
+      <div className="min-h-screen bg-white">
         <div className="fixed top-4 left-4 z-50">
           <button
             onClick={() => setSelectedRole(null)}
@@ -97,8 +97,9 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Hero Section */}
+    <div style={{ minHeight: '100vh', backgroundColor: 'white', color: 'black', padding: '20px' }}>
+      <h1 style={{ fontSize: '32px', marginBottom: '20px' }}>PoortLink App Loading Test</h1>
+      <p style={{ fontSize: '18px', marginBottom: '20px' }}>If you can see this text, the React app is working!</p>
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <div className="mb-8">
