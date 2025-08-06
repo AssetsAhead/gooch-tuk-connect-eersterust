@@ -24,7 +24,7 @@ export const RoleBasedRedirect: React.FC = () => {
       if (isAdmin) {
         console.log('RoleBasedRedirect - Admin user detected, redirecting to admin dashboard');
         const currentPath = window.location.pathname;
-        if (currentPath === '/' || currentPath === '/auth' || currentPath.startsWith('/auth/')) {
+        if (currentPath === '/' || currentPath === '/auth' || currentPath.startsWith('/auth/') || currentPath === '/dashboard') {
           setRedirected(true);
           navigate('/admin', { replace: true });
         }

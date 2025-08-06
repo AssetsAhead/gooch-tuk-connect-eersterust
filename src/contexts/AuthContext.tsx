@@ -86,6 +86,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setTimeout(() => {
           fetchUserProfile(session.user.id);
         }, 0);
+        
+        // Redirect to dashboard after successful auth
+        if (event === 'SIGNED_IN' && window.location.pathname.startsWith('/auth/')) {
+          window.location.href = '/dashboard';
+        }
       } else {
         setUserProfile(null);
         setRequireMFA(false);
