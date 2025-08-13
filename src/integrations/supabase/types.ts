@@ -14,6 +14,217 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_incidents: {
+        Row: {
+          auto_detected: boolean | null
+          capture_id: string
+          created_at: string
+          description: string | null
+          id: string
+          incident_type: string
+          location: Json | null
+          metadata: Json | null
+          resolution_notes: string | null
+          responded_at: string | null
+          responded_by: string | null
+          response_required: boolean | null
+          response_time: unknown | null
+          severity: string
+          status: string | null
+        }
+        Insert: {
+          auto_detected?: boolean | null
+          capture_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          incident_type: string
+          location?: Json | null
+          metadata?: Json | null
+          resolution_notes?: string | null
+          responded_at?: string | null
+          responded_by?: string | null
+          response_required?: boolean | null
+          response_time?: unknown | null
+          severity?: string
+          status?: string | null
+        }
+        Update: {
+          auto_detected?: boolean | null
+          capture_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          incident_type?: string
+          location?: Json | null
+          metadata?: Json | null
+          resolution_notes?: string | null
+          responded_at?: string | null
+          responded_by?: string | null
+          response_required?: boolean | null
+          response_time?: unknown | null
+          severity?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_incidents_capture_id_fkey"
+            columns: ["capture_id"]
+            isOneToOne: false
+            referencedRelation: "camera_captures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_events: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          page_url: string | null
+          session_id: string
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          page_url?: string | null
+          session_id: string
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          page_url?: string | null
+          session_id?: string
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      camera_captures: {
+        Row: {
+          ai_analysis: Json | null
+          camera_id: string | null
+          capture_timestamp: string
+          confidence_score: number | null
+          created_at: string
+          evidence_status: string | null
+          facial_matches: Json | null
+          id: string
+          image_url: string
+          incident_detected: boolean | null
+          incident_type: string | null
+          license_plates: Json | null
+          location: Json | null
+          metadata: Json | null
+          traffic_violations: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          ai_analysis?: Json | null
+          camera_id?: string | null
+          capture_timestamp?: string
+          confidence_score?: number | null
+          created_at?: string
+          evidence_status?: string | null
+          facial_matches?: Json | null
+          id?: string
+          image_url: string
+          incident_detected?: boolean | null
+          incident_type?: string | null
+          license_plates?: Json | null
+          location?: Json | null
+          metadata?: Json | null
+          traffic_violations?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          ai_analysis?: Json | null
+          camera_id?: string | null
+          capture_timestamp?: string
+          confidence_score?: number | null
+          created_at?: string
+          evidence_status?: string | null
+          facial_matches?: Json | null
+          id?: string
+          image_url?: string
+          incident_detected?: boolean | null
+          incident_type?: string | null
+          license_plates?: Json | null
+          location?: Json | null
+          metadata?: Json | null
+          traffic_violations?: Json | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "camera_captures_camera_id_fkey"
+            columns: ["camera_id"]
+            isOneToOne: false
+            referencedRelation: "camera_installations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      camera_installations: {
+        Row: {
+          camera_type: string
+          created_at: string
+          features: string[] | null
+          id: string
+          installation_date: string
+          installation_notes: string | null
+          latitude: number
+          location_name: string
+          longitude: number
+          municipality: string
+          status: string
+          updated_at: string
+          ward: string | null
+        }
+        Insert: {
+          camera_type?: string
+          created_at?: string
+          features?: string[] | null
+          id?: string
+          installation_date?: string
+          installation_notes?: string | null
+          latitude: number
+          location_name: string
+          longitude: number
+          municipality: string
+          status?: string
+          updated_at?: string
+          ward?: string | null
+        }
+        Update: {
+          camera_type?: string
+          created_at?: string
+          features?: string[] | null
+          id?: string
+          installation_date?: string
+          installation_notes?: string | null
+          latitude?: number
+          location_name?: string
+          longitude?: number
+          municipality?: string
+          status?: string
+          updated_at?: string
+          ward?: string | null
+        }
+        Relationships: []
+      }
       driver_reputation: {
         Row: {
           champion_acts: number | null
@@ -98,6 +309,161 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      emergency_messages: {
+        Row: {
+          area: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          message: string
+          priority: string
+          responses: number | null
+          status: string
+          title: string
+          type: string
+          updated_at: string
+          views: number | null
+          ward: string
+        }
+        Insert: {
+          area?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message: string
+          priority: string
+          responses?: number | null
+          status?: string
+          title: string
+          type: string
+          updated_at?: string
+          views?: number | null
+          ward: string
+        }
+        Update: {
+          area?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message?: string
+          priority?: string
+          responses?: number | null
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          views?: number | null
+          ward?: string
+        }
+        Relationships: []
+      }
+      evidence_chain: {
+        Row: {
+          capture_id: string
+          case_number: string | null
+          case_reference: string | null
+          chain_notes: string | null
+          collected_at: string
+          collected_by: string
+          court_admissible: boolean | null
+          created_at: string
+          digital_signature: string | null
+          evidence_type: string
+          id: string
+          legal_status: string | null
+          metadata: Json | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          capture_id: string
+          case_number?: string | null
+          case_reference?: string | null
+          chain_notes?: string | null
+          collected_at?: string
+          collected_by: string
+          court_admissible?: boolean | null
+          created_at?: string
+          digital_signature?: string | null
+          evidence_type: string
+          id?: string
+          legal_status?: string | null
+          metadata?: Json | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          capture_id?: string
+          case_number?: string | null
+          case_reference?: string | null
+          chain_notes?: string | null
+          collected_at?: string
+          collected_by?: string
+          court_admissible?: boolean | null
+          created_at?: string
+          digital_signature?: string | null
+          evidence_type?: string
+          id?: string
+          legal_status?: string | null
+          metadata?: Json | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_chain_capture_id_fkey"
+            columns: ["capture_id"]
+            isOneToOne: false
+            referencedRelation: "camera_captures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      geofence_zones: {
+        Row: {
+          active: boolean | null
+          boundary: Json
+          created_at: string
+          created_by: string | null
+          enforcement_level: string | null
+          id: string
+          municipality: string
+          rules: Json | null
+          updated_at: string
+          ward: string | null
+          zone_name: string
+          zone_type: string
+        }
+        Insert: {
+          active?: boolean | null
+          boundary: Json
+          created_at?: string
+          created_by?: string | null
+          enforcement_level?: string | null
+          id?: string
+          municipality: string
+          rules?: Json | null
+          updated_at?: string
+          ward?: string | null
+          zone_name: string
+          zone_type: string
+        }
+        Update: {
+          active?: boolean | null
+          boundary?: Json
+          created_at?: string
+          created_by?: string | null
+          enforcement_level?: string | null
+          id?: string
+          municipality?: string
+          rules?: Json | null
+          updated_at?: string
+          ward?: string | null
+          zone_name?: string
+          zone_type?: string
+        }
+        Relationships: []
       }
       location_logs: {
         Row: {
