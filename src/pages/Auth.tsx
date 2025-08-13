@@ -4,6 +4,9 @@ import { Shield } from 'lucide-react';
 import { AuthForm } from '@/components/auth/AuthForm';
 import { VerificationSent } from '@/components/auth/VerificationSent';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 
 export const AuthPage = () => {
   const [email, setEmail] = useState('');
