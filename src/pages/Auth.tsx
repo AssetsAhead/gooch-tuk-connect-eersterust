@@ -47,7 +47,39 @@ export const AuthPage = () => {
 
         <div className="space-y-4">
           <div>
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="phone">Phone Number (Primary Method)</Label>
+            <Input
+              id="phone"
+              type="tel"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="0XX XXX XXXX"
+              onKeyDown={(e) => e.key === 'Enter' && onEmailAuth()}
+            />
+            <div className="text-xs text-muted-foreground mt-1">
+              We'll send you a code via SMS - just like WhatsApp verification
+            </div>
+          </div>
+
+          <Button 
+            onClick={onEmailAuth}
+            disabled={loading || !email}
+            className="w-full bg-sa-green hover:bg-sa-green-light text-white"
+          >
+            {loading ? "Sending..." : "Send SMS Code"}
+          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">or use email</span>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="email">Email Address (Alternative)</Label>
             <Input
               id="email"
               type="email"
@@ -61,14 +93,15 @@ export const AuthPage = () => {
           <Button 
             onClick={onEmailAuth}
             disabled={loading || !email}
-            className="w-full bg-sa-green hover:bg-sa-green-light text-white"
+            variant="outline"
+            className="w-full"
           >
-            {loading ? "Sending..." : "Send Magic Link"}
+            {loading ? "Sending..." : "Send Email Link"}
           </Button>
         </div>
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p>We'll send you a secure login link via email</p>
+          <p>Phone is fastest - no email account needed</p>
           <p className="mt-2">No passwords required!</p>
         </div>
       </Card>
