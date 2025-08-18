@@ -15,12 +15,20 @@ export const AuthPage = () => {
   const { user } = useAuthContext();
   const { loading, handleEmailAuth } = useAuth();
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [verificationSent, setVerificationSent] = useState(false);
 
   // If user is already authenticated, redirect to main page
   if (user) {
     return <Navigate to="/" replace />;
   }
+
+  const onPhoneAuth = async () => {
+    const success = await handleEmailAuth(phone);
+    if (success) {
+      setVerificationSent(true);
+    }
+  };
 
   const onEmailAuth = async () => {
     const success = await handleEmailAuth(email);
@@ -51,10 +59,10 @@ export const AuthPage = () => {
             <Input
               id="phone"
               type="tel"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               placeholder="0XX XXX XXXX"
-              onKeyDown={(e) => e.key === 'Enter' && onEmailAuth()}
+              onKeyDown={(e) => e.key === 'Enter' && onPhoneAuth()}
             />
             <div className="text-xs text-muted-foreground mt-1">
               We'll send you a code via SMS - just like WhatsApp verification
@@ -62,8 +70,8 @@ export const AuthPage = () => {
           </div>
 
           <Button 
-            onClick={onEmailAuth}
-            disabled={loading || !email}
+            onClick={onPhoneAuth}
+            disabled={loading || !phone}
             className="w-full bg-sa-green hover:bg-sa-green-light text-white"
           >
             {loading ? "Sending..." : "Send SMS Code"}
