@@ -99,9 +99,9 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white p-5">
-      <h1 className="text-3xl mb-5 text-black">PoortLink App Loading Test</h1>
-      <p className="text-lg mb-5 text-gray-600">If you can see this text, the React app is working!</p>
+    <div className="min-h-screen bg-background text-foreground p-5" style={{backgroundColor: '#ffffff', color: '#000000', minHeight: '100vh'}}>
+      <h1 className="text-3xl mb-5" style={{color: '#000000', fontSize: '2rem', marginBottom: '1rem'}}>PoortLink App Loading Test</h1>
+      <p className="text-lg mb-5" style={{color: '#666666', fontSize: '1.2rem', marginBottom: '1rem'}}>If you can see this text, the React app is working!</p>
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <div className="mb-8">
