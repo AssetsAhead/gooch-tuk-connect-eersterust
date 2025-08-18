@@ -69,13 +69,39 @@ export const useAuth = () => {
   };
 
   const handlePhoneAuth = async (phone: string) => {
-    // Disable phone auth for now since it requires additional Supabase configuration
-    toast({
-      title: "Phone Authentication Unavailable",
-      description: "Please use email authentication for now. Phone authentication requires additional setup.",
-      variant: "destructive",
-    });
-    return false;
+    if (!phone) {
+      toast({
+        title: "Phone Required",
+        description: "Please enter your phone number",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    setLoading(true);
+    try {
+      const formattedPhone = phone.startsWith('+27') ? phone : `+27${phone.replace(/^0/, '')}`;
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: formattedPhone,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Check Your Phone",
+        description: "We've sent you a verification code",
+      });
+      return true;
+    } catch (error: any) {
+      toast({
+        title: "Authentication Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setLoading(false);
+    }
     
     /* Commented out until phone auth is properly configured in Supabase
     if (!phone) {
