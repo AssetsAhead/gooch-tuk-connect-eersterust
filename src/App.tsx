@@ -27,13 +27,14 @@ import RegisterComplete from "./pages/RegisterComplete";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+const App = () => {
+  console.log('App component rendering');
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/register-complete" element={<RegisterComplete />} />
@@ -85,10 +86,13 @@ const App = () => (
             <Route path="/community-safety" element={<CommunitySafetyPortal />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <Toaster />
+          <Sonner />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
