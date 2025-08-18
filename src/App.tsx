@@ -24,6 +24,7 @@ import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PaymentCancelled } from "./pages/PaymentCancelled";
 import { RoleAuth } from "./pages/RoleAuth";
 import RegisterComplete from "./pages/RegisterComplete";
+import { SafeMode } from "./pages/SafeMode";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => {
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancelled" element={<PaymentCancelled />} />
             <Route path="/auth/:role" element={<RoleAuth />} />
+            <Route path="/safe" element={<SafeMode />} />
             <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
