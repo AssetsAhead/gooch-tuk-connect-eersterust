@@ -99,57 +99,57 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-5">
-      <h1 className="text-3xl mb-5 text-foreground">PoortLink App Loading Test</h1>
-      <p className="text-lg mb-5 text-muted-foreground">If you can see this text, the React app is working!</p>
+    <div className="min-h-screen bg-white p-5">
+      <h1 className="text-3xl mb-5 text-black">PoortLink App Loading Test</h1>
+      <p className="text-lg mb-5 text-gray-600">If you can see this text, the React app is working!</p>
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <div className="mb-8">
             <h1 className="text-5xl md:text-6xl font-bold mb-4">
-              <span className="text-primary">Poort</span>
-              <span className="text-secondary">Link</span>
+              <span className="text-green-600">Poort</span>
+              <span className="text-yellow-500">Link</span>
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-6">
+            <p className="text-xl md:text-2xl text-gray-600 mb-6">
               Connecting local hustle to national movement
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm md:text-base mb-8">
-            <div className="bg-success/20 text-success px-4 py-2 rounded-full border border-success/30 shadow-lg">
+              <div className="bg-green-100 text-green-600 px-4 py-2 rounded-full border border-green-300 shadow-lg">
                 Safe & Reliable Transport
               </div>
-              <div className="bg-primary/20 text-primary px-4 py-2 rounded-full border border-primary/30 shadow-lg">
+              <div className="bg-green-100 text-green-600 px-4 py-2 rounded-full border border-green-300 shadow-lg">
                 Real-time Tracking
               </div>
-              <div className="bg-tuk-blue/20 text-tuk-blue px-4 py-2 rounded-full border border-tuk-blue/30 shadow-lg">
+              <div className="bg-blue-100 text-blue-600 px-4 py-2 rounded-full border border-blue-300 shadow-lg">
                 Community Focused
               </div>
-              <div className="bg-info/20 text-info px-4 py-2 rounded-full border border-info/30 shadow-lg">
+              <div className="bg-blue-100 text-blue-600 px-4 py-2 rounded-full border border-blue-300 shadow-lg">
                 Multi-Platform Ready
               </div>
             </div>
             
-        {/* Enhanced CTAs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto">
-          <Link to="/business-portal">
-            <Button className="w-full bg-gradient-to-r from-primary to-tuk-orange hover:from-primary/90 hover:to-tuk-orange/90 text-white font-bold py-4 px-8 text-lg">
-              🏢 Business Heroes Portal 🌟
-            </Button>
-          </Link>
-          <Link to="/community-safety">
-            <Button className="w-full bg-gradient-to-r from-danger to-primary hover:from-danger/90 hover:to-primary/90 text-white font-bold py-4 px-8 text-lg">
-              🛡️ Community Safety Portal 🏘️
-            </Button>
-          </Link>
-          <Button className="w-full bg-gradient-to-r from-success to-tuk-blue hover:from-success/90 hover:to-tuk-blue/90 text-white font-bold py-4 px-8 text-lg">
-            🤖 AI Assistant (11 Languages) 💬
-          </Button>
-        </div>
-        <div className="text-center mt-4">
-          <p className="text-sm text-muted-foreground">
-            🏛️ Government Services • ⚡ Load Shedding Intelligence • 🏪 Township Economy • 🛡️ Crime Prevention Network
-          </p>
-        </div>
+            {/* Enhanced CTAs */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto">
+              <Link to="/business-portal">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 text-lg">
+                  🏢 Business Heroes Portal 🌟
+                </Button>
+              </Link>
+              <Link to="/community-safety">
+                <Button className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 text-lg">
+                  🛡️ Community Safety Portal 🏘️
+                </Button>
+              </Link>
+              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 text-lg">
+                🤖 AI Assistant (11 Languages) 💬
+              </Button>
+            </div>
+            <div className="text-center mt-4">
+              <p className="text-sm text-gray-600">
+                🏛️ Government Services • ⚡ Load Shedding Intelligence • 🏪 Township Economy • 🛡️ Crime Prevention Network
+              </p>
+            </div>
           </div>
-          <div className="text-center text-muted-foreground">
+          <div className="text-center text-gray-600">
             <p className="mb-2">Serving Eersterust • Silverton • Eastlynne • Mamelodi</p>
             <p className="text-sm">Select your role to access your personalized dashboard</p>
           </div>
@@ -171,27 +171,27 @@ const Index = () => {
 
         {/* Pricing Information */}
         <div className="mt-16 max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-8 text-primary">Transport Pricing</h2>
+          <h2 className="text-3xl font-bold text-center mb-8 text-green-600">Transport Pricing</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="text-center p-6 bg-card rounded-lg border border-success/20">
-              <div className="text-3xl font-bold text-success mb-2">R15</div>
-              <p className="text-sm text-muted-foreground">In-Poort (05:00-19:00)</p>
+            <div className="text-center p-6 bg-white rounded-lg border border-green-300">
+              <div className="text-3xl font-bold text-green-600 mb-2">R15</div>
+              <p className="text-sm text-gray-600">In-Poort (05:00-19:00)</p>
             </div>
-            <div className="text-center p-6 bg-card rounded-lg border border-tuk-orange/20">
-              <div className="text-3xl font-bold text-tuk-orange mb-2">R25</div>
-              <p className="text-sm text-muted-foreground">Out-of-Township</p>
+            <div className="text-center p-6 bg-white rounded-lg border border-orange-300">
+              <div className="text-3xl font-bold text-orange-600 mb-2">R25</div>
+              <p className="text-sm text-gray-600">Out-of-Township</p>
             </div>
-            <div className="text-center p-6 bg-card rounded-lg border border-tuk-blue/20">
-              <div className="text-3xl font-bold text-tuk-blue mb-2">R30</div>
-              <p className="text-sm text-muted-foreground">Night In-Poort</p>
+            <div className="text-center p-6 bg-white rounded-lg border border-blue-300">
+              <div className="text-3xl font-bold text-blue-600 mb-2">R30</div>
+              <p className="text-sm text-gray-600">Night In-Poort</p>
             </div>
-            <div className="text-center p-6 bg-card rounded-lg border border-warning/20">
-              <div className="text-3xl font-bold text-warning mb-2">R50</div>
-              <p className="text-sm text-muted-foreground">Night Out-Township</p>
+            <div className="text-center p-6 bg-white rounded-lg border border-yellow-300">
+              <div className="text-3xl font-bold text-yellow-600 mb-2">R50</div>
+              <p className="text-sm text-gray-600">Night Out-Township</p>
             </div>
           </div>
           <div className="text-center">
-            <div className="inline-block bg-success/10 text-success px-6 py-3 rounded-full border border-success/20">
+            <div className="inline-block bg-green-100 text-green-600 px-6 py-3 rounded-full border border-green-300">
               <span className="font-bold">33% OFF</span> on Pension Collection Days
             </div>
           </div>
@@ -199,28 +199,28 @@ const Index = () => {
 
         {/* Features Preview */}
         <div className="mt-16 max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-primary">Platform Features</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 text-green-600">Platform Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🚗</span>
               </div>
               <h3 className="text-xl font-bold mb-2">Real-time Tracking</h3>
-              <p className="text-muted-foreground">GPS tracking for vehicles and drivers with live location updates</p>
+              <p className="text-gray-600">GPS tracking for vehicles and drivers with live location updates</p>
             </div>
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">💰</span>
               </div>
               <h3 className="text-xl font-bold mb-2">Automated Payments</h3>
-              <p className="text-muted-foreground">60/40 revenue split automation with multiple payment options</p>
+              <p className="text-gray-600">60/40 revenue split automation with multiple payment options</p>
             </div>
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-danger/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🛡️</span>
               </div>
               <h3 className="text-xl font-bold mb-2">Safety & Security</h3>
-              <p className="text-muted-foreground">Emergency alerts, incident reporting, and driver verification</p>
+              <p className="text-gray-600">Emergency alerts, incident reporting, and driver verification</p>
             </div>
           </div>
         </div>
