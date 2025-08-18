@@ -97,9 +97,9 @@ const Index = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'white', color: 'black', padding: '20px' }}>
-      <h1 style={{ fontSize: '32px', marginBottom: '20px' }}>PoortLink App Loading Test</h1>
-      <p style={{ fontSize: '18px', marginBottom: '20px' }}>If you can see this text, the React app is working!</p>
+    <div className="min-h-screen bg-background text-foreground p-5">
+      <h1 className="text-3xl mb-5 text-foreground">PoortLink App Loading Test</h1>
+      <p className="text-lg mb-5 text-muted-foreground">If you can see this text, the React app is working!</p>
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <div className="mb-8">
