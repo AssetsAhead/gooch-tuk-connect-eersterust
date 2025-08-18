@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -647,6 +647,45 @@ export type Database = {
         }
         Relationships: []
       }
+      portal_access: {
+        Row: {
+          access_granted: boolean
+          created_at: string
+          granted_at: string | null
+          granted_by: string | null
+          id: string
+          notes: string | null
+          portal_type: string
+          revoked_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_granted?: boolean
+          created_at?: string
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          notes?: string | null
+          portal_type: string
+          revoked_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_granted?: boolean
+          created_at?: string
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          notes?: string | null
+          portal_type?: string
+          revoked_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -901,6 +940,84 @@ export type Database = {
           ride_id?: string | null
           ride_type?: string | null
           status?: string | null
+        }
+        Relationships: []
+      }
+      user_phone_numbers: {
+        Row: {
+          created_at: string
+          id: string
+          is_primary: boolean
+          is_verified: boolean
+          phone_number: string
+          updated_at: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          is_verified?: boolean
+          phone_number: string
+          updated_at?: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          is_verified?: boolean
+          phone_number?: string
+          updated_at?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
+      user_registrations: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          drivers_license_number: string | null
+          first_name: string
+          id: string
+          id_number: string | null
+          last_name: string
+          pdp_number: string | null
+          registration_status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          drivers_license_number?: string | null
+          first_name: string
+          id?: string
+          id_number?: string | null
+          last_name: string
+          pdp_number?: string | null
+          registration_status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          drivers_license_number?: string | null
+          first_name?: string
+          id?: string
+          id_number?: string | null
+          last_name?: string
+          pdp_number?: string | null
+          registration_status?: string
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }

@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PaymentCancelled } from "./pages/PaymentCancelled";
 import { RoleAuth } from "./pages/RoleAuth";
+import RegisterComplete from "./pages/RegisterComplete";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/register-complete" element={<RegisterComplete />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancelled" element={<PaymentCancelled />} />

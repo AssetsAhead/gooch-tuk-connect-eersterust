@@ -24,7 +24,7 @@ export const useAuth = () => {
           email,
           password: 'temp-password-123!', // Temporary password for signup
           options: {
-            emailRedirectTo: `${window.location.origin}/#/`,
+            emailRedirectTo: `${window.location.origin}/#/register-complete`,
             data: {
               full_name: name,
               role: role,
