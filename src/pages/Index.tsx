@@ -120,7 +120,7 @@ const Index = () => {
               <div className="bg-tuk-blue/20 text-tuk-blue px-4 py-2 rounded-full border border-tuk-blue/30 shadow-lg">
                 Community Focused
               </div>
-              <div className="bg-purple/20 text-purple px-4 py-2 rounded-full border border-purple/30 shadow-lg">
+              <div className="bg-info/20 text-info px-4 py-2 rounded-full border border-info/30 shadow-lg">
                 Multi-Platform Ready
               </div>
             </div>
