@@ -1,11 +1,11 @@
 
 import { useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export const useSecurityMonitoring = () => {
-  const { user } = useAuth();
+  const { user } = useSecureAuth();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -27,15 +27,13 @@ export const useSecurityMonitoring = () => {
         }
 
         // Monitor for location anomalies (for drivers/marshalls)
-        const userRole = user.user_metadata?.role;
-        if (['driver', 'marshall', 'police'].includes(userRole)) {
-          // Location logs check temporarily disabled until types are updated
-          const locationLogs = null;
+        // Note: Role checking is now done via secure hooks
+        // This section is temporarily disabled until secure role integration
+        const locationLogs = null;
 
-          if (locationLogs && locationLogs.length > 0) {
-            // Implement location anomaly detection logic here
-            console.log('Monitoring location patterns for security');
-          }
+        if (locationLogs && locationLogs.length > 0) {
+          // Implement location anomaly detection logic here
+          console.log('Monitoring location patterns for security');
         }
 
       } catch (error) {

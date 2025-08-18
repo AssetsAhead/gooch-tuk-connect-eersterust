@@ -1,27 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 
 export const RoleBasedRedirect: React.FC = () => {
-  const { user, userProfile, loading } = useAuth();
+  const { user, loading, isAdmin, getPrimaryRole } = useSecureAuth();
   const navigate = useNavigate();
   const [redirected, setRedirected] = useState(false);
 
   useEffect(() => {
-    console.log('RoleBasedRedirect - Auth state:', { loading, user: !!user, userProfile, userMetadata: user?.user_metadata });
+    console.log('RoleBasedRedirect - Auth state:', { loading, user: !!user });
     
     if (!loading && user && !redirected) {
-      // Ensure we have the user profile loaded, otherwise wait
-      if (!userProfile) {
-        console.log('RoleBasedRedirect - Waiting for userProfile to load...');
-        return;
-      }
-
       // Check if user is admin first (bypasses role check)
-      const isAdmin = user?.email === 'assetsahead.sa@gmail.com';
-      
-      if (isAdmin) {
+      if (isAdmin()) {
         console.log('RoleBasedRedirect - Admin user detected');
         const currentPath = window.location.pathname;
         
@@ -45,11 +36,11 @@ export const RoleBasedRedirect: React.FC = () => {
         return;
       }
       
-      const role = userProfile?.role;
+      const role = getPrimaryRole();
       console.log('RoleBasedRedirect - Detected role:', role);
       
       // If no role found, redirect to auth
-      if (!role) {
+      if (!role || role === 'passenger') {
         console.log('RoleBasedRedirect - No role found, redirecting to auth');
         setRedirected(true);
         navigate('/auth', { replace: true });
@@ -79,15 +70,15 @@ export const RoleBasedRedirect: React.FC = () => {
           navigate('/police', { replace: true });
           break;
         default:
-          console.log('RoleBasedRedirect - No valid role found, defaulting to admin');
-          navigate('/admin', { replace: true });
+          console.log('RoleBasedRedirect - No valid role found, redirecting to auth');
+          navigate('/auth', { replace: true });
       }
     } else if (!loading && !user && !redirected) {
       console.log('RoleBasedRedirect - No user, redirecting to auth');
       setRedirected(true);
       navigate('/auth', { replace: true });
     }
-  }, [user, userProfile, loading, navigate, redirected]);
+  }, [user, loading, navigate, redirected, isAdmin, getPrimaryRole]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">

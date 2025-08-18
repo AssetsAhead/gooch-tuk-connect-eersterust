@@ -1,21 +1,21 @@
 
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export const SessionMonitor = () => {
-  const { user, session, userProfile } = useAuth();
+  const { user, isAdmin } = useSecureAuth();
   const [lastActivity, setLastActivity] = useState(Date.now());
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!user || !session) return;
+    if (!user) return;
 
     // Admin gets shorter session timeout for enhanced security
-    const isAdmin = userProfile?.role === 'admin' || user.email === 'assetsahead.sa@gmail.com';
-    const SESSION_TIMEOUT = isAdmin ? 10 * 60 * 1000 : 30 * 60 * 1000; // 10 min for admin, 30 for others
-    const WARNING_TIME = isAdmin ? 2 * 60 * 1000 : 5 * 60 * 1000; // 2 min warning for admin
+    const isAdminUser = isAdmin();
+    const SESSION_TIMEOUT = isAdminUser ? 10 * 60 * 1000 : 30 * 60 * 1000; // 10 min for admin, 30 for others
+    const WARNING_TIME = isAdminUser ? 2 * 60 * 1000 : 5 * 60 * 1000; // 2 min warning for admin
 
     let timeoutId: NodeJS.Timeout;
     let warningId: NodeJS.Timeout;
@@ -28,7 +28,7 @@ export const SessionMonitor = () => {
 
       // Show warning before timeout
       warningId = setTimeout(() => {
-        const warningTime = isAdmin ? "2 minutes" : "5 minutes";
+        const warningTime = isAdminUser ? "2 minutes" : "5 minutes";
         toast({
           title: "Session Expiring Soon",
           description: `Your session will expire in ${warningTime}. Click anywhere to extend.`,
@@ -75,7 +75,7 @@ export const SessionMonitor = () => {
       });
       logSecurityEvent('session_end');
     };
-  }, [user, session, userProfile, toast]);
+  }, [user, isAdmin, toast]);
 
   return null; // This component only monitors, doesn't render anything
 };

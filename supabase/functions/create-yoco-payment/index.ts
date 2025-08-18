@@ -62,8 +62,9 @@ serve(async (req) => {
         },
         receipt_email: user.email,
         description: description || "TukTuk Ride Payment",
-        success_url: `${req.headers.get("origin")}/payment-success`,
-        cancel_url: `${req.headers.get("origin")}/payment-cancelled`,
+        // Use secure base URL instead of trusting origin header
+        success_url: "https://iiompkhsodkztxllbvkm.supabase.co/payment-success",
+        cancel_url: "https://iiompkhsodkztxllbvkm.supabase.co/payment-cancelled",
       }),
     });
 

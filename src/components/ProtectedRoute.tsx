@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSecureAuth } from '@/hooks/useSecureAuth';
+import { useDemoMode } from '@/hooks/useDemoMode';
 import { Loader2 } from 'lucide-react';
 import { DemoModeBanner } from '@/components/DemoModeBanner';
 
@@ -13,12 +14,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children, 
   requiredRole 
 }) => {
-  const { user, loading, userProfile } = useAuth();
+  const { user, loading, hasRole, isAdmin } = useSecureAuth();
+  const { isDemo, role: demoRole } = useDemoMode();
   const location = useLocation();
-
-  // Client-side demo mode flags
-  const demoMode = typeof window !== 'undefined' && localStorage.getItem('demo_mode') === 'true';
-  const demoRole = (typeof window !== 'undefined' && localStorage.getItem('demo_role')) || null;
 
   if (loading) {
     return (
@@ -29,30 +27,25 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // If not authenticated, allow demo users to pass; otherwise redirect to auth
-  if (!user && !demoMode) {
+  if (!user && !isDemo) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   // Check role requirements
   if (requiredRole) {
-    // If real user is present, keep existing logic
+    // If real user is present, use secure role checking
     if (user) {
-      // Admin email has unrestricted access to all routes
-      const isAdmin = user.email === 'assetsahead.sa@gmail.com';
-      if (isAdmin) {
+      // Admin has unrestricted access to all routes
+      if (isAdmin()) {
         return <>{children}</>;
       }
       
-      // For non-admin users, check if userProfile exists and has required role
-      if (!userProfile) {
-        return <Navigate to="/auth" state={{ from: location }} replace />;
-      }
-      
-      const userRole = (userProfile as any).role || (userProfile as any).user_metadata?.role;
-      if (requiredRole.length > 0 && !requiredRole.includes(userRole)) {
+      // For non-admin users, check if they have required role
+      const hasRequiredRole = requiredRole.some(role => hasRole(role));
+      if (!hasRequiredRole) {
         return <Navigate to="/unauthorized" replace />;
       }
-    } else if (demoMode) {
+    } else if (isDemo) {
       const isDemoAdmin = demoRole === 'admin';
       if (isDemoAdmin) {
         return (<>
@@ -72,7 +65,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   return (
     <>
-      {demoMode ? <DemoModeBanner /> : null}
+      {isDemo ? <DemoModeBanner /> : null}
       {children}
     </>
   );
