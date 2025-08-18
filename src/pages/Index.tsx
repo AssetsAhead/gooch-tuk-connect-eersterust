@@ -106,8 +106,8 @@ const Index = () => {
         <div className="text-center mb-12">
           <div className="mb-8">
             <h1 className="text-5xl md:text-6xl font-bold mb-4">
-              <span className="text-green-600">Poort</span>
-              <span className="text-yellow-500">Link</span>
+              <span className="text-sa-green">Poort</span>
+              <span className="text-sa-gold">Link</span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-6">
               Connecting local hustle to national movement
