@@ -15,6 +15,8 @@ const Index = () => {
   
   // Debug logging
   console.log('Index component rendering, selectedRole:', selectedRole);
+  console.log('Document body styles:', document.body.style);
+  console.log('CSS custom properties test:', getComputedStyle(document.documentElement).getPropertyValue('--primary'));
 
   const roles = [
     {
