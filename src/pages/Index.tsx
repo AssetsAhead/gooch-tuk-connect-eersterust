@@ -84,7 +84,7 @@ const Index = () => {
 
   if (selectedRole) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-background">
         <div className="fixed top-4 left-4 z-50">
           <button
             onClick={() => setSelectedRole(null)}
