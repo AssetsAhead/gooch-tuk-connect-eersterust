@@ -197,7 +197,7 @@ export class ZeroTrustSecurityService {
   // Audit logging
   private async auditLog(event: string, details: any): Promise<void> {
     try {
-      await supabase.from('security_audit_logs').insert({
+      const { error } = await (supabase as any).from('security_audit_logs').insert({
         event_type: event,
         user_id: this.securityContext?.userId,
         details,
@@ -205,6 +205,8 @@ export class ZeroTrustSecurityService {
         device_fingerprint: this.securityContext?.deviceFingerprint,
         created_at: new Date().toISOString()
       });
+
+      if (error) throw error;
     } catch (error) {
       console.error('Failed to write audit log:', error);
     }

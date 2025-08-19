@@ -225,6 +225,39 @@ export type Database = {
         }
         Relationships: []
       }
+      data_processing_logs: {
+        Row: {
+          created_at: string
+          data_type: string
+          id: string
+          lawful_basis: Database["public"]["Enums"]["legal_basis"]
+          operation: Database["public"]["Enums"]["data_operation"]
+          purpose: string
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_type: string
+          id?: string
+          lawful_basis?: Database["public"]["Enums"]["legal_basis"]
+          operation: Database["public"]["Enums"]["data_operation"]
+          purpose: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_type?: string
+          id?: string
+          lawful_basis?: Database["public"]["Enums"]["legal_basis"]
+          operation?: Database["public"]["Enums"]["data_operation"]
+          purpose?: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       driver_reputation: {
         Row: {
           champion_acts: number | null
@@ -647,6 +680,81 @@ export type Database = {
         }
         Relationships: []
       }
+      pii_data_records: {
+        Row: {
+          created_at: string
+          data_type: Database["public"]["Enums"]["pii_data_type"]
+          encrypted_value: string
+          expires_at: string
+          id: string
+          purpose: string
+          retention_days: number
+          source: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_type: Database["public"]["Enums"]["pii_data_type"]
+          encrypted_value: string
+          expires_at: string
+          id?: string
+          purpose: string
+          retention_days?: number
+          source: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data_type?: Database["public"]["Enums"]["pii_data_type"]
+          encrypted_value?: string
+          expires_at?: string
+          id?: string
+          purpose?: string
+          retention_days?: number
+          source?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      popia_consent_records: {
+        Row: {
+          consent_date: string
+          consent_given: boolean
+          created_at: string
+          id: string
+          legal_basis: Database["public"]["Enums"]["legal_basis"]
+          purpose: string
+          updated_at: string
+          user_id: string
+          withdrawal_date: string | null
+        }
+        Insert: {
+          consent_date?: string
+          consent_given?: boolean
+          created_at?: string
+          id?: string
+          legal_basis?: Database["public"]["Enums"]["legal_basis"]
+          purpose: string
+          updated_at?: string
+          user_id: string
+          withdrawal_date?: string | null
+        }
+        Update: {
+          consent_date?: string
+          consent_given?: boolean
+          created_at?: string
+          id?: string
+          legal_basis?: Database["public"]["Enums"]["legal_basis"]
+          purpose?: string
+          updated_at?: string
+          user_id?: string
+          withdrawal_date?: string | null
+        }
+        Relationships: []
+      }
       portal_access: {
         Row: {
           access_granted: boolean
@@ -693,7 +801,10 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          is_government_verified: boolean | null
+          is_law_enforcement: boolean | null
           notification_preferences: Json | null
+          popia_consent: boolean | null
           preferred_language: string | null
           role: string | null
           updated_at: string
@@ -705,7 +816,10 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          is_government_verified?: boolean | null
+          is_law_enforcement?: boolean | null
           notification_preferences?: Json | null
+          popia_consent?: boolean | null
           preferred_language?: string | null
           role?: string | null
           updated_at?: string
@@ -717,7 +831,10 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          is_government_verified?: boolean | null
+          is_law_enforcement?: boolean | null
           notification_preferences?: Json | null
+          popia_consent?: boolean | null
           preferred_language?: string | null
           role?: string | null
           updated_at?: string
@@ -844,6 +961,36 @@ export type Database = {
           user_id?: string
           verification_notes?: string | null
           verified_at?: string | null
+        }
+        Relationships: []
+      }
+      security_audit_logs: {
+        Row: {
+          created_at: string
+          details: Json | null
+          device_fingerprint: string | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          device_fingerprint?: string | null
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          device_fingerprint?: string | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1099,7 +1246,21 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      data_operation: "collect" | "process" | "store" | "transmit" | "delete"
+      legal_basis:
+        | "consent"
+        | "contract"
+        | "legal_obligation"
+        | "vital_interests"
+        | "public_task"
+        | "legitimate_interests"
+      pii_data_type:
+        | "identity_number"
+        | "phone_number"
+        | "email"
+        | "address"
+        | "biometric"
+        | "financial"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1226,6 +1387,24 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      data_operation: ["collect", "process", "store", "transmit", "delete"],
+      legal_basis: [
+        "consent",
+        "contract",
+        "legal_obligation",
+        "vital_interests",
+        "public_task",
+        "legitimate_interests",
+      ],
+      pii_data_type: [
+        "identity_number",
+        "phone_number",
+        "email",
+        "address",
+        "biometric",
+        "financial",
+      ],
+    },
   },
 } as const

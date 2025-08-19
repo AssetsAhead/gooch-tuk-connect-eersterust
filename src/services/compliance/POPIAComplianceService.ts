@@ -1,5 +1,6 @@
 // POPIA Compliance Service for Data Protection and Privacy
 import { supabase } from '@/integrations/supabase/client';
+type SupabaseClient = typeof supabase;
 
 export interface PIIData {
   type: 'identity_number' | 'phone_number' | 'email' | 'address' | 'biometric' | 'financial';
@@ -42,7 +43,7 @@ export class POPIAComplianceService {
   // Record consent for data processing
   async recordConsent(consent: ConsentRecord): Promise<void> {
     try {
-      await supabase.from('popia_consent_records').insert({
+      const { error } = await (supabase as any).from('popia_consent_records').insert({
         user_id: consent.userId,
         purpose: consent.purpose,
         consent_given: consent.consentGiven,
@@ -51,6 +52,8 @@ export class POPIAComplianceService {
         legal_basis: consent.legalBasis,
         created_at: new Date().toISOString()
       });
+
+      if (error) throw error;
 
       // Log consent action
       await this.logDataProcessing({
@@ -71,7 +74,7 @@ export class POPIAComplianceService {
   // Check if user has given consent for specific purpose
   async hasValidConsent(userId: string, purpose: string): Promise<boolean> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('popia_consent_records')
         .select('*')
         .eq('user_id', userId)
@@ -92,7 +95,7 @@ export class POPIAComplianceService {
   // Withdraw consent
   async withdrawConsent(userId: string, purpose: string): Promise<void> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('popia_consent_records')
         .update({
           withdrawal_date: new Date().toISOString(),
@@ -140,7 +143,7 @@ export class POPIAComplianceService {
       const encryptedValue = await this.encryptPII(piiData.value, piiData.type);
 
       // Store encrypted PII with metadata
-      await supabase.from('pii_data_records').insert({
+      const { error } = await (supabase as any).from('pii_data_records').insert({
         user_id: userId,
         data_type: piiData.type,
         encrypted_value: encryptedValue,
@@ -150,6 +153,8 @@ export class POPIAComplianceService {
         created_at: new Date().toISOString(),
         expires_at: new Date(Date.now() + piiData.retentionDays * 24 * 60 * 60 * 1000).toISOString()
       });
+
+      if (error) throw error;
 
       // Log data processing
       await this.logDataProcessing({
@@ -172,7 +177,7 @@ export class POPIAComplianceService {
   // Get user's data processing records (for transparency)
   async getUserDataProcessingRecords(userId: string): Promise<DataProcessingRecord[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('data_processing_logs')
         .select('*')
         .eq('user_id', userId)
@@ -180,7 +185,7 @@ export class POPIAComplianceService {
 
       if (error) throw error;
 
-      return data?.map(record => ({
+      return data?.map((record: any) => ({
         id: record.id,
         userId: record.user_id,
         dataType: record.data_type,
@@ -201,18 +206,19 @@ export class POPIAComplianceService {
       // Delete from all relevant tables
       const tables = [
         'pii_data_records',
-        'popia_consent_records',
+        'popia_consent_records', 
         'data_processing_logs'
       ];
 
       for (const table of tables) {
-        let query = supabase.from(table).delete().eq('user_id', userId);
+        let query = (supabase as any).from(table).delete().eq('user_id', userId);
         
         if (dataTypes && table === 'pii_data_records') {
           query = query.in('data_type', dataTypes);
         }
         
-        await query;
+        const { error } = await query;
+        if (error) throw error;
       }
 
       // Log data deletion
@@ -246,12 +252,12 @@ export class POPIAComplianceService {
   }> {
     try {
       // Get consent records
-      const { data: consentData } = await supabase
+      const { data: consentData } = await (supabase as any)
         .from('popia_consent_records')
         .select('*')
         .eq('user_id', userId);
 
-      const consentRecords: ConsentRecord[] = consentData?.map(record => ({
+      const consentRecords: ConsentRecord[] = consentData?.map((record: any) => ({
         userId: record.user_id,
         purpose: record.purpose,
         consentGiven: record.consent_given,
@@ -264,7 +270,7 @@ export class POPIAComplianceService {
       const dataProcessingRecords = await this.getUserDataProcessingRecords(userId);
 
       // Get PII data summary
-      const { data: piiData } = await supabase
+      const { data: piiData } = await (supabase as any)
         .from('pii_data_records')
         .select('data_type, purpose, created_at, expires_at')
         .eq('user_id', userId);
@@ -296,7 +302,7 @@ export class POPIAComplianceService {
 
   private async logDataProcessing(record: DataProcessingRecord): Promise<void> {
     try {
-      await supabase.from('data_processing_logs').insert({
+      const { error } = await (supabase as any).from('data_processing_logs').insert({
         id: record.id,
         user_id: record.userId,
         data_type: record.dataType,
@@ -305,6 +311,8 @@ export class POPIAComplianceService {
         timestamp: record.timestamp.toISOString(),
         lawful_basis: record.lawfulBasis
       });
+
+      if (error) throw error;
     } catch (error) {
       console.error('Failed to log data processing:', error);
     }
@@ -313,11 +321,13 @@ export class POPIAComplianceService {
   private async handleConsentWithdrawal(userId: string, purpose: string): Promise<void> {
     // Delete data that was collected solely based on withdrawn consent
     try {
-      await supabase
+      const { error } = await (supabase as any)
         .from('pii_data_records')
         .delete()
         .eq('user_id', userId)
         .eq('purpose', purpose);
+      
+      if (error) throw error;
     } catch (error) {
       console.error('Failed to handle consent withdrawal:', error);
     }
