@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { EnhancedSecurityProvider } from "@/components/security/EnhancedSecurityProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -36,7 +37,8 @@ const App = () => {
       <AuthProvider>
         <TooltipProvider>
           <BrowserRouter>
-          <Routes>
+            <EnhancedSecurityProvider>
+              <Routes>
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/register-complete" element={<RegisterComplete />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
@@ -86,14 +88,15 @@ const App = () => {
               </ProtectedRoute>
             } />
             <Route path="/community-safety" element={<CommunitySafetyPortal />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Toaster />
-          <Sonner />
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <Toaster />
+            <Sonner />
+            </EnhancedSecurityProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 };
 
