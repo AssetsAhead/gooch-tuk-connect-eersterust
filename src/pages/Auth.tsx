@@ -9,14 +9,16 @@ import { useAuth as useAuthContext } from "@/contexts/AuthContext";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import { supabase } from '@/integrations/supabase/client';
 export const AuthPage = () => {
   const { role } = useParams<{ role?: string }>();
   const { user } = useAuthContext();
-  const { loading, handleEmailAuth } = useAuth();
+  const { loading, handleEmailAuth, handlePhoneAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [verificationSent, setVerificationSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [verifying, setVerifying] = useState(false);
 
   // If user is already authenticated, redirect to main page
   if (user) {
@@ -24,7 +26,7 @@ export const AuthPage = () => {
   }
 
   const onPhoneAuth = async () => {
-    const success = await handleEmailAuth(phone);
+    const success = await handlePhoneAuth(phone);
     if (success) {
       setVerificationSent(true);
     }
@@ -37,8 +39,58 @@ export const AuthPage = () => {
     }
   };
 
+  const onVerifyOtp = async () => {
+    setVerifying(true);
+    try {
+      const formattedPhone = phone.startsWith('+27') ? phone : `+27${phone.replace(/^0/, '')}`;
+      const { error } = await supabase.auth.verifyOtp({
+        phone: formattedPhone,
+        token: otp,
+        type: 'sms',
+      });
+      if (error) throw error;
+      // On success, AuthContext listener should update and route will allow access
+    } catch (err: any) {
+      alert(err.message || 'Verification failed');
+    } finally {
+      setVerifying(false);
+    }
+  };
+
   if (verificationSent) {
-    return <VerificationSent onBack={() => setVerificationSent(false)} />;
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted p-4 flex items-center justify-center">
+        <Card className="w-full max-w-md p-6">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-sa-green mb-2">Verify Phone</h1>
+            <p className="text-muted-foreground">Enter the 6-digit code sent via SMS</p>
+          </div>
+          <div className="space-y-4">
+            <Label htmlFor="otp">Verification Code</Label>
+            <Input
+              id="otp"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && onVerifyOtp()}
+              placeholder="123456"
+            />
+            <Button 
+              onClick={onVerifyOtp}
+              disabled={verifying || otp.length < 4}
+              className="w-full bg-sa-green hover:bg-sa-green-light text-white"
+            >
+              {verifying ? "Verifying..." : "Verify Code"}
+            </Button>
+            <Button variant="ghost" onClick={() => setVerificationSent(false)} className="w-full">
+              Back
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
   }
 
   return (

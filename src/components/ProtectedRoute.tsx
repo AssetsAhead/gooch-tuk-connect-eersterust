@@ -28,6 +28,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // If not authenticated, allow demo users to pass; otherwise redirect to auth
   if (!user && !isDemo) {
+    console.warn('ProtectedRoute: redirecting to /auth', { path: location.pathname });
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
@@ -43,6 +44,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       // For non-admin users, check if they have required role
       const hasRequiredRole = requiredRole.some(role => hasRole(role));
       if (!hasRequiredRole) {
+        console.warn('ProtectedRoute: missing required role', { requiredRole, path: location.pathname });
         return <Navigate to="/unauthorized" replace />;
       }
     } else if (isDemo) {
