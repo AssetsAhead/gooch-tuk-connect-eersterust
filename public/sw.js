@@ -1,4 +1,4 @@
-const CACHE_NAME = 'poortlink-v1';
+const CACHE_NAME = 'poortlink-v2';
 const OFFLINE_PAGE = '/offline.html';
 
 // Cache essential files
@@ -40,22 +40,45 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve from cache when offline
+// Fetch event - smarter strategy to avoid stale app and auth loops
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  const url = new URL(event.request.url);
+
+  // Bypass cache for Supabase auth/API and app auth routes
+  if (url.origin.includes('supabase.co') || url.pathname.startsWith('/auth') || url.pathname.startsWith('/api')) {
+    return; // let the browser/network handle it
+  }
+
+  // Network-first for navigation/HTML requests
+  if (event.request.mode === 'navigate' || (event.request.headers.get('accept') || '').includes('text/html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          return response;
+        })
+        .catch(() => caches.match(OFFLINE_PAGE))
+    );
+    return;
+  }
+
+  // Cache-first for static assets (images, styles, scripts, fonts)
   event.respondWith(
     caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
+      .then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request).then((response) => {
+          if (['image', 'style', 'script', 'font'].includes(event.request.destination)) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        });
       })
-      .catch(() => {
-        // If both cache and network fail, show offline page
-        if (event.request.destination === 'document') {
-          return caches.match(OFFLINE_PAGE);
-        }
-      })
+      .catch(() => undefined)
   );
 });
 
