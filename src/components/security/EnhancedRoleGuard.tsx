@@ -32,6 +32,12 @@ export const EnhancedRoleGuard: React.FC<EnhancedRoleGuardProps> = ({
   // Enhanced security checks for South African context
   const isVerifiedUser = userProfile?.sassa_verified || userProfile?.id_verified;
   const isHighSecurityRole = ['police', 'admin', 'marshall'].includes(userRole);
+  const isAdminUser = userRole === 'admin';
+  
+  // Admins have universal access for demos and admin operations
+  if (isAdminUser) {
+    return <>{children}</>;
+  }
   
   // High security roles require additional verification
   if (isHighSecurityRole && !isVerifiedUser) {
