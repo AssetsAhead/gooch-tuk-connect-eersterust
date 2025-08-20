@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { AuthForm } from '@/components/auth/AuthForm';
 import { VerificationSent } from '@/components/auth/VerificationSent';
 import { useAuth } from '@/hooks/useAuth';
 import { ArrowLeft, Shield, Car, Users, CreditCard, UserCheck, AlertTriangle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const roleConfig = {
   passenger: {
@@ -58,12 +61,16 @@ export const RoleAuth = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [verificationSent, setVerificationSent] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
+  const [adminError, setAdminError] = useState<string | null>(null);
   
   const { loading, handleEmailAuth, handlePhoneAuth } = useAuth();
 
   const config = roleConfig[role as keyof typeof roleConfig];
+  const allowedAdminEmails = ['assetsahead.sa@gmail.com'];
   
   if (!config) {
     return (
@@ -90,6 +97,30 @@ export const RoleAuth = () => {
     if (success) setVerificationSent(true);
   };
 
+  const adminSignIn = async () => {
+    setAdminError(null);
+    setSigningIn(true);
+    try {
+      const emailLc = email.trim().toLowerCase();
+      if (!allowedAdminEmails.includes(emailLc)) {
+        throw new Error('This admin email is not whitelisted yet.');
+      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: emailLc,
+        password
+      });
+      if (error) throw error;
+      // Ensure admin role is present in metadata for guards
+      await supabase.auth.updateUser({ data: { role: 'admin' } });
+      // Reset master unlock for new session
+      localStorage.removeItem('admin_master_unlocked');
+      navigate('/');
+    } catch (e: any) {
+      setAdminError(e?.message || 'Admin sign-in failed');
+    } finally {
+      setSigningIn(false);
+    }
+  };
   if (verificationSent) {
     return (
       <VerificationSent 
@@ -140,25 +171,62 @@ export const RoleAuth = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <AuthForm
-              loading={loading}
-              email={email}
-              phone={phone}
-              name={name}
-              role={role || 'passenger'}
-              authMode={authMode}
-              setEmail={setEmail}
-              setPhone={setPhone}
-              setName={setName}
-              setRole={() => {}} // Role is fixed based on route
-              setAuthMode={setAuthMode}
-              onPhoneAuth={onPhoneAuth}
-              onEmailAuth={onEmailAuth}
-            />
-
-            <div className="mt-6 text-center text-xs text-muted-foreground">
-              Role-specific access • SASSA verification • WhatsApp-style auth
-            </div>
+            {role === 'admin' ? (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="admin-email">Admin Email</Label>
+                  <Input
+                    id="admin-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@email.com"
+                    onKeyDown={(e) => e.key === 'Enter' && adminSignIn()}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="admin-password">Password</Label>
+                  <Input
+                    id="admin-password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    onKeyDown={(e) => e.key === 'Enter' && adminSignIn()}
+                  />
+                </div>
+                {adminError && (
+                  <p className="text-sm text-destructive">{adminError}</p>
+                )}
+                <Button onClick={adminSignIn} disabled={signingIn || !email || !password} className="w-full">
+                  {signingIn ? 'Signing in…' : 'Admin Sign In'}
+                </Button>
+                <div className="text-xs text-muted-foreground text-center">
+                  Only whitelisted admin emails can sign in here
+                </div>
+              </div>
+            ) : (
+              <>
+                <AuthForm
+                  loading={loading}
+                  email={email}
+                  phone={phone}
+                  name={name}
+                  role={role || 'passenger'}
+                  authMode={authMode}
+                  setEmail={setEmail}
+                  setPhone={setPhone}
+                  setName={setName}
+                  setRole={() => {}} // Role is fixed based on route
+                  setAuthMode={setAuthMode}
+                  onPhoneAuth={onPhoneAuth}
+                  onEmailAuth={onEmailAuth}
+                />
+                <div className="mt-6 text-center text-xs text-muted-foreground">
+                  Role-specific access • SASSA verification • WhatsApp-style auth
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
