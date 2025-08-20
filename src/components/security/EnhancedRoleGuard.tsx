@@ -45,6 +45,11 @@ export const EnhancedRoleGuard: React.FC<EnhancedRoleGuardProps> = ({
     return typeof window !== 'undefined' && localStorage.getItem('admin_master_unlocked') === 'true';
   });
 
+  // Check if user is admin (bypass all checks for admins once master password is entered)
+  if (isAdminUser && unlocked) {
+    return <>{children}</>;
+  }
+
   const shouldPromptMaster = useMemo(() => isAdminUser && !unlocked, [isAdminUser, unlocked]);
 
   const verifyMaster = async () => {

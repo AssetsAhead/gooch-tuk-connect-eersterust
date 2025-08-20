@@ -59,17 +59,18 @@ class AnalyticsTracker {
       
       // Also try to store in Supabase if available
       try {
-        // Use security_logs table as fallback for analytics
-        await supabase
-          .from('security_logs')
-          .insert([{
-            user_id: this.userId || null,
-            event_type: eventType,
-            details: eventData,
-            timestamp: new Date().toISOString(),
-            ip_address: null,
-            user_agent: navigator.userAgent
-          }]);
+      // Store in analytics_events table for proper research data
+      await supabase
+        .from('analytics_events')
+        .insert([{
+          user_id: this.userId || null,
+          event_type: eventType,
+          event_data: eventData,
+          session_id: this.sessionId,
+          page_url: window.location.href,
+          user_agent: navigator.userAgent,
+          timestamp: new Date().toISOString()
+        }]);
       } catch (supabaseError) {
         console.log('Supabase storage failed, using offline only:', supabaseError);
       }
@@ -104,18 +105,19 @@ class AnalyticsTracker {
       const offlineEvents = JSON.parse(localStorage.getItem('offline_analytics') || '[]');
       if (offlineEvents.length === 0) return;
 
-      // Try to store in security_logs as fallback
+      // Store in analytics_events table for research data
       for (const event of offlineEvents) {
         try {
           await supabase
-            .from('security_logs')
+            .from('analytics_events')
             .insert([{
               user_id: event.user_id || null,
               event_type: event.event_type,
-              details: event.event_data,
-              timestamp: event.timestamp,
-              ip_address: null,
-              user_agent: event.user_agent
+              event_data: event.event_data,
+              session_id: event.session_id,
+              page_url: event.page_url,
+              user_agent: event.user_agent,
+              timestamp: event.timestamp
             }]);
         } catch (error) {
           console.log('Failed to sync event:', error);
