@@ -201,6 +201,31 @@ export const RoleAuth = () => {
                 <Button onClick={adminSignIn} disabled={signingIn || !email || !password} className="w-full">
                   {signingIn ? 'Signing in…' : 'Admin Sign In'}
                 </Button>
+                <div className="text-center">
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={async () => {
+                      if (!email) {
+                        setAdminError('Please enter your email address first');
+                        return;
+                      }
+                      try {
+                        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                          redirectTo: `${window.location.origin}/auth/admin`
+                        });
+                        if (error) throw error;
+                        setAdminError(null);
+                        alert('Password reset email sent! Check your inbox.');
+                      } catch (error: any) {
+                        setAdminError(error.message || 'Failed to send reset email');
+                      }
+                    }}
+                    className="text-xs p-0 h-auto"
+                  >
+                    Forgot your password?
+                  </Button>
+                </div>
                 <div className="text-xs text-muted-foreground text-center">
                   Only whitelisted admin emails can sign in here
                 </div>
