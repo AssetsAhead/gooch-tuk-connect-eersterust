@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, Navigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield } from 'lucide-react';
+import { Shield, ArrowLeft } from 'lucide-react';
 import { AuthForm } from '@/components/auth/AuthForm';
 import { VerificationSent } from '@/components/auth/VerificationSent';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,15 +10,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 export const AuthPage = () => {
   const { role } = useParams<{ role?: string }>();
   const { user } = useAuthContext();
   const { loading, handleEmailAuth, handlePhoneAuth } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [verificationSent, setVerificationSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [verifying, setVerifying] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   // If user is already authenticated, redirect to main page
   if (user) {
@@ -36,6 +40,41 @@ export const AuthPage = () => {
     const success = await handleEmailAuth(email);
     if (success) {
       setVerificationSent(true);
+    }
+  };
+
+  const onResetPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address to reset your password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setResetLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Password reset sent",
+        description: "Check your email for a password reset link.",
+      });
+      
+      setShowForgotPassword(false);
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to send password reset email.",
+        variant: "destructive",
+      });
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -96,74 +135,130 @@ export const AuthPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted p-4 flex items-center justify-center">
       <Card className="w-full max-w-md p-6">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-sa-green mb-2">
-            {role ? `${role.charAt(0).toUpperCase() + role.slice(1)} Login` : "Login"}
-          </h1>
-          <p className="text-muted-foreground">
-            Enter your email to sign in to PoortLink
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="phone">Phone Number (Primary Method)</Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="0XX XXX XXXX"
-              onKeyDown={(e) => e.key === 'Enter' && onPhoneAuth()}
-            />
-            <div className="text-xs text-muted-foreground mt-1">
-              We'll send you a code via SMS - just like WhatsApp verification
+        {showForgotPassword ? (
+          // Forgot Password Form
+          <>
+            <div className="flex items-center mb-6">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowForgotPassword(false)}
+                className="p-0 h-auto mr-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <h1 className="text-2xl font-bold text-sa-green">Reset Password</h1>
             </div>
-          </div>
+            <p className="text-muted-foreground mb-6">
+              Enter your email address and we'll send you a link to reset your password.
+            </p>
 
-          <Button 
-            onClick={onPhoneAuth}
-            disabled={loading || !phone}
-            className="w-full bg-sa-green hover:bg-sa-green-light text-white"
-          >
-            {loading ? "Sending..." : "Send SMS Code"}
-          </Button>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="reset-email">Email Address</Label>
+                <Input
+                  id="reset-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  onKeyDown={(e) => e.key === 'Enter' && onResetPassword()}
+                />
+              </div>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <Button 
+                onClick={onResetPassword}
+                disabled={resetLoading || !email}
+                className="w-full bg-sa-green hover:bg-sa-green-light text-white"
+              >
+                {resetLoading ? "Sending..." : "Send Reset Link"}
+              </Button>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">or use email</span>
+          </>
+        ) : (
+          // Main Auth Form
+          <>
+            <div className="text-center mb-6">
+              <h1 className="text-2xl font-bold text-sa-green mb-2">
+                {role ? `${role.charAt(0).toUpperCase() + role.slice(1)} Login` : "Login"}
+              </h1>
+              <p className="text-muted-foreground">
+                Enter your email to sign in to PoortLink
+              </p>
             </div>
-          </div>
 
-          <div>
-            <Label htmlFor="email">Email Address (Alternative)</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              onKeyDown={(e) => e.key === 'Enter' && onEmailAuth()}
-            />
-          </div>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="phone">Phone Number (Primary Method)</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="0XX XXX XXXX"
+                  onKeyDown={(e) => e.key === 'Enter' && onPhoneAuth()}
+                />
+                <div className="text-xs text-muted-foreground mt-1">
+                  We'll send you a code via SMS - just like WhatsApp verification
+                </div>
+              </div>
 
-          <Button 
-            onClick={onEmailAuth}
-            disabled={loading || !email}
-            variant="outline"
-            className="w-full"
-          >
-            {loading ? "Sending..." : "Send Email Link"}
-          </Button>
-        </div>
+              <Button 
+                onClick={onPhoneAuth}
+                disabled={loading || !phone}
+                className="w-full bg-sa-green hover:bg-sa-green-light text-white"
+              >
+                {loading ? "Sending..." : "Send SMS Code"}
+              </Button>
 
-        <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p>Phone is fastest - no email account needed</p>
-          <p className="mt-2">No passwords required!</p>
-        </div>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">or use email</span>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="email">Email Address (Alternative)</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  onKeyDown={(e) => e.key === 'Enter' && onEmailAuth()}
+                />
+              </div>
+
+              <Button 
+                onClick={onEmailAuth}
+                disabled={loading || !email}
+                variant="outline"
+                className="w-full"
+              >
+                {loading ? "Sending..." : "Send Email Link"}
+              </Button>
+
+              <div className="text-center">
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sa-green"
+                >
+                  Forgot your password?
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              <p>Phone is fastest - no email account needed</p>
+              <p className="mt-2">No passwords required!</p>
+            </div>
+          </>
+        )}
       </Card>
     </div>
   );
