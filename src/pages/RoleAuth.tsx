@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,19 +58,32 @@ const roleConfig = {
 export const RoleAuth = () => {
   const { role } = useParams<{ role: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [verificationSent, setVerificationSent] = useState(false);
   const [signingIn, setSigningIn] = useState(false);
   const [adminError, setAdminError] = useState<string | null>(null);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
   
   const { loading, handleEmailAuth, handlePhoneAuth } = useAuth();
 
   const config = roleConfig[role as keyof typeof roleConfig];
   const allowedAdminEmails = ['assetsahead.sa@gmail.com'];
+
+  // Check for password reset flow on page load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    if (urlParams.has('type') && urlParams.get('type') === 'recovery') {
+      setIsResettingPassword(true);
+    }
+  }, [location.search]);
   
   if (!config) {
     return (
@@ -117,6 +130,40 @@ export const RoleAuth = () => {
       navigate('/');
     } catch (e: any) {
       setAdminError(e?.message || 'Admin sign-in failed');
+    } finally {
+      setSigningIn(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (newPassword !== confirmPassword) {
+      setAdminError('Passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setAdminError('Password must be at least 6 characters long');
+      return;
+    }
+
+    setAdminError(null);
+    setSigningIn(true);
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) throw error;
+
+      setPasswordResetSuccess(true);
+      setIsResettingPassword(false);
+      
+      // Clear the URL parameters
+      navigate('/auth/admin', { replace: true });
+      
+    } catch (error: any) {
+      setAdminError(error.message || 'Failed to reset password');
     } finally {
       setSigningIn(false);
     }
@@ -172,64 +219,132 @@ export const RoleAuth = () => {
           </CardHeader>
           <CardContent>
             {role === 'admin' ? (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="admin-email">Admin Email</Label>
-                  <Input
-                    id="admin-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@email.com"
-                    onKeyDown={(e) => e.key === 'Enter' && adminSignIn()}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="admin-password">Password</Label>
-                  <Input
-                    id="admin-password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    onKeyDown={(e) => e.key === 'Enter' && adminSignIn()}
-                  />
-                </div>
-                {adminError && (
-                  <p className="text-sm text-destructive">{adminError}</p>
-                )}
-                <Button onClick={adminSignIn} disabled={signingIn || !email || !password} className="w-full">
-                  {signingIn ? 'Signing in…' : 'Admin Sign In'}
-                </Button>
-                <div className="text-center">
-                  <Button
-                    variant="link"
-                    size="sm"
-                    onClick={async () => {
-                      if (!email) {
-                        setAdminError('Please enter your email address first');
-                        return;
-                      }
-                      try {
-                        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                          redirectTo: `${window.location.origin}/auth/admin`
-                        });
-                        if (error) throw error;
-                        setAdminError(null);
-                        alert('Password reset email sent! Check your inbox.');
-                      } catch (error: any) {
-                        setAdminError(error.message || 'Failed to send reset email');
-                      }
-                    }}
-                    className="text-xs p-0 h-auto"
-                  >
-                    Forgot your password?
+              passwordResetSuccess ? (
+                <div className="space-y-4 text-center">
+                  <div className="text-success text-lg font-semibold">
+                    ✅ Password Reset Successful!
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Your password has been updated. You can now sign in with your new password.
+                  </p>
+                  <Button onClick={() => setPasswordResetSuccess(false)} className="w-full">
+                    Sign In Now
                   </Button>
                 </div>
-                <div className="text-xs text-muted-foreground text-center">
-                  Only whitelisted admin emails can sign in here
+              ) : isResettingPassword ? (
+                <div className="space-y-4">
+                  <div className="text-center mb-4">
+                    <h3 className="text-lg font-semibold">Reset Your Password</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Enter your new password below
+                    </p>
+                  </div>
+                  <div>
+                    <Label htmlFor="new-password">New Password</Label>
+                    <Input
+                      id="new-password"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="••••••••"
+                      onKeyDown={(e) => e.key === 'Enter' && handlePasswordReset()}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="confirm-password">Confirm New Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      onKeyDown={(e) => e.key === 'Enter' && handlePasswordReset()}
+                    />
+                  </div>
+                  {adminError && (
+                    <p className="text-sm text-destructive">{adminError}</p>
+                  )}
+                  <Button 
+                    onClick={handlePasswordReset} 
+                    disabled={signingIn || !newPassword || !confirmPassword} 
+                    className="w-full"
+                  >
+                    {signingIn ? 'Updating Password...' : 'Update Password'}
+                  </Button>
+                  <div className="text-center">
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => {
+                        setIsResettingPassword(false);
+                        navigate('/auth/admin', { replace: true });
+                      }}
+                      className="text-xs p-0 h-auto"
+                    >
+                      Back to Sign In
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="admin-email">Admin Email</Label>
+                    <Input
+                      id="admin-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="admin@email.com"
+                      onKeyDown={(e) => e.key === 'Enter' && adminSignIn()}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="admin-password">Password</Label>
+                    <Input
+                      id="admin-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      onKeyDown={(e) => e.key === 'Enter' && adminSignIn()}
+                    />
+                  </div>
+                  {adminError && (
+                    <p className="text-sm text-destructive">{adminError}</p>
+                  )}
+                  <Button onClick={adminSignIn} disabled={signingIn || !email || !password} className="w-full">
+                    {signingIn ? 'Signing in…' : 'Admin Sign In'}
+                  </Button>
+                  <div className="text-center">
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={async () => {
+                        if (!email) {
+                          setAdminError('Please enter your email address first');
+                          return;
+                        }
+                        try {
+                          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                            redirectTo: `${window.location.origin}/auth/admin`
+                          });
+                          if (error) throw error;
+                          setAdminError(null);
+                          alert('Password reset email sent! Check your inbox.');
+                        } catch (error: any) {
+                          setAdminError(error.message || 'Failed to send reset email');
+                        }
+                      }}
+                      className="text-xs p-0 h-auto"
+                    >
+                      Forgot your password?
+                    </Button>
+                  </div>
+                  <div className="text-xs text-muted-foreground text-center">
+                    Only whitelisted admin emails can sign in here
+                  </div>
+                </div>
+              )
             ) : (
               <>
                 <AuthForm
