@@ -9,6 +9,7 @@ import { VerificationSent } from '@/components/auth/VerificationSent';
 import { useAuth } from '@/hooks/useAuth';
 import { ArrowLeft, Shield, Car, Users, CreditCard, UserCheck, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const roleConfig = {
   passenger: {
@@ -73,6 +74,7 @@ export const RoleAuth = () => {
   const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
   
   const { loading, handleEmailAuth, handlePhoneAuth } = useAuth();
+  const { toast } = useToast();
 
   const config = roleConfig[role as keyof typeof roleConfig];
   const allowedAdminEmails = ['assetsahead.sa@gmail.com'];
@@ -108,6 +110,31 @@ export const RoleAuth = () => {
   const onPhoneAuth = async () => {
     const success = await handlePhoneAuth(phone);
     if (success) setVerificationSent(true);
+  };
+
+  const onGoogleAuth = async () => {
+    try {
+      setSigningIn(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+      
+      if (error) {
+        console.error('Google auth error:', error);
+        toast({
+          title: "Authentication Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Google auth error:', error);
+    } finally {
+      setSigningIn(false);
+    }
   };
 
   const adminSignIn = async () => {
@@ -312,6 +339,17 @@ export const RoleAuth = () => {
                   {adminError && (
                     <p className="text-sm text-destructive">{adminError}</p>
                   )}
+                  <Button onClick={onGoogleAuth} disabled={signingIn} className="w-full mb-3" variant="outline">
+                    {signingIn ? 'Signing in…' : 'Continue with Google'}
+                  </Button>
+                  <div className="relative mb-3">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">Or</span>
+                    </div>
+                  </div>
                   <Button onClick={adminSignIn} disabled={signingIn || !email || !password} className="w-full">
                     {signingIn ? 'Signing in…' : 'Admin Sign In'}
                   </Button>
