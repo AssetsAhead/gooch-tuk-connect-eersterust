@@ -105,10 +105,17 @@ const Index = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <div className="mb-8">
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">
-              <span className="text-sa-green">Poort</span>
-              <span className="text-sa-gold">Link</span>
-            </h1>
+            <div className="flex items-center justify-center mb-6">
+              <img 
+                src="/logo.png" 
+                alt="PoortLink Logo" 
+                className="w-16 h-16 md:w-20 md:h-20 mr-4"
+              />
+              <h1 className="text-5xl md:text-6xl font-bold">
+                <span className="text-sa-green">Poort</span>
+                <span className="text-sa-gold">Link</span>
+              </h1>
+            </div>
             <p className="text-xl md:text-2xl text-muted-foreground mb-6">
               Connecting local hustle to national movement
             </p>
