@@ -23,6 +23,8 @@ import { PoliceDashboard } from "./components/dashboards/PoliceDashboard";
 import BusinessPortal from "./pages/BusinessPortal";
 import CommunitySafetyPortal from "./pages/CommunitySafetyPortal";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PaymentCancelled } from "./pages/PaymentCancelled";
 import { RoleAuth } from "./pages/RoleAuth";
@@ -96,6 +98,8 @@ const App = () => {
                     <CommunitySafetyPortal />
                   </ProtectedRoute>
                 } />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Toaster />
