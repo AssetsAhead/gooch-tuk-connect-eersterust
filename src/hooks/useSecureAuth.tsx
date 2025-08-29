@@ -62,7 +62,10 @@ export const useSecureAuth = () => {
   };
 
   const hasRole = (role: string): boolean => {
-    return getEffectiveRoles().some((r) => r === role);
+    const roles = getEffectiveRoles();
+    // Default: if no roles assigned yet, treat as 'passenger' for basic access
+    if (roles.length === 0 && role === 'passenger') return true;
+    return roles.some((r) => r === role);
   };
 
   const isAdmin = (): boolean => hasRole('admin');

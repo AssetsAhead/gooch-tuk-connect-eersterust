@@ -1,9 +1,10 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { Loader2 } from 'lucide-react';
 import { DemoModeBanner } from '@/components/DemoModeBanner';
+import { Button } from '@/components/ui/button';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -16,7 +17,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { user, loading, hasRole, isAdmin } = useSecureAuth();
   const { isDemo, role: demoRole } = useDemoMode();
-  const location = useLocation();
+const location = useLocation();
+  const navigate = useNavigate();
 
   if (loading) {
     return (
@@ -68,6 +70,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   return (
     <>
       {isDemo ? <DemoModeBanner /> : null}
+      <div className="fixed top-4 left-4 z-50">
+        <Button variant="outline" onClick={() => navigate(-1)}>← Back</Button>
+      </div>
       {children}
     </>
   );

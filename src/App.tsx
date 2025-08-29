@@ -88,16 +88,8 @@ const App = () => {
                     <PoliceDashboard />
                   </ProtectedRoute>
                 } />
-                <Route path="/business-portal" element={
-                  <ProtectedRoute requiredRole={['owner', 'marshall', 'admin']}>
-                    <BusinessPortal />
-                  </ProtectedRoute>
-                } />
-                <Route path="/community-safety" element={
-                  <ProtectedRoute requiredRole={['police', 'marshall', 'admin']}>
-                    <CommunitySafetyPortal />
-                  </ProtectedRoute>
-                } />
+                <Route path="/business-portal" element={<BusinessPortal />} />
+                <Route path="/community-safety" element={<CommunitySafetyPortal />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />

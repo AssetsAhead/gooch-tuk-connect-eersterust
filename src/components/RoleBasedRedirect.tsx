@@ -40,7 +40,7 @@ export const RoleBasedRedirect: React.FC = () => {
       console.log('RoleBasedRedirect - Detected role:', role);
       
       // If no role found, redirect to auth
-      if (!role || role === 'passenger') {
+      if (!role) {
         console.log('RoleBasedRedirect - No role found, redirecting to auth');
         setRedirected(true);
         navigate('/auth', { replace: true });

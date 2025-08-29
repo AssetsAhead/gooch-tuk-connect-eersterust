@@ -24,9 +24,9 @@ export const AuthPage = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
 
-  // If user is already authenticated, redirect to main page
+  // If user is already authenticated, redirect to dashboard for role-based routing
   if (user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const onPhoneAuth = async () => {
