@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -7,9 +7,12 @@ import { useToast } from '@/hooks/use-toast';
 export const useSecurityMonitoring = () => {
   const { user } = useSecureAuth();
   const { toast } = useToast();
+  const isInitialized = useRef(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || isInitialized.current) return;
+    
+    isInitialized.current = true;
 
     // Monitor for suspicious activities
     const monitorSuspiciousActivity = async () => {
@@ -77,8 +80,11 @@ export const useSecurityMonitoring = () => {
     // Set up periodic monitoring
     const securityInterval = setInterval(monitorSuspiciousActivity, 5 * 60 * 1000); // Every 5 minutes
 
-    return () => clearInterval(securityInterval);
-  }, [user, toast]);
+    return () => {
+      clearInterval(securityInterval);
+      isInitialized.current = false;
+    };
+  }, [user?.id]); // Only depend on user.id to prevent loops
 
   // Function to report security incident
   const reportSecurityIncident = async (incidentType: string, details: any) => {

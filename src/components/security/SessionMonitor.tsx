@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -8,9 +8,12 @@ export const SessionMonitor = () => {
   const { user, isAdmin } = useSecureAuth();
   const [lastActivity, setLastActivity] = useState(Date.now());
   const { toast } = useToast();
+  const isInitialized = useRef(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || isInitialized.current) return;
+    
+    isInitialized.current = true;
 
     // Admin gets shorter session timeout for enhanced security
     const isAdminUser = isAdmin();
@@ -59,23 +62,15 @@ export const SessionMonitor = () => {
     // Initialize timeout
     resetTimeout();
 
-    // Log security events - temporarily disabled until types are updated
-    const logSecurityEvent = async (event: string) => {
-      console.log('Security event:', event);
-    };
-
-    // Log session start
-    logSecurityEvent('session_start');
-
     return () => {
       clearTimeout(timeoutId);
       clearTimeout(warningId);
       activityEvents.forEach(event => {
         document.removeEventListener(event, handleActivity, true);
       });
-      logSecurityEvent('session_end');
+      isInitialized.current = false;
     };
-  }, [user, isAdmin, toast]);
+  }, [user?.id]); // Only depend on user.id to prevent loops
 
   return null; // This component only monitors, doesn't render anything
 };
