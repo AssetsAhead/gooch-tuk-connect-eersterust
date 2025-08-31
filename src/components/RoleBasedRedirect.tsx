@@ -39,21 +39,11 @@ export const RoleBasedRedirect: React.FC = () => {
       const role = getPrimaryRole();
       console.log('RoleBasedRedirect - Detected role:', role);
       
-      // If no role found, redirect to auth
-      if (!role) {
-        console.log('RoleBasedRedirect - No role found, redirecting to auth');
-        setRedirected(true);
-        navigate('/auth', { replace: true });
-        return;
-      }
-      
+      // All authenticated users get passenger access by default
       setRedirected(true);
       
-      // Navigate immediately since we have all the data we need
+      // Navigate based on highest assigned role, fallback to passenger
       switch (role) {
-        case 'passenger':
-          navigate('/passenger', { replace: true });
-          break;
         case 'driver':
           navigate('/driver', { replace: true });
           break;
@@ -70,10 +60,18 @@ export const RoleBasedRedirect: React.FC = () => {
           navigate('/police', { replace: true });
           break;
         default:
-          console.log('RoleBasedRedirect - No valid role found, redirecting to auth');
-          navigate('/auth', { replace: true });
+          // Default: all users can access passenger portal
+          navigate('/passenger', { replace: true });
       }
     } else if (!loading && !user && !redirected) {
+      // No authentication required for public portals
+      const currentPath = window.location.pathname;
+      if (currentPath === '/business-portal' || currentPath === '/community-safety') {
+        console.log('RoleBasedRedirect - Public portal access allowed');
+        setRedirected(true);
+        return;
+      }
+      
       console.log('RoleBasedRedirect - No user, redirecting to auth');
       setRedirected(true);
       navigate('/auth', { replace: true });
