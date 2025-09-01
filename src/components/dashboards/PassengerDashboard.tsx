@@ -28,6 +28,7 @@ import { TownshipEconomy } from "@/components/TownshipEconomy";
 import { EnhancedMultiLanguageAssistant } from "@/components/EnhancedMultiLanguageAssistant";
 import { CrimePreventionNetwork } from "@/components/CrimePreventionNetwork";
 import { EnhancedFinancialInclusion } from "@/components/EnhancedFinancialInclusion";
+import { SmartLocationInput } from "@/components/SmartLocationInput";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
@@ -70,6 +71,27 @@ export const PassengerDashboard = () => {
     fetchNearbyDrivers();
   }, []);
 
+  const saveSuggestion = async (field: 'pickup' | 'destination', text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    const key = `loc_suggestions:${user?.id || 'anon'}:${field}`;
+    try {
+      const existing: string[] = JSON.parse(localStorage.getItem(key) || '[]');
+      const next = [trimmed, ...existing.filter((s) => s.toLowerCase() !== trimmed.toLowerCase())].slice(0, 20);
+      localStorage.setItem(key, JSON.stringify(next));
+    } catch (e) {}
+    try {
+      await supabase.from('analytics_events').insert({
+        event_type: 'location_input',
+        user_id: user?.id ?? null,
+        session_id: crypto?.randomUUID?.() ?? 'web',
+        event_data: { field, value: trimmed },
+        page_url: window.location.pathname,
+        user_agent: navigator.userAgent,
+      });
+    } catch (e) {}
+  };
+
   const handleBookRide = async () => {
     if (!pickup || !destination) {
       toast({
@@ -82,6 +104,8 @@ export const PassengerDashboard = () => {
 
     const originalPrice = Math.floor(Math.random() * 30 + 15);
     const { finalPrice } = calculateDiscountedPrice(originalPrice);
+    await saveSuggestion('pickup', pickup);
+    await saveSuggestion('destination', destination);
     await createRide(pickup, destination, "standard", finalPrice);
   };
 
@@ -197,18 +221,22 @@ export const PassengerDashboard = () => {
               <CardContent className="space-y-4">
                 <div>
                   <label className="text-sm font-medium mb-2 block">Pickup Location</label>
-                  <Input 
+                  <SmartLocationInput
                     placeholder="Enter pickup location..."
                     value={pickup}
-                    onChange={(e) => setPickup(e.target.value)}
+                    onChange={setPickup}
+                    storageKey="pickup"
+                    quickSuggestions={quickDestinations.map((d) => d.name)}
                   />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Destination</label>
-                  <Input 
+                  <SmartLocationInput
                     placeholder="Where to?"
                     value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
+                    onChange={setDestination}
+                    storageKey="destination"
+                    quickSuggestions={quickDestinations.map((d) => d.name)}
                   />
                 </div>
                 <Button 
@@ -509,6 +537,11 @@ export const PassengerDashboard = () => {
             </div>
           </TabsContent>
         </Tabs>
+        <div className="fixed bottom-4 right-4 z-50">
+          <Button variant="secondary" onClick={() => setActiveTab('payments')} className="shadow-lg">
+            SASSA Calendar
+          </Button>
+        </div>
       </div>
     </div>
   );

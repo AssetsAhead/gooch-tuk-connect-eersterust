@@ -96,6 +96,14 @@ const CommunitySafetyPortal = () => {
             Community Portal
           </Badge>
         </div>
+        {/* Quick Home FAB */}
+        <div className="fixed bottom-4 right-4 z-50">
+          <Link to="/">
+            <Button variant="secondary" className="shadow-lg" aria-label="Home">
+              Home
+            </Button>
+          </Link>
+        </div>
 
         {/* Hero Section */}
         <div className="text-center mb-12">

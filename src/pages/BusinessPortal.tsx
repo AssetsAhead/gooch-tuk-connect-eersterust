@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -77,13 +78,23 @@ const BusinessPortal = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
-        <Button
-          onClick={() => window.history.back()}
-          variant="outline"
-          className="bg-background/90 backdrop-blur-sm"
-        >
-          ← Back to Home
-        </Button>
+        <Link to="/">
+          <Button
+            variant="outline"
+            className="bg-background/90 backdrop-blur-sm"
+            aria-label="Back to home"
+          >
+            ← Back to Home
+          </Button>
+        </Link>
+      </div>
+      {/* Quick Home FAB */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <Link to="/">
+          <Button variant="secondary" className="shadow-lg" aria-label="Home">
+            Home
+          </Button>
+        </Link>
       </div>
 
       <div className="container mx-auto px-4 py-8 pt-20">
