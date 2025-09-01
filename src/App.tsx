@@ -30,6 +30,7 @@ import { PaymentCancelled } from "./pages/PaymentCancelled";
 import { RoleAuth } from "./pages/RoleAuth";
 import RegisterComplete from "./pages/RegisterComplete";
 import { SafeMode } from "./pages/SafeMode";
+import { GlobalPanicButton } from "./components/GlobalPanicButton";
 
 const queryClient = new QueryClient();
 
@@ -93,10 +94,11 @@ const App = () => {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
-                </Routes>
+                 </Routes>
+                <GlobalPanicButton />
                 <Toaster />
                 <Sonner />
-                </EnhancedSecurityProvider>
+                 </EnhancedSecurityProvider>
               </BrowserRouter>
             </TooltipProvider>
           </AdminUniversalAccess>

@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { ArrowLeft, Shield, Car, Users, CreditCard, UserCheck, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 
 const roleConfig = {
   passenger: {
@@ -339,9 +340,7 @@ export const RoleAuth = () => {
                   {adminError && (
                     <p className="text-sm text-destructive">{adminError}</p>
                   )}
-                  <Button onClick={onGoogleAuth} disabled={signingIn} className="w-full mb-3" variant="outline">
-                    {signingIn ? 'Signing in…' : 'Continue with Google'}
-                  </Button>
+                  <GoogleAuthButton disabled={signingIn} />
                   <div className="relative mb-3">
                     <div className="absolute inset-0 flex items-center">
                       <span className="w-full border-t" />
