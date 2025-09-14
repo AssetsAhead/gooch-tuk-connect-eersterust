@@ -19,7 +19,7 @@ export const RoleBasedRedirect: React.FC = () => {
         // Only redirect if on root, auth, or dashboard pages
         if (currentPath === '/' || currentPath === '/auth' || currentPath === '/dashboard') {
           setRedirected(true);
-          navigate('/admin', { replace: true });
+          navigate('/admin');
           return;
         }
         
@@ -27,7 +27,7 @@ export const RoleBasedRedirect: React.FC = () => {
         if (currentPath.startsWith('/auth/')) {
           const rolePath = currentPath.replace('/auth/', '');
           setRedirected(true);
-          navigate(`/${rolePath}`, { replace: true });
+          navigate(`/${rolePath}`);
           return;
         }
         
@@ -45,23 +45,23 @@ export const RoleBasedRedirect: React.FC = () => {
       // Navigate based on highest assigned role, fallback to passenger
       switch (role) {
         case 'driver':
-          navigate('/driver', { replace: true });
+          navigate('/driver');
           break;
         case 'owner':
-          navigate('/owner', { replace: true });
+          navigate('/owner');
           break;
         case 'marshall':
-          navigate('/marshall', { replace: true });
+          navigate('/marshall');
           break;
         case 'admin':
-          navigate('/admin', { replace: true });
+          navigate('/admin');
           break;
         case 'police':
-          navigate('/police', { replace: true });
+          navigate('/police');
           break;
         default:
           // Default: all users can access passenger portal
-          navigate('/passenger', { replace: true });
+          navigate('/passenger');
       }
     } else if (!loading && !user && !redirected) {
       // No authentication required for public portals
@@ -74,7 +74,7 @@ export const RoleBasedRedirect: React.FC = () => {
       
       console.log('RoleBasedRedirect - No user, redirecting to auth');
       setRedirected(true);
-      navigate('/auth', { replace: true });
+      navigate('/auth');
     }
   }, [user, loading, navigate, redirected, isAdmin, getPrimaryRole]);
 
