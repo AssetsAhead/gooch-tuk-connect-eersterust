@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'app.lovable.151b89e2eda149dfb8ebace47fd64286',
-  appName: 'poort-connect',
+  appName: 'PoortLink',
   webDir: 'dist',
   bundledWebRuntime: false,
   server: {
