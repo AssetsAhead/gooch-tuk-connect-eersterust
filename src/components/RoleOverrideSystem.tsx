@@ -3,7 +3,7 @@ import { useRoleHierarchy } from '@/hooks/useRoleHierarchy';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Users, Car, Crown, Eye, AlertTriangle } from 'lucide-react';
+import { Shield, Users, Car, Crown, Eye, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const roleIcons = {
@@ -53,10 +53,21 @@ export const RoleOverrideSystem: React.FC = () => {
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5" />
-          Role Override System
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5" />
+            Role Override System
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+        </div>
         <CardDescription>
           {isAdmin 
             ? "As admin, you have access to all portals for system monitoring and debugging."

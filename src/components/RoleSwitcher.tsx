@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useRoleSwitching } from '@/hooks/useRoleSwitching';
+import { useNavigate } from 'react-router-dom';
 import { 
   User, 
   Car, 
@@ -12,7 +13,8 @@ import {
   BadgeCheck,
   UserCheck,
   Users,
-  Loader2
+  Loader2,
+  ArrowLeft
 } from 'lucide-react';
 
 const roleIcons = {
@@ -44,6 +46,7 @@ const roleDescriptions = {
 
 export const RoleSwitcher: React.FC = () => {
   const { availableRoles, currentRole, loading, switchRole, addRole } = useRoleSwitching();
+  const navigate = useNavigate();
 
   const allRoles = ['passenger', 'driver', 'owner', 'marshall', 'admin', 'police'];
   const unavailableRoles = allRoles.filter(role => 
@@ -66,10 +69,21 @@ export const RoleSwitcher: React.FC = () => {
       {/* Current Role Display */}
       <Card className="w-full max-w-4xl mx-auto border-2 border-primary">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UserCheck className="h-5 w-5" />
-            Current Active Role
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <UserCheck className="h-5 w-5" />
+              Current Active Role
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
