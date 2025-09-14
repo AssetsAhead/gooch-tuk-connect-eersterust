@@ -19,7 +19,7 @@ export const RoleBasedRedirect: React.FC = () => {
         // Only redirect if on root, auth, or dashboard pages
         if (currentPath === '/' || currentPath === '/auth' || currentPath === '/dashboard') {
           setRedirected(true);
-          navigate('/admin');
+          navigate('/admin', { replace: true });
           return;
         }
         
@@ -27,7 +27,7 @@ export const RoleBasedRedirect: React.FC = () => {
         if (currentPath.startsWith('/auth/')) {
           const rolePath = currentPath.replace('/auth/', '');
           setRedirected(true);
-          navigate(`/${rolePath}`);
+          navigate(`/${rolePath}`, { replace: true });
           return;
         }
         
@@ -43,25 +43,26 @@ export const RoleBasedRedirect: React.FC = () => {
       setRedirected(true);
       
       // Navigate based on highest assigned role, fallback to passenger
+      const fromAuthFlow = window.location.pathname === '/' || window.location.pathname === '/auth' || window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/auth/');
       switch (role) {
         case 'driver':
-          navigate('/driver');
+          navigate('/driver', { replace: fromAuthFlow });
           break;
         case 'owner':
-          navigate('/owner');
+          navigate('/owner', { replace: fromAuthFlow });
           break;
         case 'marshall':
-          navigate('/marshall');
+          navigate('/marshall', { replace: fromAuthFlow });
           break;
         case 'admin':
-          navigate('/admin');
+          navigate('/admin', { replace: fromAuthFlow });
           break;
         case 'police':
-          navigate('/police');
+          navigate('/police', { replace: fromAuthFlow });
           break;
         default:
           // Default: all users can access passenger portal
-          navigate('/passenger');
+          navigate('/passenger', { replace: fromAuthFlow });
       }
     } else if (!loading && !user && !redirected) {
       // No authentication required for public portals
