@@ -6,7 +6,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Shield, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface ComplianceStatus {
@@ -31,28 +30,15 @@ export const LegalComplianceHub: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      fetchComplianceStatus();
+      loadComplianceStatus();
     }
   }, [user]);
 
-  const fetchComplianceStatus = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('user_compliance')
-        .select('*')
-        .eq('user_id', user?.id)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching compliance status:', error);
-        return;
-      }
-
-      if (data) {
-        setComplianceStatus(data.compliance_data);
-      }
-    } catch (error) {
-      console.error('Error fetching compliance status:', error);
+  const loadComplianceStatus = async () => {
+    // Load from localStorage for now
+    const savedStatus = localStorage.getItem(`compliance_${user?.id}`);
+    if (savedStatus) {
+      setComplianceStatus(JSON.parse(savedStatus));
     }
   };
 
@@ -64,15 +50,8 @@ export const LegalComplianceHub: React.FC = () => {
       const newStatus = { ...complianceStatus, [key]: accepted };
       setComplianceStatus(newStatus);
 
-      const { error } = await supabase
-        .from('user_compliance')
-        .upsert({
-          user_id: user.id,
-          compliance_data: newStatus,
-          updated_at: new Date().toISOString(),
-        });
-
-      if (error) throw error;
+      // Save to localStorage for now
+      localStorage.setItem(`compliance_${user.id}`, JSON.stringify(newStatus));
 
       toast({
         title: "Compliance Updated",

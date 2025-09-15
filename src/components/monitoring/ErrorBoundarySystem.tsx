@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
   children: ReactNode;
@@ -69,16 +68,10 @@ export class ErrorBoundarySystem extends Component<Props, State> {
         user_id: null, // Will be set if user is logged in
       };
 
-      // Try to get current user
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        errorReport.user_id = user.id;
-      }
-
-      // Log to Supabase
-      await supabase
-        .from('error_logs')
-        .insert(errorReport);
+      // Save to localStorage for now
+      const existingErrors = JSON.parse(localStorage.getItem('error_logs') || '[]');
+      existingErrors.push(errorReport);
+      localStorage.setItem('error_logs', JSON.stringify(existingErrors));
         
     } catch (reportingError) {
       console.error('Failed to report error:', reportingError);

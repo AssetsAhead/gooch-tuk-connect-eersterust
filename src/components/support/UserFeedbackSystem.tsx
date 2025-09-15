@@ -8,7 +8,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, Bug, Lightbulb, AlertTriangle, Star } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface FeedbackForm {
@@ -68,23 +67,18 @@ export const UserFeedbackSystem: React.FC = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('user_feedback')
-        .insert({
-          user_id: user.id,
-          feedback_type: feedback.type,
-          category: feedback.category,
-          priority: feedback.priority,
-          rating: feedback.rating,
-          title: feedback.title,
-          description: feedback.description,
-          device_info: feedback.device_info,
-          browser_info: feedback.browser_info,
-          status: 'submitted',
-          created_at: new Date().toISOString(),
-        });
+      // Save to localStorage for now
+      const feedbackRecord = {
+        ...feedback,
+        id: Date.now().toString(),
+        user_id: user.id,
+        timestamp: new Date().toISOString(),
+        status: 'submitted',
+      };
 
-      if (error) throw error;
+      const existingFeedback = JSON.parse(localStorage.getItem('user_feedback') || '[]');
+      existingFeedback.push(feedbackRecord);
+      localStorage.setItem('user_feedback', JSON.stringify(existingFeedback));
 
       toast({
         title: "Feedback Submitted",

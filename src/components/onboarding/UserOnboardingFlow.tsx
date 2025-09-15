@@ -5,7 +5,6 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Circle, ArrowRight, ArrowLeft, Users, Shield, MapPin } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { LegalComplianceHub } from '@/components/compliance/LegalComplianceHub';
 import { PrivacyControls } from '@/components/compliance/PrivacyControls';
@@ -87,31 +86,19 @@ export const UserOnboardingFlow: React.FC = () => {
   }, [user]);
 
   const loadOnboardingProgress = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('user_onboarding')
-        .select('*')
-        .eq('user_id', user?.id)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error loading onboarding progress:', error);
-        return;
-      }
-
-      if (data) {
-        setOnboardingData(data.onboarding_data || {});
-        setCurrentStep(data.current_step || 0);
-        
-        // Update step completion status
-        const updatedSteps = steps.map((step, index) => ({
-          ...step,
-          completed: index < (data.current_step || 0) || data.completed_steps?.includes(step.id),
-        }));
-        setSteps(updatedSteps);
-      }
-    } catch (error) {
-      console.error('Error loading onboarding progress:', error);
+    // Load from localStorage for now
+    const savedProgress = localStorage.getItem(`onboarding_${user?.id}`);
+    if (savedProgress) {
+      const data = JSON.parse(savedProgress);
+      setOnboardingData(data.onboarding_data || {});
+      setCurrentStep(data.current_step || 0);
+      
+      // Update step completion status
+      const updatedSteps = steps.map((step, index) => ({
+        ...step,
+        completed: index < (data.current_step || 0) || data.completed_steps?.includes(step.id),
+      }));
+      setSteps(updatedSteps);
     }
   };
 
@@ -122,17 +109,16 @@ export const UserOnboardingFlow: React.FC = () => {
       const updatedData = stepData ? { ...onboardingData, ...stepData } : onboardingData;
       const completedSteps = steps.slice(0, stepIndex + 1).map(step => step.id);
 
-      await supabase
-        .from('user_onboarding')
-        .upsert({
-          user_id: user.id,
-          current_step: stepIndex,
-          onboarding_data: updatedData,
-          completed_steps: completedSteps,
-          is_completed: stepIndex >= steps.length - 1,
-          updated_at: new Date().toISOString(),
-        });
+      const progressData = {
+        user_id: user.id,
+        current_step: stepIndex,
+        onboarding_data: updatedData,
+        completed_steps: completedSteps,
+        is_completed: stepIndex >= steps.length - 1,
+        updated_at: new Date().toISOString(),
+      };
 
+      localStorage.setItem(`onboarding_${user.id}`, JSON.stringify(progressData));
       setOnboardingData(updatedData);
     } catch (error) {
       console.error('Error saving onboarding progress:', error);

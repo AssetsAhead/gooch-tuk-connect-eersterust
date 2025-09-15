@@ -7,7 +7,6 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Shield, Eye, MapPin, Bell, Users, Database } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface PrivacySettings {
@@ -34,28 +33,15 @@ export const PrivacyControls: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      fetchPrivacySettings();
+      loadSettings();
     }
   }, [user]);
 
-  const fetchPrivacySettings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('user_privacy_settings')
-        .select('*')
-        .eq('user_id', user?.id)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching privacy settings:', error);
-        return;
-      }
-
-      if (data) {
-        setSettings(data.settings);
-      }
-    } catch (error) {
-      console.error('Error fetching privacy settings:', error);
+  const loadSettings = async () => {
+    // Load from localStorage for now
+    const savedSettings = localStorage.getItem(`privacy_settings_${user?.id}`);
+    if (savedSettings) {
+      setSettings(JSON.parse(savedSettings));
     }
   };
 
@@ -67,15 +53,8 @@ export const PrivacyControls: React.FC = () => {
       const newSettings = { ...settings, [key]: value };
       setSettings(newSettings);
 
-      const { error } = await supabase
-        .from('user_privacy_settings')
-        .upsert({
-          user_id: user.id,
-          settings: newSettings,
-          updated_at: new Date().toISOString(),
-        });
-
-      if (error) throw error;
+      // Save to localStorage for now
+      localStorage.setItem(`privacy_settings_${user.id}`, JSON.stringify(newSettings));
 
       toast({
         title: "Privacy Setting Updated",

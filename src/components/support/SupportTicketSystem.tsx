@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HelpCircle, Clock, CheckCircle, AlertCircle, MessageCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface SupportTicket {
@@ -20,6 +19,7 @@ interface SupportTicket {
   status: 'open' | 'in_progress' | 'resolved' | 'closed';
   created_at: string;
   updated_at: string;
+  user_id: string;
 }
 
 export const SupportTicketSystem: React.FC = () => {
@@ -42,14 +42,11 @@ export const SupportTicketSystem: React.FC = () => {
 
   const fetchTickets = async () => {
     try {
-      const { data, error } = await supabase
-        .from('support_tickets')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setTickets(data || []);
+      // Load from localStorage for now
+      const savedTickets = localStorage.getItem(`support_tickets_${user?.id}`);
+      if (savedTickets) {
+        setTickets(JSON.parse(savedTickets));
+      }
     } catch (error) {
       console.error('Error fetching tickets:', error);
     }
@@ -67,24 +64,24 @@ export const SupportTicketSystem: React.FC = () => {
 
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('support_tickets')
-        .insert({
-          user_id: user.id,
-          title: newTicket.title,
-          description: newTicket.description,
-          category: newTicket.category,
-          priority: newTicket.priority,
-          status: 'open',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
+      const ticketData: SupportTicket = {
+        id: Date.now().toString(),
+        user_id: user.id,
+        title: newTicket.title,
+        description: newTicket.description,
+        category: newTicket.category,
+        priority: newTicket.priority,
+        status: 'open',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
 
-      if (error) throw error;
+      const updatedTickets = [ticketData, ...tickets];
+      setTickets(updatedTickets);
+      
+      // Save to localStorage
+      localStorage.setItem(`support_tickets_${user.id}`, JSON.stringify(updatedTickets));
 
-      setTickets([data, ...tickets]);
       setNewTicket({
         title: '',
         description: '',
