@@ -22,6 +22,7 @@ import { AdminDashboard } from "./components/dashboards/AdminDashboard";
 import { PoliceDashboard } from "./components/dashboards/PoliceDashboard";
 import BusinessPortal from "./pages/BusinessPortal";
 import CommunitySafetyPortal from "./pages/CommunitySafetyPortal";
+import PassengerRecruitment from "./pages/PassengerRecruitment";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -91,6 +92,7 @@ const App = () => {
                 } />
                 <Route path="/business-portal" element={<BusinessPortal />} />
                 <Route path="/community-safety" element={<CommunitySafetyPortal />} />
+                <Route path="/passenger-recruitment" element={<PassengerRecruitment />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
