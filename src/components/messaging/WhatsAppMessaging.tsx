@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Send, Users, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { MessageSIDValidator } from './MessageSIDValidator';
 
 interface WhatsAppMessagingProps {
   userRole?: string;
@@ -93,6 +94,8 @@ export const WhatsAppMessaging: React.FC<WhatsAppMessagingProps> = ({ userRole =
 
   return (
     <div className="space-y-6">
+      <MessageSIDValidator />
+      
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

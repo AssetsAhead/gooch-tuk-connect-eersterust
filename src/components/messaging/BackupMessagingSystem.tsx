@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { AlertTriangle, MessageSquare, Smartphone, Zap, WifiOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { MessageSIDValidator } from './MessageSIDValidator';
 
 interface BackupMessagingSystemProps {
   userRole?: string;
@@ -148,6 +149,8 @@ export const BackupMessagingSystem: React.FC<BackupMessagingSystemProps> = ({ us
 
   return (
     <div className="space-y-6">
+      <MessageSIDValidator />
+      
       {/* Network Status Indicator */}
       <Card className={networkStatus === 'offline' ? 'border-red-200 bg-red-50' : ''}>
         <CardContent className="pt-6">
