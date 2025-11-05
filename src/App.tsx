@@ -38,6 +38,7 @@ import { StateDebugger } from "./components/dev/StateDebugger";
 import { NetworkMonitor } from "./components/dev/NetworkMonitor";
 import { ComponentTreeVisualizer } from "./components/dev/ComponentTreeVisualizer";
 import { AccessibilityAuditor } from "./components/dev/AccessibilityAuditor";
+import { TimeTravelDebugger } from "./components/dev/TimeTravelDebugger";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,7 @@ const App = () => {
                 <NetworkMonitor />
                 <ComponentTreeVisualizer />
                 <AccessibilityAuditor />
+                <TimeTravelDebugger />
               </EnhancedSecurityProvider>
             </BrowserRouter>
           </AdminUniversalAccess>
