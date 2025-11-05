@@ -32,6 +32,7 @@ import RegisterComplete from "./pages/RegisterComplete";
 import { SafeMode } from "./pages/SafeMode";
 import { Compliance } from "./pages/Compliance";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
+import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,7 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <GlobalPanicButton />
+                <ReactHealthMonitor />
               </EnhancedSecurityProvider>
             </BrowserRouter>
           </AdminUniversalAccess>
