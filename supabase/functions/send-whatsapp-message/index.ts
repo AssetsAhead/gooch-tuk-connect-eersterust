@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,6 +13,40 @@ interface WhatsAppMessageRequest {
   freeformMessage?: string;
 }
 
+// Rate limiting: max 5 requests per minute per user
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+const checkRateLimit = (userId: string): boolean => {
+  const now = Date.now();
+  const userLimit = rateLimitStore.get(userId);
+
+  if (!userLimit || now > userLimit.resetTime) {
+    rateLimitStore.set(userId, { count: 1, resetTime: now + 60000 });
+    return true;
+  }
+
+  if (userLimit.count >= 5) {
+    return false;
+  }
+
+  userLimit.count++;
+  return true;
+};
+
+const validatePhoneNumber = (phone: string): boolean => {
+  // E.164 format: +[country code][subscriber number]
+  const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+  return phoneRegex.test(phone.replace(/[\s-()]/g, ''));
+};
+
+const sanitizeMessage = (message: string): string => {
+  // Remove potential malicious content and limit length
+  return message
+    .trim()
+    .replace(/[<>]/g, '') // Remove potential HTML/script tags
+    .substring(0, 1000); // Limit to 1000 chars
+};
+
 const TWILIO_ACCOUNT_SID = Deno.env.get('TWILIO_ACCOUNT_SID');
 const TWILIO_AUTH_TOKEN = Deno.env.get('TWILIO_AUTH_TOKEN');
 const TWILIO_WHATSAPP_FROM = 'whatsapp:+14155238886'; // Twilio Sandbox number
@@ -23,14 +58,57 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Validate JWT and get user
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+
+    // Check rate limit
+    if (!checkRateLimit(user.id)) {
+      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Max 5 messages per minute.' }), {
+        status: 429,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+
     if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
       throw new Error('Missing Twilio credentials');
     }
 
     const { to, templateName, templateParams, freeformMessage }: WhatsAppMessageRequest = await req.json();
 
-    if (!to) {
-      throw new Error('Phone number (to) is required');
+    // Validate phone number
+    if (!to || !validatePhoneNumber(to)) {
+      return new Response(JSON.stringify({ error: 'Invalid phone number format. Use E.164 format (+country code + number)' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+
+    // Validate message content
+    if (!freeformMessage && !templateName) {
+      return new Response(JSON.stringify({ error: 'Either freeformMessage or templateName is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
     }
 
     // Format phone number for WhatsApp
@@ -39,26 +117,27 @@ const handler = async (req: Request): Promise<Response> => {
     let messageBody = '';
     
     if (templateName) {
-      // For template messages, we'll use ContentSid once approved templates are available
-      // For now, using basic message format
+      // Sanitize template parameters
+      const sanitizedParams = templateParams?.map(p => sanitizeMessage(p)) || [];
+      
       switch (templateName) {
         case 'ride_confirmation':
-          messageBody = `🚖 Ride Confirmed! Driver: ${templateParams?.[0] || 'Unknown'}, ETA: ${templateParams?.[1] || '5 mins'}. Track your ride in the app.`;
+          messageBody = `🚖 Ride Confirmed! Driver: ${sanitizedParams[0] || 'Unknown'}, ETA: ${sanitizedParams[1] || '5 mins'}. Track your ride in the app.`;
           break;
         case 'payment_reminder':
-          messageBody = `💰 Payment Reminder: Your SASSA transport payment of R${templateParams?.[0] || '0'} is due on ${templateParams?.[1] || 'today'}. Discount available!`;
+          messageBody = `💰 Payment Reminder: Your SASSA transport payment of R${sanitizedParams[0] || '0'} is due on ${sanitizedParams[1] || 'today'}. Discount available!`;
           break;
         case 'emergency_alert':
-          messageBody = `🚨 Emergency Alert: ${templateParams?.[0] || 'Safety incident'} in your area. Stay safe and avoid ${templateParams?.[1] || 'the area'}.`;
+          messageBody = `🚨 Emergency Alert: ${sanitizedParams[0] || 'Safety incident'} in your area. Stay safe and avoid ${sanitizedParams[1] || 'the area'}.`;
           break;
         case 'driver_notification':
-          messageBody = `🚗 New Ride Request: Pickup at ${templateParams?.[0] || 'Unknown location'}, Destination: ${templateParams?.[1] || 'Unknown'}. Accept in app.`;
+          messageBody = `🚗 New Ride Request: Pickup at ${sanitizedParams[0] || 'Unknown location'}, Destination: ${sanitizedParams[1] || 'Unknown'}. Accept in app.`;
           break;
         default:
-          messageBody = freeformMessage || 'Transport update from your taxi service.';
+          messageBody = sanitizeMessage(freeformMessage || 'Transport update from your taxi service.');
       }
     } else {
-      messageBody = freeformMessage || 'Transport update from your taxi service.';
+      messageBody = sanitizeMessage(freeformMessage || 'Transport update from your taxi service.');
     }
 
     // Create Twilio API URL
@@ -70,8 +149,8 @@ const handler = async (req: Request): Promise<Response> => {
     formData.append('To', formattedTo);
     formData.append('Body', messageBody);
 
-    // Create basic auth header
-    const authHeader = btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`);
+    // Create basic auth header for Twilio
+    const twilioAuthHeader = btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`);
 
     console.log(`Sending WhatsApp message to ${formattedTo}: ${messageBody}`);
 
@@ -79,7 +158,7 @@ const handler = async (req: Request): Promise<Response> => {
     const response = await fetch(twilioUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${authHeader}`,
+        'Authorization': `Basic ${twilioAuthHeader}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: formData,
