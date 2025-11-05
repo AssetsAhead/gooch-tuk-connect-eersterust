@@ -27,6 +27,9 @@ export const useRoleHierarchy = () => {
   const { user, userProfile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  
+  // Admin role switching state (memory-only, no browser storage)
+  const [adminActiveRole, setAdminActiveRole] = useState<string>('admin');
 
   // Use server-verified admin check
   const { isAdmin, loading: adminLoading } = useServerVerifiedAdmin();
@@ -59,16 +62,16 @@ export const useRoleHierarchy = () => {
 
     setLoading(true);
     try {
-      // For admin, update session storage and log the action
+      // For admin, update React state (memory-only, secure)
       if (isAdmin) {
-        sessionStorage.setItem('admin_active_role', targetRole);
+        setAdminActiveRole(targetRole);
         
         // Log the role switch in audit logs
         await supabase.from('admin_audit_logs').insert({
           admin_id: user?.id,
           action_type: 'ROLE_SWITCH',
           details: { 
-            from_role: userProfile?.role,
+            from_role: adminActiveRole,
             to_role: targetRole,
             timestamp: new Date().toISOString()
           }
@@ -116,14 +119,14 @@ export const useRoleHierarchy = () => {
     } finally {
       setLoading(false);
     }
-  }, [canAccessRole, isAdmin, user?.id, refreshProfile, toast]);
+  }, [canAccessRole, isAdmin, adminActiveRole, user?.id, refreshProfile, toast]);
 
   const getCurrentActiveRole = useCallback(() => {
     if (isAdmin) {
-      return sessionStorage.getItem('admin_active_role') || 'admin';
+      return adminActiveRole;
     }
     return userProfile?.role || null;
-  }, [isAdmin, userProfile?.role]);
+  }, [isAdmin, adminActiveRole, userProfile?.role]);
 
   const assignRole = useCallback(async (userId: string, role: string) => {
     if (!isAdmin) {
