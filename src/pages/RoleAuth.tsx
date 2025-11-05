@@ -143,18 +143,31 @@ export const RoleAuth = () => {
     setSigningIn(true);
     try {
       const emailLc = email.trim().toLowerCase();
-      if (!allowedAdminEmails.includes(emailLc)) {
-        throw new Error('This admin email is not whitelisted yet.');
-      }
+      
+      // Sign in with password
       const { error } = await supabase.auth.signInWithPassword({
         email: emailLc,
         password
       });
       if (error) throw error;
-      // Ensure admin role is present in metadata for guards
-      await supabase.auth.updateUser({ data: { role: 'admin' } });
-      // Reset master unlock for new session
-      localStorage.removeItem('admin_master_unlocked');
+
+      // Verify admin role exists in database (server-side check)
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser) throw new Error('User not found');
+
+      const { data: adminRole, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role, is_active')
+        .eq('user_id', currentUser.id)
+        .eq('role', 'admin')
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (roleError || !adminRole) {
+        await supabase.auth.signOut();
+        throw new Error('Unauthorized: No active admin role found');
+      }
+
       navigate('/');
     } catch (e: any) {
       setAdminError(e?.message || 'Admin sign-in failed');

@@ -35,75 +35,46 @@ export const EnhancedRoleGuard: React.FC<EnhancedRoleGuardProps> = ({
   // Enhanced security checks for South African context
   const isVerifiedUser = (userProfile as any)?.sassa_verified || (userProfile as any)?.id_verified;
   const isHighSecurityRole = ['police', 'admin', 'marshall'].includes(userRole);
-  const isAdminUser = userRole === 'admin';
+  
+  // Verify admin role from database (server-side check)
+  const [isVerifiedAdmin, setIsVerifiedAdmin] = useState(false);
+  const [verifying, setVerifying] = useState(true);
 
-  // Admin master password gate (prompt once per session)
-  const [masterPassword, setMasterPassword] = useState('');
-  const [verifying, setVerifying] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [unlocked, setUnlocked] = useState(() => {
-    return typeof window !== 'undefined' && localStorage.getItem('admin_master_unlocked') === 'true';
-  });
+  React.useEffect(() => {
+    const checkAdminRole = async () => {
+      if (!user) {
+        setVerifying(false);
+        return;
+      }
 
-  // Check if user is admin (bypass all checks for admins once master password is entered)
-  if (isAdminUser && unlocked) {
+      try {
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role, is_active')
+          .eq('user_id', user.id)
+          .eq('role', 'admin')
+          .eq('is_active', true)
+          .maybeSingle();
+
+        setIsVerifiedAdmin(!error && !!data);
+      } catch (err) {
+        console.error('Error checking admin role:', err);
+        setIsVerifiedAdmin(false);
+      } finally {
+        setVerifying(false);
+      }
+    };
+
+    checkAdminRole();
+  }, [user]);
+
+  // Allow direct rendering if admin role is verified
+  if (isVerifiedAdmin) {
     return <>{children}</>;
   }
 
-  const shouldPromptMaster = useMemo(() => isAdminUser && !unlocked, [isAdminUser, unlocked]);
-
-  const verifyMaster = async () => {
-    setVerifying(true);
-    setError(null);
-    try {
-      const { data, error } = await supabase.functions.invoke('verify-admin-master', {
-        body: { password: masterPassword }
-      });
-      if (error) throw error;
-      if (data?.valid) {
-        localStorage.setItem('admin_master_unlocked', 'true');
-        setUnlocked(true);
-      } else {
-        setError('Invalid master password');
-      }
-    } catch (e: any) {
-      setError(e?.message || 'Verification failed');
-    } finally {
-      setVerifying(false);
-    }
-  };
-
-  // Admins must pass master password first
-  if (shouldPromptMaster) {
-    return (
-      <Card className="w-full max-w-md mx-auto mt-8">
-        <CardHeader className="text-center">
-          <CardTitle>Admin Access Gate</CardTitle>
-          <CardDescription>Enter the master password to unlock all portals</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <Input
-              type="password"
-              placeholder="Master password"
-              value={masterPassword}
-              onChange={(e) => setMasterPassword(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && verifyMaster()}
-            />
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
-            <Button onClick={verifyMaster} disabled={verifying || masterPassword.length < 4} className="w-full">
-              {verifying ? 'Verifying…' : 'Unlock Admin Access'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   // High security roles require additional verification
-  if (isHighSecurityRole && !isVerifiedUser && !isAdminUser) {
+  if (isHighSecurityRole && !isVerifiedUser && !isVerifiedAdmin) {
     return (
       <Card className="w-full max-w-md mx-auto mt-8">
         <CardHeader className="text-center">

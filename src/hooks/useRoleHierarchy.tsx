@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,7 +27,29 @@ export const useRoleHierarchy = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  const isAdmin = user?.email === 'assetsahead.sa@gmail.com';
+  // Check if user has active admin role from database
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useEffect(() => {
+    const checkAdminRole = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .eq('is_active', true)
+        .maybeSingle();
+
+      setIsAdmin(!!data);
+    };
+
+    checkAdminRole();
+  }, [user]);
 
   const getAccessibleRoles = useCallback(() => {
     if (isAdmin) {
@@ -57,10 +79,21 @@ export const useRoleHierarchy = () => {
 
     setLoading(true);
     try {
-      // For admin, no database update needed, just UI change
+      // For admin, update session storage and log the action
       if (isAdmin) {
-        // Store temporary role in session storage for UI purposes
         sessionStorage.setItem('admin_active_role', targetRole);
+        
+        // Log the role switch in audit logs
+        await supabase.from('admin_audit_logs').insert({
+          admin_id: user?.id,
+          action_type: 'ROLE_SWITCH',
+          details: { 
+            from_role: userProfile?.role,
+            to_role: targetRole,
+            timestamp: new Date().toISOString()
+          }
+        });
+        
         toast({
           title: "Role Switched",
           description: `Now viewing as ${targetRole}`,

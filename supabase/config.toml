@@ -59,7 +59,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-whatsapp-message]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-sms-message]
-verify_jwt = false
+verify_jwt = true
