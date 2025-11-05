@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Phone, Plus, Trash2, Check } from 'lucide-react';
+import { registrationSchema } from '@/lib/validationSchemas';
+import { z } from 'zod';
 
 interface PhoneRegistrationFormProps {
   onRegistrationComplete: () => void;
@@ -54,47 +56,37 @@ export const PhoneRegistrationForm = ({ onRegistrationComplete }: PhoneRegistrat
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!firstName.trim() || !lastName.trim()) {
-      toast({
-        title: "Missing Information",
-        description: "Please provide your first name and last name",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const validPhoneNumbers = phoneNumbers
-      .map(formatPhoneNumber)
-      .filter(phone => phone.length > 8);
-
-    if (validPhoneNumbers.length === 0) {
-      toast({
-        title: "Phone Number Required",
-        description: "Please provide at least one valid phone number",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No authenticated user');
+
+      // Format and filter phone numbers
+      const formattedPhones = phoneNumbers
+        .map(formatPhoneNumber)
+        .filter(phone => phone.length > 8);
+
+      // Validate using zod schema
+      const validatedData = registrationSchema.parse({
+        firstName,
+        lastName,
+        phoneNumbers: formattedPhones
+      });
 
       // Create user registration
       const { error: regError } = await supabase
         .from('user_registrations')
         .insert({
           user_id: user.id,
-          first_name: firstName.trim(),
-          last_name: lastName.trim(),
+          first_name: validatedData.firstName,
+          last_name: validatedData.lastName,
           registration_status: 'trial'
         });
 
       if (regError) throw regError;
 
       // Add phone numbers
-      const phoneData = validPhoneNumbers.map((phone, index) => ({
+      const phoneData = validatedData.phoneNumbers.map((phone, index) => ({
         user_id: user.id,
         phone_number: phone,
         is_primary: index === 0,
@@ -126,11 +118,22 @@ export const PhoneRegistrationForm = ({ onRegistrationComplete }: PhoneRegistrat
 
       onRegistrationComplete();
     } catch (error: any) {
-      toast({
-        title: "Registration Failed",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Registration error:', error);
+      
+      if (error instanceof z.ZodError) {
+        const firstError = error.errors[0];
+        toast({
+          title: "Validation Error",
+          description: firstError.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Registration Failed",
+          description: error.message || "Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }

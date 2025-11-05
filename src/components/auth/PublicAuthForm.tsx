@@ -4,6 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, Mail, ArrowRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { phoneAuthSchema, emailAuthSchema } from '@/lib/validationSchemas';
+import { z } from 'zod';
 
 interface PublicAuthFormProps {
   onPhoneAuth: (phone: string) => Promise<void>;
@@ -23,20 +25,36 @@ export const PublicAuthForm: React.FC<PublicAuthFormProps> = ({
 
   const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone.trim()) {
-      toast({ title: "Please enter your phone number", variant: "destructive" });
-      return;
+    
+    try {
+      const validatedData = phoneAuthSchema.parse({ phone });
+      await onPhoneAuth(validatedData.phone);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({ 
+          title: "Invalid Phone Number", 
+          description: error.errors[0].message,
+          variant: "destructive" 
+        });
+      }
     }
-    await onPhoneAuth(phone);
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) {
-      toast({ title: "Please enter your email address", variant: "destructive" });
-      return;
+    
+    try {
+      const validatedData = emailAuthSchema.parse({ email });
+      await onEmailAuth(validatedData.email);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({ 
+          title: "Invalid Email", 
+          description: error.errors[0].message,
+          variant: "destructive" 
+        });
+      }
     }
-    await onEmailAuth(email);
   };
 
   return (

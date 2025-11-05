@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Phone, Plus, Trash2, Check, Star } from 'lucide-react';
+import { phoneNumberSchema } from '@/lib/validationSchemas';
+import { z } from 'zod';
 
 interface PhoneNumber {
   id: string;
@@ -64,27 +66,13 @@ export const PhoneNumberManager = () => {
   };
 
   const addPhoneNumber = async () => {
-    if (!newPhoneNumber.trim()) {
-      toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid phone number",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const formattedNumber = formatPhoneNumber(newPhoneNumber);
-    if (formattedNumber.length < 12) {
-      toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid South African phone number",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
     try {
+      const formattedNumber = formatPhoneNumber(newPhoneNumber);
+      
+      // Validate using zod schema
+      phoneNumberSchema.parse({ phoneNumber: formattedNumber });
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
@@ -106,11 +94,19 @@ export const PhoneNumberManager = () => {
         description: "Your phone number has been added successfully",
       });
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Invalid Phone Number",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }

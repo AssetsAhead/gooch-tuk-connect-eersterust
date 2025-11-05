@@ -6,6 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { YocoPayment } from './YocoPayment';
 import { Calculator, CreditCard } from 'lucide-react';
+import { paymentAmountSchema } from '@/lib/validationSchemas';
+import { z } from 'zod';
+import { useToast } from '@/hooks/use-toast';
 
 interface PaymentFormProps {
   rideId?: string;
@@ -20,8 +23,9 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   onPaymentSuccess,
   onPaymentError
 }) => {
+  const { toast } = useToast();
   const [amount, setAmount] = useState(initialAmount);
-  const [paymentType, setPaymentType] = useState('ride');
+  const [paymentType, setPaymentType] = useState<'ride' | 'deposit' | 'subscription'>('ride');
   const [description, setDescription] = useState('TukTuk Ride Payment');
   const [showPayment, setShowPayment] = useState(false);
 
@@ -37,27 +41,34 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   };
 
   const handlePaymentTypeChange = (type: string) => {
-    setPaymentType(type);
-    const typeData = paymentTypes.find(t => t.value === type);
-    if (typeData) {
-      setDescription(typeData.desc);
+    if (type === 'ride' || type === 'deposit' || type === 'subscription') {
+      setPaymentType(type);
+      const typeData = paymentTypes.find(t => t.value === type);
+      if (typeData) {
+        setDescription(typeData.desc);
+      }
     }
   };
 
   const validateAndProceed = () => {
-    if (amount <= 0) {
-      onPaymentError?.('Please enter a valid amount');
-      return;
+    try {
+      paymentAmountSchema.parse({
+        amount,
+        description,
+        paymentType
+      });
+      setShowPayment(true);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessage = error.errors[0].message;
+        toast({ 
+          title: "Validation Error", 
+          description: errorMessage,
+          variant: "destructive" 
+        });
+        onPaymentError?.(errorMessage);
+      }
     }
-    if (amount < 5) {
-      onPaymentError?.('Minimum payment amount is R5.00');
-      return;
-    }
-    if (amount > 10000) {
-      onPaymentError?.('Maximum payment amount is R10,000.00');
-      return;
-    }
-    setShowPayment(true);
   };
 
   if (showPayment) {

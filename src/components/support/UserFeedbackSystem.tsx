@@ -3,15 +3,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, Bug, Lightbulb, AlertTriangle, Star } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { feedbackSchema } from '@/lib/validationSchemas';
+import { z } from 'zod';
 
 interface FeedbackForm {
-  type: 'bug' | 'feature' | 'general' | 'urgent';
+  type: 'bug' | 'feature' | 'general' | 'complaint';
   category: string;
   priority: 'low' | 'medium' | 'high' | 'critical';
   rating: number;
@@ -40,7 +43,7 @@ export const UserFeedbackSystem: React.FC = () => {
     { value: 'bug', label: 'Bug Report', icon: Bug, color: 'text-red-600' },
     { value: 'feature', label: 'Feature Request', icon: Lightbulb, color: 'text-blue-600' },
     { value: 'general', label: 'General Feedback', icon: MessageSquare, color: 'text-green-600' },
-    { value: 'urgent', label: 'Urgent Issue', icon: AlertTriangle, color: 'text-orange-600' },
+    { value: 'complaint', label: 'Urgent Issue', icon: AlertTriangle, color: 'text-orange-600' },
   ];
 
   const categories = [
@@ -56,24 +59,29 @@ export const UserFeedbackSystem: React.FC = () => {
   ];
 
   const submitFeedback = async () => {
-    if (!user || !feedback.title || !feedback.description) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
     try {
-      // Save to localStorage for now
+      if (!user) throw new Error('Not authenticated');
+
+      // Validate using zod schema
+      const validatedData = feedbackSchema.parse({
+        type: feedback.type,
+        category: feedback.category,
+        priority: feedback.priority,
+        rating: feedback.rating,
+        title: feedback.title,
+        description: feedback.description
+      });
+
+      // Save to localStorage for now (could be database in production)
       const feedbackRecord = {
-        ...feedback,
+        ...validatedData,
         id: Date.now().toString(),
         user_id: user.id,
         timestamp: new Date().toISOString(),
         status: 'submitted',
+        device_info: feedback.device_info,
+        browser_info: feedback.browser_info
       };
 
       const existingFeedback = JSON.parse(localStorage.getItem('user_feedback') || '[]');
@@ -90,15 +98,25 @@ export const UserFeedbackSystem: React.FC = () => {
         ...feedback,
         title: '',
         description: '',
+        category: '',
         rating: 5,
       });
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      toast({
-        title: "Error",
-        description: "Failed to submit feedback. Please try again.",
-        variant: "destructive",
-      });
+      
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to submit feedback. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -199,13 +217,13 @@ export const UserFeedbackSystem: React.FC = () => {
 
         <div className="space-y-2">
           <Label htmlFor="title">Title *</Label>
-          <input
+          <Input
             id="title"
             type="text"
             placeholder={`Enter a brief ${selectedType?.label.toLowerCase()}`}
             value={feedback.title}
             onChange={(e) => setFeedback({ ...feedback, title: e.target.value })}
-            className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            maxLength={100}
           />
         </div>
 
@@ -217,7 +235,11 @@ export const UserFeedbackSystem: React.FC = () => {
             value={feedback.description}
             onChange={(e) => setFeedback({ ...feedback, description: e.target.value })}
             rows={4}
+            maxLength={1000}
           />
+          <p className="text-xs text-muted-foreground">
+            {feedback.description.length}/1000 characters
+          </p>
         </div>
 
         <div className="space-y-2">
