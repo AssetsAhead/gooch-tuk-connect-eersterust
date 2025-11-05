@@ -31,6 +31,7 @@ import { PaymentCancelled } from "./pages/PaymentCancelled";
 import { RoleAuth } from "./pages/RoleAuth";
 import RegisterComplete from "./pages/RegisterComplete";
 import { SafeMode } from "./pages/SafeMode";
+import { Compliance } from "./pages/Compliance";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 
 const queryClient = new QueryClient();
@@ -93,6 +94,7 @@ const App = () => {
                 <Route path="/business-portal" element={<BusinessPortal />} />
                 <Route path="/community-safety" element={<CommunitySafetyPortal />} />
                 <Route path="/passenger-recruitment" element={<PassengerRecruitment />} />
+                <Route path="/compliance" element={<Compliance />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
