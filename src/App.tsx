@@ -36,6 +36,7 @@ import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
 import { PerformanceProfiler } from "./components/dev/PerformanceProfiler";
 import { StateDebugger } from "./components/dev/StateDebugger";
 import { NetworkMonitor } from "./components/dev/NetworkMonitor";
+import { ComponentTreeVisualizer } from "./components/dev/ComponentTreeVisualizer";
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,7 @@ const App = () => {
                 <PerformanceProfiler />
                 <StateDebugger />
                 <NetworkMonitor />
+                <ComponentTreeVisualizer />
               </EnhancedSecurityProvider>
             </BrowserRouter>
           </AdminUniversalAccess>
