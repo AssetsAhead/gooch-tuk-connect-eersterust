@@ -1,6 +1,5 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { EnhancedSecurityProvider } from "@/components/security/EnhancedSecurityProvider";
 import { AnalyticsProvider } from "@/components/AnalyticsTracker";
 import { AdminUniversalAccess } from "@/components/AdminUniversalAccess";
@@ -41,15 +40,14 @@ const App = () => {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <AuthProvider>
-          <AnalyticsProvider>
-            <AdminUniversalAccess>
-              <BrowserRouter>
-                <EnhancedSecurityProvider>
-                  <Routes>
+      <Toaster />
+      <Sonner />
+      <AuthProvider>
+        <AnalyticsProvider>
+          <AdminUniversalAccess>
+            <BrowserRouter>
+              <EnhancedSecurityProvider>
+                <Routes>
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/register-complete" element={<RegisterComplete />} />
                 <Route path="/unauthorized" element={<UnauthorizedPage />} />
@@ -100,14 +98,13 @@ const App = () => {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
-                 </Routes>
+                </Routes>
                 <GlobalPanicButton />
-                 </EnhancedSecurityProvider>
-              </BrowserRouter>
-            </AdminUniversalAccess>
-          </AnalyticsProvider>
-        </AuthProvider>
-      </TooltipProvider>
+              </EnhancedSecurityProvider>
+            </BrowserRouter>
+          </AdminUniversalAccess>
+        </AnalyticsProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
