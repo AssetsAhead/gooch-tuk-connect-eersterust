@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useServerVerifiedAdmin } from './useServerVerifiedAdmin';
 
 interface UserRole {
   id: string;
@@ -12,6 +13,7 @@ export const useSecureAuth = () => {
   const { user, userProfile, loading: authLoading } = useAuth();
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isAdmin: serverVerifiedAdmin, loading: adminLoading } = useServerVerifiedAdmin();
 
   useEffect(() => {
     const fetchUserRoles = async () => {
@@ -68,7 +70,8 @@ export const useSecureAuth = () => {
     return roles.some((r) => r === role);
   };
 
-  const isAdmin = (): boolean => hasRole('admin');
+  // Server-verified admin check (NEVER use client-side storage)
+  const isAdmin = (): boolean => serverVerifiedAdmin;
   const isDriver = (): boolean => hasRole('driver');
   const isPassenger = (): boolean => hasRole('passenger');
   const isOwner = (): boolean => hasRole('owner');
@@ -96,7 +99,7 @@ export const useSecureAuth = () => {
     user,
     userProfile,
     userRoles,
-    loading: authLoading || loading,
+    loading: authLoading || loading || adminLoading,
     hasRole,
     isAdmin,
     isDriver,

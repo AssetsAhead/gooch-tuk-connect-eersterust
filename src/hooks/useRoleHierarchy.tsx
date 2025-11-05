@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useServerVerifiedAdmin } from './useServerVerifiedAdmin';
 
 export interface RoleHierarchy {
   admin: string[];
@@ -27,29 +28,8 @@ export const useRoleHierarchy = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  // Check if user has active admin role from database
-  const [isAdmin, setIsAdmin] = useState(false);
-  
-  useEffect(() => {
-    const checkAdminRole = async () => {
-      if (!user) {
-        setIsAdmin(false);
-        return;
-      }
-
-      const { data } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
-        .eq('role', 'admin')
-        .eq('is_active', true)
-        .maybeSingle();
-
-      setIsAdmin(!!data);
-    };
-
-    checkAdminRole();
-  }, [user]);
+  // Use server-verified admin check
+  const { isAdmin, loading: adminLoading } = useServerVerifiedAdmin();
 
   const getAccessibleRoles = useCallback(() => {
     if (isAdmin) {
@@ -193,7 +173,7 @@ export const useRoleHierarchy = () => {
     switchToRole,
     getCurrentActiveRole,
     assignRole,
-    loading,
+    loading: loading || adminLoading,
     isAdmin,
     roleHierarchy: ROLE_HIERARCHY,
   };

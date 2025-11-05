@@ -1,11 +1,9 @@
 
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, AlertTriangle } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
+import { useServerVerifiedAdmin } from '@/hooks/useServerVerifiedAdmin';
 
 interface EnhancedRoleGuardProps {
   children: React.ReactNode;
@@ -21,6 +19,7 @@ export const EnhancedRoleGuard: React.FC<EnhancedRoleGuardProps> = ({
   fallback
 }) => {
   const { user, userProfile } = useAuth();
+  const { isAdmin: isVerifiedAdmin, loading: verifying } = useServerVerifiedAdmin();
 
   // Check if user has required role
   const userRole = (userProfile as any)?.role || (user as any)?.user_metadata?.role;
@@ -35,38 +34,6 @@ export const EnhancedRoleGuard: React.FC<EnhancedRoleGuardProps> = ({
   // Enhanced security checks for South African context
   const isVerifiedUser = (userProfile as any)?.sassa_verified || (userProfile as any)?.id_verified;
   const isHighSecurityRole = ['police', 'admin', 'marshall'].includes(userRole);
-  
-  // Verify admin role from database (server-side check)
-  const [isVerifiedAdmin, setIsVerifiedAdmin] = useState(false);
-  const [verifying, setVerifying] = useState(true);
-
-  React.useEffect(() => {
-    const checkAdminRole = async () => {
-      if (!user) {
-        setVerifying(false);
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('role, is_active')
-          .eq('user_id', user.id)
-          .eq('role', 'admin')
-          .eq('is_active', true)
-          .maybeSingle();
-
-        setIsVerifiedAdmin(!error && !!data);
-      } catch (err) {
-        console.error('Error checking admin role:', err);
-        setIsVerifiedAdmin(false);
-      } finally {
-        setVerifying(false);
-      }
-    };
-
-    checkAdminRole();
-  }, [user]);
 
   // Allow direct rendering if admin role is verified
   if (isVerifiedAdmin) {
