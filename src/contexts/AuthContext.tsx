@@ -63,9 +63,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (userData) {
         setUserProfile(userData);
-        const highSecurityRoles = ['police', 'admin', 'marshall'];
-        setRequireMFA(highSecurityRoles.includes(userData.role));
       }
+
+      // Compute MFA requirement from user_roles table (authoritative roles source)
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('role, is_active')
+        .eq('user_id', userId)
+        .eq('is_active', true);
+
+      const highSecurityRoles = ['police', 'admin', 'marshall'];
+      const roleNames = roles?.map((r: any) => r.role) ?? [];
+      setRequireMFA(roleNames.some((r: string) => highSecurityRoles.includes(r)));
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
