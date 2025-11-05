@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAnalytics } from '@/components/AnalyticsTracker';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
@@ -10,7 +10,7 @@ export const useAnalyticsTracking = () => {
   const { user, getPrimaryRole } = useSecureAuth();
 
   // Track page views automatically
-  useEffect(() => {
+  React.useEffect(() => {
     analytics.trackPageView();
     
     // Track role-specific page access patterns
@@ -26,7 +26,7 @@ export const useAnalyticsTracking = () => {
   }, [location.pathname, analytics, getPrimaryRole, user?.id]);
 
   // Enhanced tracking methods for UX research
-  const trackPortalTransition = useCallback((fromPortal: string, toPortal: string) => {
+  const trackPortalTransition = React.useCallback((fromPortal: string, toPortal: string) => {
     analytics.trackFeatureUsage('portal_transition', {
       from_portal: fromPortal,
       to_portal: toPortal,
@@ -35,7 +35,7 @@ export const useAnalyticsTracking = () => {
     });
   }, [analytics, getPrimaryRole]);
 
-  const trackFormInteraction = useCallback((formName: string, fieldName: string, action: 'focus' | 'blur' | 'input') => {
+  const trackFormInteraction = React.useCallback((formName: string, fieldName: string, action: 'focus' | 'blur' | 'input') => {
     analytics.trackEvent('form_submit', {
       form_name: formName,
       field_name: fieldName,
@@ -45,7 +45,7 @@ export const useAnalyticsTracking = () => {
     });
   }, [analytics, getPrimaryRole, location.pathname]);
 
-  const trackSearchQuery = useCallback((query: string, results: number, context?: string) => {
+  const trackSearchQuery = React.useCallback((query: string, results: number, context?: string) => {
     analytics.trackFeatureUsage('search', {
       query: query.toLowerCase(), // For autocomplete patterns
       results_count: results,
@@ -54,7 +54,7 @@ export const useAnalyticsTracking = () => {
     });
   }, [analytics, getPrimaryRole]);
 
-  const trackUserPreference = useCallback((preferenceType: string, preferenceValue: any) => {
+  const trackUserPreference = React.useCallback((preferenceType: string, preferenceValue: any) => {
     analytics.trackFeatureUsage('user_preference', {
       preference_type: preferenceType,
       preference_value: preferenceValue,
@@ -63,7 +63,7 @@ export const useAnalyticsTracking = () => {
     });
   }, [analytics, getPrimaryRole, location.pathname]);
 
-  const trackTaskCompletion = useCallback((taskName: string, completionTime: number, success: boolean) => {
+  const trackTaskCompletion = React.useCallback((taskName: string, completionTime: number, success: boolean) => {
     analytics.trackFeatureUsage('task_completion', {
       task_name: taskName,
       completion_time_ms: completionTime,
@@ -73,7 +73,7 @@ export const useAnalyticsTracking = () => {
     });
   }, [analytics, getPrimaryRole, location.pathname]);
 
-  const trackErrorEncounter = useCallback((errorType: string, errorMessage: string, context?: Record<string, any>) => {
+  const trackErrorEncounter = React.useCallback((errorType: string, errorMessage: string, context?: Record<string, any>) => {
     analytics.trackEvent('feature_used', {
       error_type: errorType,
       error_message: errorMessage,

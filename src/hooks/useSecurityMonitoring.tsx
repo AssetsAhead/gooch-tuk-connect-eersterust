@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from 'react';
+import React from 'react';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -7,9 +7,9 @@ import { useToast } from '@/hooks/use-toast';
 export const useSecurityMonitoring = () => {
   const { user } = useSecureAuth();
   const { toast } = useToast();
-  const isInitialized = useRef(false);
+  const isInitialized = React.useRef(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!user || isInitialized.current) return;
     
     isInitialized.current = true;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { SecurityProvider } from './SecurityProvider';
 import { ZeroTrustSecurityService } from '@/services/security/ZeroTrustSecurityService';
 import { GovernmentAPIGateway } from '@/services/government/GovernmentAPIGateway';
@@ -14,7 +14,7 @@ interface EnhancedSecurityProviderProps {
 
 export const EnhancedSecurityProvider: React.FC<EnhancedSecurityProviderProps> = ({ children }) => {
   const { user } = useAuth();
-  const [securityStatus, setSecurityStatus] = useState<{
+  const [securityStatus, setSecurityStatus] = React.useState<{
     initialized: boolean;
     riskScore: number;
     complianceFlags: string[];
@@ -28,9 +28,9 @@ export const EnhancedSecurityProvider: React.FC<EnhancedSecurityProviderProps> =
     popiaClearance: false
   });
 
-  const [showSecurityAlert, setShowSecurityAlert] = useState(false);
+  const [showSecurityAlert, setShowSecurityAlert] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       initializeEnhancedSecurity();
     }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -11,11 +11,11 @@ interface UserRole {
 
 export const useRoleSwitching = () => {
   const { user, userProfile, refreshProfile } = useAuth();
-  const [availableRoles, setAvailableRoles] = useState<UserRole[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [availableRoles, setAvailableRoles] = React.useState<UserRole[]>([]);
+  const [loading, setLoading] = React.useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       fetchUserRoles();
     }

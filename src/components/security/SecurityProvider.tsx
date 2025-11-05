@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SessionMonitor } from './SessionMonitor';
 import { PanicTrigger } from './PanicTrigger';

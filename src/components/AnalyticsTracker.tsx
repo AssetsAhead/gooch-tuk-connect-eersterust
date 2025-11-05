@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AnalyticsEvent {
@@ -225,7 +225,7 @@ const analytics = new AnalyticsTracker();
 
 // React component for analytics setup
 export const AnalyticsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  useEffect(() => {
+  React.useEffect(() => {
     // Sync offline events on app load
     analytics.syncOfflineEvents();
 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
 
 interface AdminAccessContextType {
@@ -6,12 +6,12 @@ interface AdminAccessContextType {
   masterPasswordEntered: boolean;
 }
 
-const AdminAccessContext = createContext<AdminAccessContextType>({
+const AdminAccessContext = React.createContext<AdminAccessContextType>({
   hasUniversalAccess: false,
   masterPasswordEntered: false
 });
 
-export const useAdminAccess = () => useContext(AdminAccessContext);
+export const useAdminAccess = () => React.useContext(AdminAccessContext);
 
 interface AdminUniversalAccessProps {
   children: React.ReactNode;
@@ -19,12 +19,12 @@ interface AdminUniversalAccessProps {
 
 export const AdminUniversalAccess: React.FC<AdminUniversalAccessProps> = ({ children }) => {
   const { isAdmin } = useSecureAuth();
-  const [masterPasswordEntered, setMasterPasswordEntered] = useState(() => {
+  const [masterPasswordEntered, setMasterPasswordEntered] = React.useState(() => {
     return typeof window !== 'undefined' && localStorage.getItem('admin_master_unlocked') === 'true';
   });
 
   // Listen for master password unlock events
-  useEffect(() => {
+  React.useEffect(() => {
     const handleStorageChange = () => {
       setMasterPasswordEntered(localStorage.getItem('admin_master_unlocked') === 'true');
     };
