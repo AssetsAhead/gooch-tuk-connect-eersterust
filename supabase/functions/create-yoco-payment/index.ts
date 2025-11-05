@@ -70,8 +70,25 @@ serve(async (req) => {
 
     if (!yocoResponse.ok) {
       const errorText = await yocoResponse.text();
-      logStep("Yoco API error", { status: yocoResponse.status, error: errorText });
-      throw new Error(`Yoco API error: ${errorText}`);
+      // Log detailed error server-side only
+      logStep("Yoco API error", { 
+        status: yocoResponse.status, 
+        statusText: yocoResponse.statusText,
+        error: errorText 
+      });
+      
+      // Return generic error message to client based on status code
+      const clientMessage = yocoResponse.status === 401 || yocoResponse.status === 403
+        ? 'Payment service authentication error. Please try again later.'
+        : yocoResponse.status === 400
+        ? 'Invalid payment request. Please check your payment details.'
+        : yocoResponse.status === 402
+        ? 'Payment declined. Please check your payment method.'
+        : yocoResponse.status === 429
+        ? 'Too many payment requests. Please wait and try again.'
+        : 'Payment processing failed. Please try again later.';
+      
+      throw new Error(clientMessage);
     }
 
     const yocoData = await yocoResponse.json();

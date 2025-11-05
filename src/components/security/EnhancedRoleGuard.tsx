@@ -21,9 +21,9 @@ export const EnhancedRoleGuard: React.FC<EnhancedRoleGuardProps> = ({
   const { user, userProfile } = useAuth();
   const { isAdmin: isVerifiedAdmin, loading: verifying } = useServerVerifiedAdmin();
 
-  // Check if user has required role
-  const userRole = (userProfile as any)?.role || (user as any)?.user_metadata?.role;
-  const hasRequiredRole = requiredRoles.length === 0 || requiredRoles.includes(userRole);
+  // SECURITY: Only check verified roles from user_roles table (handled by useSecureAuth)
+  // This component should use useSecureAuth hook instead of directly checking metadata
+  const hasRequiredRole = requiredRoles.length === 0 || isVerifiedAdmin;
 
   // Check permissions (you can extend this based on your permission system)
   const userPermissions = (userProfile as any)?.permissions || [];

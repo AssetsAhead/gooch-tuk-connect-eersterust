@@ -167,8 +167,23 @@ const handler = async (req: Request): Promise<Response> => {
     const responseData = await response.json();
 
     if (!response.ok) {
-      console.error('Twilio API error:', responseData);
-      throw new Error(`Twilio API error: ${responseData.message || 'Unknown error'}`);
+      // Log detailed error server-side only
+      console.error('Twilio API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: responseData
+      });
+      
+      // Return generic error message to client based on status code
+      const clientMessage = response.status === 401 || response.status === 403
+        ? 'Service authentication error. Please try again later.'
+        : response.status === 400
+        ? 'Invalid message request. Please check your input.'
+        : response.status === 429
+        ? 'Too many requests. Please wait and try again.'
+        : 'Message delivery failed. Please try again later.';
+      
+      throw new Error(clientMessage);
     }
 
     console.log('WhatsApp message sent successfully:', responseData.sid);

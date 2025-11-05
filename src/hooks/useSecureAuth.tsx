@@ -47,27 +47,17 @@ export const useSecureAuth = () => {
     fetchUserRoles();
   }, [user]);
 
-  // Role checking functions with robust fallbacks
+  // SECURITY: Only use verified roles from user_roles table
+  // NO fallbacks to user_metadata or profile.role (client-modifiable)
   const getEffectiveRoles = (): string[] => {
-    // Active roles from user_roles
-    const activeAssigned = userRoles
+    return userRoles
       .filter((r) => r.is_active)
       .map((r) => r.role);
-
-    if (activeAssigned.length > 0) return activeAssigned;
-
-    // Fallbacks when assignments are missing (during demos or initial setup)
-    const metadataRole = (user as any)?.user_metadata?.role as string | undefined;
-    const profileRole = (userProfile as any)?.role as string | undefined;
-
-    return [profileRole, metadataRole].filter(Boolean) as string[];
   };
 
   const hasRole = (role: string): boolean => {
     const roles = getEffectiveRoles();
-    // Default: if no roles assigned yet, treat as 'passenger' for basic access
-    if (roles.length === 0 && role === 'passenger') return true;
-    return roles.some((r) => r === role);
+    return roles.includes(role);
   };
 
   // Server-verified admin check (NEVER use client-side storage)
@@ -90,10 +80,10 @@ export const useSecureAuth = () => {
     return roles.length > 0 ? roles : [];
   };
 
-  // Get primary role (first active role, fallback to passenger)
+  // Get primary role (first active role, or empty if none assigned)
   const getPrimaryRole = (): string => {
     const roles = getEffectiveRoles();
-    return roles.length > 0 ? roles[0] : 'passenger';
+    return roles.length > 0 ? roles[0] : '';
   };
   return {
     user,

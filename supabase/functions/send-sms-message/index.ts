@@ -155,8 +155,23 @@ const handler = async (req: Request): Promise<Response> => {
     const responseData = await response.json();
 
     if (!response.ok) {
-      console.error('Twilio SMS API error:', responseData);
-      throw new Error(`Twilio SMS API error: ${responseData.message || 'Unknown error'}`);
+      // Log detailed error server-side only
+      console.error('Twilio SMS API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: responseData
+      });
+      
+      // Return generic error message to client based on status code
+      const clientMessage = response.status === 401 || response.status === 403
+        ? 'Service authentication error. Please try again later.'
+        : response.status === 400
+        ? 'Invalid SMS request. Please check your phone number and message.'
+        : response.status === 429
+        ? 'Too many requests. Please wait and try again.'
+        : 'SMS delivery failed. Please try again later.';
+      
+      throw new Error(clientMessage);
     }
 
     console.log('SMS sent successfully:', responseData.sid);
