@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   user: User | null;
@@ -46,7 +46,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userProfile, setUserProfile] = React.useState<any | null>(null);
   const [requireMFA, setRequireMFA] = React.useState(false);
   const [isSecureSession, setIsSecureSession] = React.useState(false);
-  const { toast } = useToast();
 
   const fetchUserProfile = async (userId: string) => {
     try {
