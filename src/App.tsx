@@ -40,6 +40,7 @@ import { ComponentTreeVisualizer } from "./components/dev/ComponentTreeVisualize
 import { AccessibilityAuditor } from "./components/dev/AccessibilityAuditor";
 import { TimeTravelDebugger } from "./components/dev/TimeTravelDebugger";
 import { ResponsiveDesignTester } from "./components/dev/ResponsiveDesignTester";
+import { BundleSizeAnalyzer } from "./components/dev/BundleSizeAnalyzer";
 
 const queryClient = new QueryClient();
 
@@ -116,6 +117,7 @@ const App = () => {
                 <AccessibilityAuditor />
                 <TimeTravelDebugger />
                 <ResponsiveDesignTester />
+                <BundleSizeAnalyzer />
               </EnhancedSecurityProvider>
             </BrowserRouter>
           </AdminUniversalAccess>
