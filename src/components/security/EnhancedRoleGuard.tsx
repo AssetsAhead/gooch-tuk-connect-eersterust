@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, AlertTriangle } from 'lucide-react';
 import { useServerVerifiedAdmin } from '@/hooks/useServerVerifiedAdmin';
+import { useSecureAuth } from '@/hooks/useSecureAuth';
 
 interface EnhancedRoleGuardProps {
   children: React.ReactNode;
@@ -20,10 +21,12 @@ export const EnhancedRoleGuard: React.FC<EnhancedRoleGuardProps> = ({
 }) => {
   const { user, userProfile } = useAuth();
   const { isAdmin: isVerifiedAdmin, loading: verifying } = useServerVerifiedAdmin();
+  const { getPrimaryRole } = useSecureAuth();
+  const userRole = getPrimaryRole();
 
   // SECURITY: Only check verified roles from user_roles table (handled by useSecureAuth)
   // This component should use useSecureAuth hook instead of directly checking metadata
-  const hasRequiredRole = requiredRoles.length === 0 || isVerifiedAdmin;
+  const hasRequiredRole = requiredRoles.length === 0 || requiredRoles.includes(userRole) || isVerifiedAdmin;
 
   // Check permissions (you can extend this based on your permission system)
   const userPermissions = (userProfile as any)?.permissions || [];
