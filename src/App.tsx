@@ -34,6 +34,7 @@ import { Compliance } from "./pages/Compliance";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
 import { PerformanceProfiler } from "./components/dev/PerformanceProfiler";
+import { StateDebugger } from "./components/dev/StateDebugger";
 
 const queryClient = new QueryClient();
 
@@ -104,6 +105,7 @@ const App = () => {
                 <GlobalPanicButton />
                 <ReactHealthMonitor />
                 <PerformanceProfiler />
+                <StateDebugger />
               </EnhancedSecurityProvider>
             </BrowserRouter>
           </AdminUniversalAccess>
