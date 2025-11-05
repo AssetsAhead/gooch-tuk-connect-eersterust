@@ -33,6 +33,7 @@ import { SafeMode } from "./pages/SafeMode";
 import { Compliance } from "./pages/Compliance";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
+import { PerformanceProfiler } from "./components/dev/PerformanceProfiler";
 
 const queryClient = new QueryClient();
 
@@ -102,6 +103,7 @@ const App = () => {
                 </Routes>
                 <GlobalPanicButton />
                 <ReactHealthMonitor />
+                <PerformanceProfiler />
               </EnhancedSecurityProvider>
             </BrowserRouter>
           </AdminUniversalAccess>
