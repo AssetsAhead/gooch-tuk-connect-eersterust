@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_logs: {
+        Row: {
+          action_type: string
+          admin_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: string | null
+          target_user_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action_type: string
+          admin_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          target_user_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          target_user_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       ai_incidents: {
         Row: {
           auto_detected: boolean | null
@@ -28,7 +61,7 @@ export type Database = {
           responded_at: string | null
           responded_by: string | null
           response_required: boolean | null
-          response_time: unknown | null
+          response_time: unknown
           severity: string
           status: string | null
         }
@@ -45,7 +78,7 @@ export type Database = {
           responded_at?: string | null
           responded_by?: string | null
           response_required?: boolean | null
-          response_time?: unknown | null
+          response_time?: unknown
           severity?: string
           status?: string | null
         }
@@ -62,7 +95,7 @@ export type Database = {
           responded_at?: string | null
           responded_by?: string | null
           response_required?: boolean | null
-          response_time?: unknown | null
+          response_time?: unknown
           severity?: string
           status?: string | null
         }
@@ -1236,14 +1269,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: { _role: string; _user_id: string }
-        Returns: boolean
-      }
-      is_current_user_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
+      is_current_user_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       data_operation: "collect" | "process" | "store" | "transmit" | "delete"
