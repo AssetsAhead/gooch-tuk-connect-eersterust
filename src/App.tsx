@@ -37,6 +37,7 @@ import { PerformanceProfiler } from "./components/dev/PerformanceProfiler";
 import { StateDebugger } from "./components/dev/StateDebugger";
 import { NetworkMonitor } from "./components/dev/NetworkMonitor";
 import { ComponentTreeVisualizer } from "./components/dev/ComponentTreeVisualizer";
+import { AccessibilityAuditor } from "./components/dev/AccessibilityAuditor";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +111,7 @@ const App = () => {
                 <StateDebugger />
                 <NetworkMonitor />
                 <ComponentTreeVisualizer />
+                <AccessibilityAuditor />
               </EnhancedSecurityProvider>
             </BrowserRouter>
           </AdminUniversalAccess>
