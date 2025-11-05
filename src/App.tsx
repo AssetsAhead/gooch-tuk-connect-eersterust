@@ -35,6 +35,7 @@ import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
 import { PerformanceProfiler } from "./components/dev/PerformanceProfiler";
 import { StateDebugger } from "./components/dev/StateDebugger";
+import { NetworkMonitor } from "./components/dev/NetworkMonitor";
 
 const queryClient = new QueryClient();
 
@@ -106,6 +107,7 @@ const App = () => {
                 <ReactHealthMonitor />
                 <PerformanceProfiler />
                 <StateDebugger />
+                <NetworkMonitor />
               </EnhancedSecurityProvider>
             </BrowserRouter>
           </AdminUniversalAccess>
