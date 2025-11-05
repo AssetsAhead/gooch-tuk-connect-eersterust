@@ -40,13 +40,13 @@ const App = () => {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster />
-      <Sonner />
       <AuthProvider>
         <AnalyticsProvider>
           <AdminUniversalAccess>
             <BrowserRouter>
               <EnhancedSecurityProvider>
+                <Toaster />
+                <Sonner />
                 <Routes>
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/register-complete" element={<RegisterComplete />} />
