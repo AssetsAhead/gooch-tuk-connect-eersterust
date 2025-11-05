@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import * as React from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -15,12 +15,12 @@ interface AuthContextType {
   isSecureSession: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
 export { AuthContext };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
+  const context = React.useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
@@ -34,12 +34,18 @@ interface AuthProviderProps {
 
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [userProfile, setUserProfile] = useState<any | null>(null);
-  const [requireMFA, setRequireMFA] = useState(false);
-  const [isSecureSession, setIsSecureSession] = useState(false);
+  // Debug diagnostics
+  // eslint-disable-next-line no-console
+  console.log('AuthProvider init: React keys', Object.keys(React || {}));
+  // eslint-disable-next-line no-console
+  console.log('AuthProvider init: typeof useState', typeof React?.useState);
+  
+  const [user, setUser] = React.useState<User | null>(null);
+  const [session, setSession] = React.useState<Session | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [userProfile, setUserProfile] = React.useState<any | null>(null);
+  const [requireMFA, setRequireMFA] = React.useState(false);
+  const [isSecureSession, setIsSecureSession] = React.useState(false);
   const { toast } = useToast();
 
   const fetchUserProfile = async (userId: string) => {
@@ -86,7 +92,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
