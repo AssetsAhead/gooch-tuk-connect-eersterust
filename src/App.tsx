@@ -41,6 +41,7 @@ import { AccessibilityAuditor } from "./components/dev/AccessibilityAuditor";
 import { TimeTravelDebugger } from "./components/dev/TimeTravelDebugger";
 import { ResponsiveDesignTester } from "./components/dev/ResponsiveDesignTester";
 import { BundleSizeAnalyzer } from "./components/dev/BundleSizeAnalyzer";
+import { CSSInspector } from "./components/dev/CSSInspector";
 
 const queryClient = new QueryClient();
 
@@ -118,6 +119,7 @@ const App = () => {
                 <TimeTravelDebugger />
                 <ResponsiveDesignTester />
                 <BundleSizeAnalyzer />
+                <CSSInspector />
               </EnhancedSecurityProvider>
             </BrowserRouter>
           </AdminUniversalAccess>
