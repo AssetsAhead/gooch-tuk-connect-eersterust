@@ -111,17 +111,19 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <GlobalPanicButton />
-                <ReactHealthMonitor />
-                <PerformanceProfiler />
-                <StateDebugger />
-                <NetworkMonitor />
-                <ComponentTreeVisualizer />
-                <AccessibilityAuditor />
-                <TimeTravelDebugger />
-                <ResponsiveDesignTester />
-                <BundleSizeAnalyzer />
-                <CSSInspector />
-                <ReactHooksProfiler />
+                {/* Dev tools disabled by default to prevent React conflicts */}
+                {/* Uncomment only the tools you need, not all at once */}
+                {/* <ReactHealthMonitor /> */}
+                {/* <PerformanceProfiler /> */}
+                {/* <StateDebugger /> */}
+                {/* <NetworkMonitor /> */}
+                {/* <ComponentTreeVisualizer /> */}
+                {/* <AccessibilityAuditor /> */}
+                {/* <TimeTravelDebugger /> */}
+                {/* <ResponsiveDesignTester /> */}
+                {/* <BundleSizeAnalyzer /> */}
+                {/* <CSSInspector /> */}
+                {/* <ReactHooksProfiler /> */}
               </EnhancedSecurityProvider>
             </BrowserRouter>
           </AdminUniversalAccess>
