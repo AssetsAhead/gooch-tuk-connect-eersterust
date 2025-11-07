@@ -104,11 +104,41 @@ serve(async (req: Request) => {
     // Log failed attempts
     if (!valid) {
       console.warn(`Failed admin verification attempt from user: ${user.id}, IP: ${ip}`);
+      return new Response(JSON.stringify({ valid: false }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 403,
+      });
     }
 
-    return new Response(JSON.stringify({ valid }), {
+    // Create server-side admin session
+    const clientIP = ip !== 'unknown' ? ip : null;
+    const userAgent = req.headers.get('user-agent') || null;
+    
+    const { data: sessionId, error: sessionError } = await supabaseClient
+      .rpc('create_admin_session', {
+        _ip_address: clientIP,
+        _user_agent: userAgent
+      });
+
+    if (sessionError) {
+      console.error('Failed to create admin session:', sessionError);
+      return new Response(JSON.stringify({ 
+        valid: false,
+        error: 'Failed to create admin session'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      });
+    }
+
+    console.log(`Admin session created for user: ${user.id}, session: ${sessionId}`);
+
+    return new Response(JSON.stringify({ 
+      valid: true,
+      sessionId: sessionId
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: valid ? 200 : 403,
+      status: 200,
     });
   } catch (e) {
     return new Response(JSON.stringify({ error: 'Unexpected error' }), {

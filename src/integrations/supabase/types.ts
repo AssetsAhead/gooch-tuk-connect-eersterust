@@ -47,6 +47,33 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_sessions: {
+        Row: {
+          admin_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       ai_incidents: {
         Row: {
           auto_detected: boolean | null
@@ -1269,8 +1296,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_admin_sessions: { Args: never; Returns: number }
+      create_admin_session: {
+        Args: { _ip_address?: string; _user_agent?: string }
+        Returns: string
+      }
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
+      has_valid_admin_session: { Args: never; Returns: boolean }
       is_current_user_admin: { Args: never; Returns: boolean }
+      revoke_admin_session: { Args: never; Returns: boolean }
     }
     Enums: {
       data_operation: "collect" | "process" | "store" | "transmit" | "delete"
