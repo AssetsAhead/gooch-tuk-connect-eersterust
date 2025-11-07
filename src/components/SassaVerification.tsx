@@ -169,10 +169,12 @@ export const SassaVerification = () => {
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
+      // Get signed URL with 1 hour expiration for security
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
         .from("sassa-cards")
-        .getPublicUrl(fileName);
+        .createSignedUrl(fileName, 3600); // 1 hour expiry
+
+      if (signedUrlError) throw signedUrlError;
 
       // Save verification record
       const { error: dbError } = await supabase
@@ -180,7 +182,7 @@ export const SassaVerification = () => {
         .upsert({
           user_id: user.id,
           grant_type: selectedGrantType,
-          card_photo_url: publicUrl,
+          card_photo_url: signedUrlData.signedUrl,
           status: "pending"
         });
 
