@@ -16,6 +16,7 @@ interface SassaVerification {
   status: string;
   grant_type: string;
   card_photo_url?: string;
+  file_path?: string;
   verified_at?: string;
   created_at: string;
   biometric_required?: boolean;
@@ -42,20 +43,16 @@ export const SassaVerification = () => {
   const [activeTab, setActiveTab] = useState("verification");
   const { toast } = useToast();
 
-  // Parse file path from card_photo_url for signed URL refresh
+  // Use stored file_path for signed URL refresh
   const signedUrlConfig = useMemo(() => {
-    if (!verification?.card_photo_url) return null;
-    
-    // Extract file path from URL (stored path format: user_id/timestamp.ext)
-    const urlMatch = verification.card_photo_url.match(/sassa-cards\/(.+?)(?:\?|$)/);
-    if (!urlMatch) return null;
+    if (!verification?.file_path) return null;
 
     return {
       bucketName: 'sassa-cards',
-      filePath: urlMatch[1],
+      filePath: verification.file_path,
       expirySeconds: 3600, // 1 hour
     };
-  }, [verification?.card_photo_url]);
+  }, [verification?.file_path]);
 
   // Automatically refresh signed URLs before expiry
   const { signedUrl: refreshedCardUrl } = useSignedUrlRefresh(signedUrlConfig);
@@ -188,21 +185,21 @@ export const SassaVerification = () => {
 
       if (uploadError) throw uploadError;
 
-      // Get initial signed URL with 1 hour expiration for security
+      // Generate initial signed URL for immediate display
       const { data: signedUrlData, error: signedUrlError } = await supabase.storage
         .from("sassa-cards")
         .createSignedUrl(fileName, 3600); // 1 hour expiry
 
       if (signedUrlError) throw signedUrlError;
 
-      // Save verification record with signed URL
-      // The file path is embedded in the URL and will be parsed for auto-refresh
+      // Save verification record with BOTH file_path (for regeneration) and initial signed URL
       const { error: dbError } = await supabase
         .from("sassa_verifications")
         .upsert({
           user_id: user.id,
           grant_type: selectedGrantType,
-          card_photo_url: signedUrlData.signedUrl,
+          file_path: fileName, // Store path for server-side URL regeneration
+          card_photo_url: signedUrlData.signedUrl, // Initial URL for compatibility
           status: "pending"
         });
 

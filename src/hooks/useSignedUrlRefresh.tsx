@@ -22,6 +22,8 @@ export const useSignedUrlRefresh = (config: SignedUrlConfig | null) => {
     setError(null);
 
     try {
+      // Client-side URL generation for immediate use
+      // For production, consider using the server-side edge function for better security
       const { data, error: signedUrlError } = await supabase.storage
         .from(config.bucketName)
         .createSignedUrl(config.filePath, expirySeconds);
@@ -29,6 +31,7 @@ export const useSignedUrlRefresh = (config: SignedUrlConfig | null) => {
       if (signedUrlError) throw signedUrlError;
 
       setSignedUrl(data.signedUrl);
+      console.log('Signed URL refreshed successfully');
     } catch (err) {
       console.error('Error refreshing signed URL:', err);
       setError(err instanceof Error ? err.message : 'Failed to refresh URL');

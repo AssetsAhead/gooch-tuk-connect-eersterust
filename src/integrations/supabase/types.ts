@@ -992,6 +992,7 @@ export type Database = {
         Row: {
           card_photo_url: string | null
           created_at: string
+          file_path: string | null
           grant_type: string
           id: string
           status: string
@@ -1003,6 +1004,7 @@ export type Database = {
         Insert: {
           card_photo_url?: string | null
           created_at?: string
+          file_path?: string | null
           grant_type: string
           id?: string
           status?: string
@@ -1014,6 +1016,7 @@ export type Database = {
         Update: {
           card_photo_url?: string | null
           created_at?: string
+          file_path?: string | null
           grant_type?: string
           id?: string
           status?: string
