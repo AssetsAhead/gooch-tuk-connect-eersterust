@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Camera, Upload, Check, Clock, X, Smartphone, MapPin, AlertCircle, Shield, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useSignedUrlRefresh } from "@/hooks/useSignedUrlRefresh";
 
 interface SassaVerification {
   id: string;
@@ -40,6 +41,24 @@ export const SassaVerification = () => {
   const [smsLink, setSmsLink] = useState("");
   const [activeTab, setActiveTab] = useState("verification");
   const { toast } = useToast();
+
+  // Parse file path from card_photo_url for signed URL refresh
+  const signedUrlConfig = useMemo(() => {
+    if (!verification?.card_photo_url) return null;
+    
+    // Extract file path from URL (stored path format: user_id/timestamp.ext)
+    const urlMatch = verification.card_photo_url.match(/sassa-cards\/(.+?)(?:\?|$)/);
+    if (!urlMatch) return null;
+
+    return {
+      bucketName: 'sassa-cards',
+      filePath: urlMatch[1],
+      expirySeconds: 3600, // 1 hour
+    };
+  }, [verification?.card_photo_url]);
+
+  // Automatically refresh signed URLs before expiry
+  const { signedUrl: refreshedCardUrl } = useSignedUrlRefresh(signedUrlConfig);
 
   useEffect(() => {
     fetchVerification();
@@ -169,14 +188,15 @@ export const SassaVerification = () => {
 
       if (uploadError) throw uploadError;
 
-      // Get signed URL with 1 hour expiration for security
+      // Get initial signed URL with 1 hour expiration for security
       const { data: signedUrlData, error: signedUrlError } = await supabase.storage
         .from("sassa-cards")
         .createSignedUrl(fileName, 3600); // 1 hour expiry
 
       if (signedUrlError) throw signedUrlError;
 
-      // Save verification record
+      // Save verification record with signed URL
+      // The file path is embedded in the URL and will be parsed for auto-refresh
       const { error: dbError } = await supabase
         .from("sassa_verifications")
         .upsert({
