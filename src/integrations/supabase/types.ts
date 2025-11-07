@@ -368,7 +368,7 @@ export type Database = {
           rating: number | null
           status: string | null
           updated_at: string | null
-          user_id: string | null
+          user_id: string
           vehicle: string
         }
         Insert: {
@@ -379,7 +379,7 @@ export type Database = {
           rating?: number | null
           status?: string | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
           vehicle: string
         }
         Update: {
@@ -390,14 +390,14 @@ export type Database = {
           rating?: number | null
           status?: string | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
           vehicle?: string
         }
         Relationships: [
           {
             foreignKeyName: "drivers_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
