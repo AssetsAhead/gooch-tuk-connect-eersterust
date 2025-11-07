@@ -19,6 +19,7 @@ import { OwnerDashboard } from "./components/dashboards/OwnerDashboard";
 import { MarshallDashboard } from "./components/dashboards/MarshallDashboard";
 import { AdminDashboard } from "./components/dashboards/AdminDashboard";
 import { PoliceDashboard } from "./components/dashboards/PoliceDashboard";
+import { AdminSassaVerifications } from "./pages/AdminSassaVerifications";
 import BusinessPortal from "./pages/BusinessPortal";
 import CommunitySafetyPortal from "./pages/CommunitySafetyPortal";
 import PassengerRecruitment from "./pages/PassengerRecruitment";
@@ -95,6 +96,11 @@ const App = () => {
                 <Route path="/admin" element={
                   <ProtectedRoute requiredRole={['admin']}>
                     <AdminDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/sassa-verifications" element={
+                  <ProtectedRoute requiredRole={['admin']}>
+                    <AdminSassaVerifications />
                   </ProtectedRoute>
                 } />
                 <Route path="/police" element={

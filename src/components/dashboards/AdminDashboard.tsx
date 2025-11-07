@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Car, User, Settings, Shield, CheckCircle, XCircle } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +20,7 @@ export const AdminDashboard = () => {
   
   const { user, userProfile, signOut } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const pendingApprovals = [
     { name: "Lucky Mthembu", type: "New Driver", vehicle: "TT012", status: "pending" },
@@ -266,10 +268,17 @@ export const AdminDashboard = () => {
           <TabsContent value="sassa" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Shield className="mr-2 h-5 w-5" />
-                  SASSA Verification Review
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center">
+                      <Shield className="mr-2 h-5 w-5" />
+                      SASSA Verification Review
+                    </CardTitle>
+                  </div>
+                  <Button onClick={() => navigate('/admin/sassa-verifications')}>
+                    View Full Dashboard
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -278,7 +287,7 @@ export const AdminDashboard = () => {
                       No SASSA verifications to review
                     </div>
                   ) : (
-                    sassaVerifications.map((verification) => (
+                    sassaVerifications.slice(0, 5).map((verification) => (
                       <SassaVerificationReview
                         key={verification.id}
                         verification={verification}
@@ -286,6 +295,16 @@ export const AdminDashboard = () => {
                         loading={loading}
                       />
                     ))
+                  )}
+                  {sassaVerifications.length > 5 && (
+                    <div className="text-center pt-4">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => navigate('/admin/sassa-verifications')}
+                      >
+                        View All {sassaVerifications.length} Verifications
+                      </Button>
+                    </div>
                   )}
                 </div>
               </CardContent>
