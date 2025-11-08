@@ -66,3 +66,6 @@ verify_jwt = true
 
 [functions.get-sassa-card-url]
 verify_jwt = true
+
+[functions.send-role-request-email]
+verify_jwt = true

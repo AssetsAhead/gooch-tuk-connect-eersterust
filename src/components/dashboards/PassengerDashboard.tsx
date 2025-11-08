@@ -29,6 +29,8 @@ import { EnhancedMultiLanguageAssistant } from "@/components/EnhancedMultiLangua
 import { CrimePreventionNetwork } from "@/components/CrimePreventionNetwork";
 import { EnhancedFinancialInclusion } from "@/components/EnhancedFinancialInclusion";
 import { SmartLocationInput } from "@/components/SmartLocationInput";
+import { RoleRequestForm } from "@/components/roles/RoleRequestForm";
+import { MyRoleRequests } from "@/components/roles/MyRoleRequests";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
@@ -136,7 +138,7 @@ export const PassengerDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-8 mb-8">
+          <TabsList className="grid w-full grid-cols-9 mb-8">
             <TabsTrigger value="booking">🚗 Book Ride</TabsTrigger>
             <TabsTrigger value="realtime">📍 Live</TabsTrigger>
             <TabsTrigger value="community">🛡️ Community</TabsTrigger>
@@ -145,6 +147,7 @@ export const PassengerDashboard = () => {
             <TabsTrigger value="assistant">🗣️ Assistant</TabsTrigger>
             <TabsTrigger value="rewards">⭐ Rewards</TabsTrigger>
             <TabsTrigger value="payments">💰 Payments</TabsTrigger>
+            <TabsTrigger value="roles">👤 Roles</TabsTrigger>
           </TabsList>
 
           {/* Booking Tab */}
@@ -534,6 +537,14 @@ export const PassengerDashboard = () => {
                   notificationsEnabled={notificationsEnabled}
                 />
               </div>
+            </div>
+          </TabsContent>
+
+          {/* Roles Tab */}
+          <TabsContent value="roles" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <RoleRequestForm />
+              <MyRoleRequests />
             </div>
           </TabsContent>
         </Tabs>

@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 import { RoleSwitcher } from "@/components/RoleSwitcher";
 import { IPDocumentationSystem } from "@/components/IPDocumentationSystem";
+import { RoleRequestsManager } from "@/components/admin/RoleRequestsManager";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
@@ -155,8 +156,9 @@ export const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="approvals" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-8">
+          <TabsList className="grid w-full grid-cols-9">
             <TabsTrigger value="approvals">Approvals</TabsTrigger>
+            <TabsTrigger value="role-requests">Role Requests</TabsTrigger>
             <TabsTrigger value="roles">Role Switch</TabsTrigger>
             <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
             <TabsTrigger value="sassa">SASSA Review</TabsTrigger>
@@ -242,6 +244,10 @@ export const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="role-requests" className="space-y-6">
+            <RoleRequestsManager />
           </TabsContent>
 
           <TabsContent value="roles" className="space-y-6">
