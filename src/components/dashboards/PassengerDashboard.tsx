@@ -31,6 +31,7 @@ import { EnhancedFinancialInclusion } from "@/components/EnhancedFinancialInclus
 import { SmartLocationInput } from "@/components/SmartLocationInput";
 import { RoleRequestForm } from "@/components/roles/RoleRequestForm";
 import { MyRoleRequests } from "@/components/roles/MyRoleRequests";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
@@ -131,9 +132,12 @@ export const PassengerDashboard = () => {
             </h1>
             <p className="text-muted-foreground">Safe, affordable transport & community safety</p>
           </div>
-          <Button variant="outline" onClick={signOut}>
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-2">
+            <NotificationCenter />
+            <Button variant="outline" onClick={signOut}>
+              Sign Out
+            </Button>
+          </div>
         </div>
 
         {/* Tabs */}

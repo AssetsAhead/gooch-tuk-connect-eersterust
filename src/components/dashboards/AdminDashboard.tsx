@@ -14,6 +14,7 @@ import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 import { RoleSwitcher } from "@/components/RoleSwitcher";
 import { IPDocumentationSystem } from "@/components/IPDocumentationSystem";
 import { RoleRequestsManager } from "@/components/admin/RoleRequestsManager";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
@@ -115,9 +116,12 @@ export const AdminDashboard = () => {
             </h1>
             <p className="text-muted-foreground">Complete oversight of the Gooch Tuk Service ecosystem</p>
           </div>
-          <Button variant="outline" onClick={signOut}>
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-2">
+            <NotificationCenter />
+            <Button variant="outline" onClick={signOut}>
+              Sign Out
+            </Button>
+          </div>
         </div>
 
         {/* Key Metrics */}
