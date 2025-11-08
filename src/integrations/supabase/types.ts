@@ -1305,11 +1305,23 @@ export type Database = {
         Returns: string
       }
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
+      has_role_text: {
+        Args: { p_role_text: string; p_user_id: string }
+        Returns: boolean
+      }
       has_valid_admin_session: { Args: never; Returns: boolean }
       is_current_user_admin: { Args: never; Returns: boolean }
       revoke_admin_session: { Args: never; Returns: boolean }
+      safe_role_allowed: { Args: { inp_role: string }; Returns: boolean }
     }
     Enums: {
+      app_role:
+        | "admin"
+        | "driver"
+        | "passenger"
+        | "owner"
+        | "marshall"
+        | "police"
       data_operation: "collect" | "process" | "store" | "transmit" | "delete"
       legal_basis:
         | "consent"
@@ -1452,6 +1464,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "driver", "passenger", "owner", "marshall", "police"],
       data_operation: ["collect", "process", "store", "transmit", "delete"],
       legal_basis: [
         "consent",
