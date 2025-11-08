@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSignedUrlRefresh } from "@/hooks/useSignedUrlRefresh";
+import { adminVerificationNotesSchema, optionalAdminNotesSchema } from "@/lib/validationSchemas";
 
 interface SassaVerification {
   id: string;
@@ -113,11 +114,26 @@ export const AdminSassaVerifications = () => {
 
   const handleApprove = async (verificationId: string) => {
     try {
+      // Validate optional notes
+      const notesToSave = verificationNotes || 'Approved by admin';
+      const validationResult = optionalAdminNotesSchema.safeParse({ 
+        notes: notesToSave 
+      });
+
+      if (!validationResult.success) {
+        toast({
+          title: "Validation Error",
+          description: validationResult.error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('sassa_verifications')
         .update({
           status: 'approved',
-          verification_notes: verificationNotes || 'Approved by admin',
+          verification_notes: validationResult.data.notes,
           verified_at: new Date().toISOString()
         })
         .eq('id', verificationId);
@@ -151,12 +167,26 @@ export const AdminSassaVerifications = () => {
       return;
     }
 
+    // Validate required notes for rejection
+    const validationResult = adminVerificationNotesSchema.safeParse({ 
+      notes: verificationNotes 
+    });
+
+    if (!validationResult.success) {
+      toast({
+        title: "Validation Error",
+        description: validationResult.error.errors[0].message,
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('sassa_verifications')
         .update({
           status: 'rejected',
-          verification_notes: verificationNotes,
+          verification_notes: validationResult.data.notes,
           verified_at: null
         })
         .eq('id', verificationId);
@@ -384,7 +414,11 @@ export const AdminSassaVerifications = () => {
                     value={verificationNotes}
                     onChange={(e) => setVerificationNotes(e.target.value)}
                     rows={4}
+                    maxLength={1000}
                   />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {verificationNotes.length}/1000 characters
+                  </p>
                 </div>
 
                 {/* Action Buttons */}

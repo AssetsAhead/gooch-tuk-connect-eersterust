@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { format } from "date-fns";
+import { optionalAdminNotesSchema, adminVerificationNotesSchema } from "@/lib/validationSchemas";
 
 interface RoleRequest {
   id: string;
@@ -54,6 +55,22 @@ export function RoleRequestsManager() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
+      // Validate optional notes
+      const notesToSave = verificationNotes[request.id] || '';
+      const validationResult = optionalAdminNotesSchema.safeParse({ 
+        notes: notesToSave 
+      });
+
+      if (!validationResult.success) {
+        toast({
+          title: "Validation Error",
+          description: validationResult.error.errors[0].message,
+          variant: "destructive",
+        });
+        setProcessingId(null);
+        return;
+      }
+
       // Update request status
       const { error: updateError } = await supabase
         .from("role_requests")
@@ -61,7 +78,7 @@ export function RoleRequestsManager() {
           status: "approved",
           reviewed_by: user.id,
           reviewed_at: new Date().toISOString(),
-          verification_notes: verificationNotes[request.id] || null,
+          verification_notes: validationResult.data.notes || null,
         })
         .eq("id", request.id);
 
@@ -130,6 +147,20 @@ export function RoleRequestsManager() {
       return;
     }
 
+    // Validate required notes for rejection
+    const validationResult = adminVerificationNotesSchema.safeParse({ 
+      notes: verificationNotes[request.id] 
+    });
+
+    if (!validationResult.success) {
+      toast({
+        title: "Validation Error",
+        description: validationResult.error.errors[0].message,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setProcessingId(request.id);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -141,7 +172,7 @@ export function RoleRequestsManager() {
           status: "rejected",
           reviewed_by: user.id,
           reviewed_at: new Date().toISOString(),
-          verification_notes: verificationNotes[request.id],
+          verification_notes: validationResult.data.notes,
         })
         .eq("id", request.id);
 
@@ -218,7 +249,11 @@ export function RoleRequestsManager() {
                 setVerificationNotes((prev) => ({ ...prev, [request.id]: e.target.value }))
               }
               className="mt-1"
+              maxLength={1000}
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              {(verificationNotes[request.id] || "").length}/1000 characters
+            </p>
           </div>
 
           <div className="flex gap-2">

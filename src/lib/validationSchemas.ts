@@ -212,6 +212,25 @@ export const validateUrlParam = (param: string, maxLength: number = 100): string
   return param.trim().substring(0, maxLength);
 };
 
+// Admin verification notes schema
+export const adminVerificationNotesSchema = z.object({
+  notes: z.string()
+    .trim()
+    .min(1, "Verification notes cannot be empty")
+    .max(1000, "Verification notes must be less than 1000 characters")
+    .transform(str => str.replace(/[<>]/g, '')) // Remove potential HTML tags
+});
+
+// Optional admin verification notes (for approval where notes are optional)
+export const optionalAdminNotesSchema = z.object({
+  notes: z.string()
+    .trim()
+    .max(1000, "Verification notes must be less than 1000 characters")
+    .transform(str => str.replace(/[<>]/g, ''))
+    .optional()
+    .or(z.literal(''))
+});
+
 // Helper to validate WhatsApp/SMS message content before sending
 export const validateMessageContent = (content: string): string => {
   return content
