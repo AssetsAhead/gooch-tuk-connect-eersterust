@@ -40,10 +40,9 @@ export const AdminSecurityProvider: React.FC<AdminSecurityProviderProps> = ({ ch
       }
     };
 
-    // Log admin session start
+    // Log admin session start (SECURITY: role field removed - comes from user_roles table)
     logAdminAction('session_active', {
       email: user.email,
-      role: userProfile?.role
     });
 
     // Monitor admin navigation

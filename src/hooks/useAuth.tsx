@@ -19,7 +19,7 @@ export const useAuth = () => {
     setLoading(true);
     try {
       if (name && role) {
-        // Sign up with email and magic link
+        // SECURITY: Force passenger role for all signups - other roles must be granted by admins
         const { error } = await supabase.auth.signUp({
           email,
           password: 'temp-password-123!', // Temporary password for signup
@@ -27,7 +27,7 @@ export const useAuth = () => {
             emailRedirectTo: `${window.location.origin}/register-complete`,
             data: {
               full_name: name,
-              role: role,
+              role: 'passenger', // Force passenger role, ignore client input
             }
           }
         });

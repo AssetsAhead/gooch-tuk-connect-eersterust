@@ -67,14 +67,11 @@ export const AuthForm = ({
             <SelectTrigger>
               <SelectValue placeholder="Select your role" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="passenger">Passenger - I need rides</SelectItem>
-              <SelectItem value="driver">Driver - I provide rides</SelectItem>
-              <SelectItem value="owner">Taxi Owner - I own vehicles</SelectItem>
-              <SelectItem value="marshall">Taxi Marshall - I manage routes</SelectItem>
-              <SelectItem value="admin">Administrator - I manage the platform</SelectItem>
-              <SelectItem value="police">Police - I monitor safety</SelectItem>
-            </SelectContent>
+              <SelectContent>
+                <SelectItem value="passenger">Passenger - I need rides</SelectItem>
+                <SelectItem value="driver">Driver - I provide rides</SelectItem>
+                <SelectItem value="owner">Taxi Owner - I own vehicles</SelectItem>
+              </SelectContent>
           </Select>
         </div>
       </TabsContent>

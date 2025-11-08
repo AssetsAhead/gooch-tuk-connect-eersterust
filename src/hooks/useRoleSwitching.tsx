@@ -81,11 +81,8 @@ export const useRoleSwitching = () => {
         .eq('user_id', user.id)
         .eq('role', newRole);
 
-      // Update the primary role in profiles
-      await supabase
-        .from('profiles')
-        .update({ role: newRole })
-        .eq('user_id', user.id);
+      // SECURITY FIX: Removed profiles.role update - roles stored only in user_roles table
+      // The role change is complete after updating user_roles table above
 
       // Refresh the profile to get updated role
       await refreshProfile();
@@ -144,7 +141,8 @@ export const useRoleSwitching = () => {
     }
   };
 
-  const currentRole = userProfile?.role;
+  // SECURITY: Role comes from user_roles table only, not from userProfile
+  const currentRole = availableRoles.find(r => r.is_active)?.role;
   const activeRole = availableRoles.find(r => r.is_active);
 
   return {

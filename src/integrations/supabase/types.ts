@@ -866,7 +866,6 @@ export type Database = {
           notification_preferences: Json | null
           popia_consent: boolean | null
           preferred_language: string | null
-          role: string | null
           updated_at: string
           user_id: string
         }
@@ -881,7 +880,6 @@ export type Database = {
           notification_preferences?: Json | null
           popia_consent?: boolean | null
           preferred_language?: string | null
-          role?: string | null
           updated_at?: string
           user_id: string
         }
@@ -896,7 +894,6 @@ export type Database = {
           notification_preferences?: Json | null
           popia_consent?: boolean | null
           preferred_language?: string | null
-          role?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -1267,7 +1264,6 @@ export type Database = {
           name: string
           phone: string
           profile_pic_url: string | null
-          role: string
           social_media: string | null
         }
         Insert: {
@@ -1278,7 +1274,6 @@ export type Database = {
           name: string
           phone: string
           profile_pic_url?: string | null
-          role: string
           social_media?: string | null
         }
         Update: {
@@ -1289,7 +1284,6 @@ export type Database = {
           name?: string
           phone?: string
           profile_pic_url?: string | null
-          role?: string
           social_media?: string | null
         }
         Relationships: []

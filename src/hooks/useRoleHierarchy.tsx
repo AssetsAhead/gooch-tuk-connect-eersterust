@@ -27,6 +27,7 @@ export const useRoleHierarchy = () => {
   const { user, userProfile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
   
   // Admin role switching state (memory-only, no browser storage)
   const [adminActiveRole, setAdminActiveRole] = useState<string>('admin');
@@ -34,16 +35,33 @@ export const useRoleHierarchy = () => {
   // Use server-verified admin check
   const { isAdmin, loading: adminLoading } = useServerVerifiedAdmin();
 
+  // SECURITY: Fetch current role from user_roles table only
+  useEffect(() => {
+    const fetchCurrentRole = async () => {
+      if (!user || isAdmin) return; // Admins don't need role from user_roles
+      
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .maybeSingle();
+      
+      setCurrentUserRole(data?.role || null);
+    };
+    
+    fetchCurrentRole();
+  }, [user, isAdmin]);
+
   const getAccessibleRoles = useCallback(() => {
     if (isAdmin) {
       return ['admin', 'marshall', 'owner', 'driver', 'passenger', 'police'];
     }
     
-    const currentRole = userProfile?.role;
-    if (!currentRole) return [];
+    if (!currentUserRole) return [];
     
-    return ROLE_HIERARCHY[currentRole as keyof RoleHierarchy] || [];
-  }, [isAdmin, userProfile?.role]);
+    return ROLE_HIERARCHY[currentUserRole as keyof RoleHierarchy] || [];
+  }, [isAdmin, currentUserRole]);
 
   const canAccessRole = useCallback((targetRole: string) => {
     const accessibleRoles = getAccessibleRoles();
@@ -125,8 +143,8 @@ export const useRoleHierarchy = () => {
     if (isAdmin) {
       return adminActiveRole;
     }
-    return userProfile?.role || null;
-  }, [isAdmin, adminActiveRole, userProfile?.role]);
+    return currentUserRole;
+  }, [isAdmin, adminActiveRole, currentUserRole]);
 
   const assignRole = useCallback(async (userId: string, role: string) => {
     if (!isAdmin) {

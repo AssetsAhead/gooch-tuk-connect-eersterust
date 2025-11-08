@@ -49,9 +49,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserProfile = async (userId: string) => {
     try {
+      // SECURITY: Explicitly exclude role field - roles come from user_roles table only
       const { data: profile } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, user_id, display_name, avatar_url, bio, preferred_language, notification_preferences, is_government_verified, popia_consent, is_law_enforcement, created_at, updated_at')
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -60,9 +61,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return;
       }
 
+      // SECURITY: Explicitly exclude role field from users table
       const { data: userData } = await supabase
         .from('users')
-        .select('*')
+        .select('id, phone, name, address, social_media, profile_pic_url, is_active, created_at')
         .eq('id', userId)
         .maybeSingle();
 
