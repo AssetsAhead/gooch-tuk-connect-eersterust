@@ -78,7 +78,6 @@ export const RoleAuth = () => {
   const { toast } = useToast();
 
   const config = roleConfig[role as keyof typeof roleConfig];
-  const allowedAdminEmails = ['assetsahead.sa@gmail.com'];
 
   // Check for password reset flow on page load
   useEffect(() => {

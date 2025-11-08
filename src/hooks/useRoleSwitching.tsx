@@ -41,8 +41,8 @@ export const useRoleSwitching = () => {
   const switchRole = async (newRole: string) => {
     if (!user || loading) return;
 
-    // Admin can access any role without restrictions
-    const isAdmin = userProfile?.role === 'admin' || user.email === 'assetsahead.sa@gmail.com';
+    // Check if user has admin role via server-verified method
+    const { data: isAdmin } = await supabase.rpc('is_current_user_admin');
     
     setLoading(true);
     try {

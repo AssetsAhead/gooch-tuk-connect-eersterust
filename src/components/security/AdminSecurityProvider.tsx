@@ -13,9 +13,14 @@ export const AdminSecurityProvider: React.FC<AdminSecurityProviderProps> = ({ ch
   const { toast } = useToast();
 
   useEffect(() => {
-    const isAdmin = userProfile?.role === 'admin' || user?.email === 'assetsahead.sa@gmail.com';
-    
-    if (!isAdmin || !user) return;
+    const checkAdminStatus = async () => {
+      if (!user) return false;
+      const { data } = await supabase.rpc('is_current_user_admin');
+      return data === true;
+    };
+
+    checkAdminStatus().then(isAdmin => {
+      if (!isAdmin || !user) return;
 
     // Enhanced security logging for admin sessions
     const logAdminAction = async (action: string, details: any = {}) => {
@@ -126,10 +131,11 @@ export const AdminSecurityProvider: React.FC<AdminSecurityProviderProps> = ({ ch
     generateAdminFingerprint();
     window.addEventListener('beforeunload', handleNavigation);
 
-    return () => {
-      window.removeEventListener('beforeunload', handleNavigation);
-      logAdminAction('session_end');
-    };
+      return () => {
+        window.removeEventListener('beforeunload', handleNavigation);
+        logAdminAction('session_end');
+      };
+    });
   }, [user, userProfile, toast]);
 
   return <>{children}</>;
