@@ -67,19 +67,20 @@ export function RoleRequestForm() {
 
       if (insertError) throw insertError;
 
-      // Send notification email
+      // Send notification (email + SMS)
       try {
         await supabase.functions.invoke("send-role-request-email", {
           body: {
             requestId: request.id,
             userEmail: user.email!,
+            userId: user.id,
             requestedRole: data.requestedRole,
             status: 'pending',
           },
         });
-      } catch (emailError) {
-        console.error("Failed to send email notification:", emailError);
-        // Don't fail the request if email fails
+      } catch (notificationError) {
+        console.error("Failed to send notification:", notificationError);
+        // Don't fail the request if notification fails
       }
 
       toast({

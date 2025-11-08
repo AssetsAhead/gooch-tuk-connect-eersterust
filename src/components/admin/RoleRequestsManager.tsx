@@ -85,19 +85,20 @@ export function RoleRequestsManager() {
         .eq("user_id", request.user_id)
         .single();
 
-      // Send approval email
+      // Send approval notification (email + SMS)
       try {
         await supabase.functions.invoke("send-role-request-email", {
           body: {
             requestId: request.id,
             userEmail: profile?.display_name || "user@example.com",
+            userId: request.user_id,
             requestedRole: request.requested_role,
             status: 'approved',
             verificationNotes: verificationNotes[request.id],
           },
         });
-      } catch (emailError) {
-        console.error("Failed to send email notification:", emailError);
+      } catch (notificationError) {
+        console.error("Failed to send notification:", notificationError);
       }
 
       toast({
@@ -153,19 +154,20 @@ export function RoleRequestsManager() {
         .eq("user_id", request.user_id)
         .single();
 
-      // Send rejection email
+      // Send rejection notification (email + SMS)
       try {
         await supabase.functions.invoke("send-role-request-email", {
           body: {
             requestId: request.id,
             userEmail: profile?.display_name || "user@example.com",
+            userId: request.user_id,
             requestedRole: request.requested_role,
             status: 'rejected',
             verificationNotes: verificationNotes[request.id],
           },
         });
-      } catch (emailError) {
-        console.error("Failed to send email notification:", emailError);
+      } catch (notificationError) {
+        console.error("Failed to send notification:", notificationError);
       }
 
       toast({
