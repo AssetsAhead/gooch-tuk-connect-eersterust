@@ -27,6 +27,7 @@ import { PushNotificationManager } from "@/components/realtime/PushNotificationM
 import PaymentCollection from "@/components/payments/PaymentCollection";
 import DriverLocationSharing from "@/components/location/DriverLocationSharing";
 import { CameraManagementSystem } from "@/components/camera/CameraManagementSystem";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 export const DriverDashboard = () => {
   const [shiftStarted, setShiftStarted] = useState(false);
@@ -142,6 +143,7 @@ export const DriverDashboard = () => {
                 <Badge className="bg-warning text-white animate-pulse">Level 3 Guardian 🛡️</Badge>
               </div>
             </div>
+            <NotificationCenter />
             <div className="text-right">
               <div className="text-2xl font-bold text-success">R450</div>
               <p className="text-sm text-muted-foreground">Today's Earnings</p>

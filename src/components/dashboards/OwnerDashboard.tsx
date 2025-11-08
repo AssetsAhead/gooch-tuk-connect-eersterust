@@ -8,6 +8,7 @@ import { PanicButton } from "@/components/PanicButton";
 import { ReputationSystem } from "@/components/ReputationSystem";
 import { CrimeMap } from "@/components/CrimeMap";
 import { SocialProof } from "@/components/SocialProof";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 export const OwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("fleet");
@@ -22,9 +23,12 @@ export const OwnerDashboard = () => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">Owner Dashboard</h1>
-          <p className="text-muted-foreground">Track your fleet, earnings, and community impact</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-primary mb-2">Owner Dashboard</h1>
+            <p className="text-muted-foreground">Track your fleet, earnings, and community impact</p>
+          </div>
+          <NotificationCenter />
         </div>
 
         {/* Tabs */}

@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Car, User, Settings, FileText, Smartphone } from "lucide-react";
 import { DigitalFineIssuer } from "@/components/police/DigitalFineIssuer";
 import { FineManagement } from "@/components/police/FineManagement";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 export const PoliceDashboard = () => {
   const flaggedVehicles = [
@@ -35,9 +36,12 @@ export const PoliceDashboard = () => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">Police & Traffic Department</h1>
-          <p className="text-muted-foreground">Law enforcement oversight for Gooch Tuk Service operations</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-primary mb-2">Police & Traffic Department</h1>
+            <p className="text-muted-foreground">Law enforcement oversight for Gooch Tuk Service operations</p>
+          </div>
+          <NotificationCenter />
         </div>
 
         {/* Emergency Alerts */}

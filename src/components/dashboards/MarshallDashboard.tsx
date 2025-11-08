@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { MapPin, Car, User, Settings } from "lucide-react";
 import { useState } from "react";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 export const MarshallDashboard = () => {
   const [currentShift, setCurrentShift] = useState(false);
@@ -30,14 +31,17 @@ export const MarshallDashboard = () => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">Marshall Dashboard</h1>
-          <div className="flex items-center space-x-4">
-            <Badge variant={currentShift ? "default" : "secondary"} className="bg-success text-white">
-              {currentShift ? "On Duty" : "Off Duty"}
-            </Badge>
-            <span className="text-muted-foreground">Eersterust Tuk Tuk Association</span>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-primary mb-2">Marshall Dashboard</h1>
+            <div className="flex items-center space-x-4">
+              <Badge variant={currentShift ? "default" : "secondary"} className="bg-success text-white">
+                {currentShift ? "On Duty" : "Off Duty"}
+              </Badge>
+              <span className="text-muted-foreground">Eersterust Tuk Tuk Association</span>
+            </div>
           </div>
+          <NotificationCenter />
         </div>
 
         {/* Shift Control */}
