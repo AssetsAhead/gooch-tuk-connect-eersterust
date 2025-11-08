@@ -985,6 +985,45 @@ export type Database = {
           },
         ]
       }
+      role_requests: {
+        Row: {
+          created_at: string
+          id: string
+          justification: string
+          requested_role: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          verification_notes: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          justification: string
+          requested_role: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          verification_notes?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          justification?: string
+          requested_role?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          verification_notes?: string | null
+        }
+        Relationships: []
+      }
       sassa_verifications: {
         Row: {
           card_photo_url: string | null
