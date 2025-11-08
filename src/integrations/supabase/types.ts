@@ -710,6 +710,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          related_id: string | null
+          related_type: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean
+          related_id?: string | null
+          related_type?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          related_id?: string | null
+          related_type?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       panic_alerts: {
         Row: {
           alert_type: string
@@ -1335,6 +1371,17 @@ export type Database = {
       cleanup_expired_admin_sessions: { Args: never; Returns: number }
       create_admin_session: {
         Args: { _ip_address?: string; _user_agent?: string }
+        Returns: string
+      }
+      create_notification: {
+        Args: {
+          _message: string
+          _related_id?: string
+          _related_type?: string
+          _title: string
+          _type: string
+          _user_id: string
+        }
         Returns: string
       }
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
