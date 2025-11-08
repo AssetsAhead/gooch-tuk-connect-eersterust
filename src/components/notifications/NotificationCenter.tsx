@@ -24,7 +24,7 @@ interface Notification {
   created_at: string;
 }
 
-export function NotificationCenter() {
+function NotificationCenter() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
@@ -260,3 +260,6 @@ export function NotificationCenter() {
     </Popover>
   );
 }
+
+export default NotificationCenter;
+export { NotificationCenter };
