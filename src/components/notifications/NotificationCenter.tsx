@@ -1,18 +1,13 @@
-/* @refresh skip */
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Bell, Check, X, CheckCheck } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { NotificationCenterHeader } from "./NotificationCenterHeader";
+import { NotificationList } from "./NotificationList";
 
 interface Notification {
   id: string;
@@ -155,19 +150,6 @@ function NotificationCenter() {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const getTypeStyles = (type: Notification['type']) => {
-    switch (type) {
-      case 'success':
-        return 'border-l-4 border-success bg-success/5';
-      case 'warning':
-        return 'border-l-4 border-warning bg-warning/5';
-      case 'error':
-        return 'border-l-4 border-destructive bg-destructive/5';
-      default:
-        return 'border-l-4 border-primary bg-primary/5';
-    }
-  };
-
   if (!user) return null;
 
   return (
@@ -186,77 +168,15 @@ function NotificationCenter() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-96 p-0" align="end">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-semibold">Notifications</h3>
-          {unreadCount > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={markAllAsRead}
-              className="text-xs"
-            >
-              <CheckCheck className="h-4 w-4 mr-1" />
-              Mark all read
-            </Button>
-          )}
-        </div>
-
-        <ScrollArea className="h-[400px]">
-          {notifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <Bell className="h-12 w-12 mb-2 opacity-50" />
-              <p className="text-sm">No notifications yet</p>
-            </div>
-          ) : (
-            <div className="divide-y">
-              {notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className={`p-4 hover:bg-muted/50 transition-colors ${
-                    !notification.read ? 'bg-muted/30' : ''
-                  } ${getTypeStyles(notification.type)}`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-sm">{notification.title}</p>
-                        {!notification.read && (
-                          <div className="w-2 h-2 bg-primary rounded-full" />
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {notification.message}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {format(new Date(notification.created_at), 'MMM d, yyyy h:mm a')}
-                      </p>
-                    </div>
-                    <div className="flex gap-1">
-                      {!notification.read && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => markAsRead(notification.id)}
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => deleteNotification(notification.id)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </ScrollArea>
+        <NotificationCenterHeader 
+          unreadCount={unreadCount} 
+          onMarkAllAsRead={markAllAsRead} 
+        />
+        <NotificationList 
+          notifications={notifications}
+          onMarkAsRead={markAsRead}
+          onDelete={deleteNotification}
+        />
       </PopoverContent>
     </Popover>
   );
