@@ -815,6 +815,54 @@ export type Database = {
         }
         Relationships: []
       }
+      policy_updates: {
+        Row: {
+          announcement_date: string
+          category: string
+          created_at: string
+          created_by: string | null
+          document_url: string | null
+          effective_date: string | null
+          id: string
+          impact_level: string
+          source_url: string | null
+          status: string
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          announcement_date?: string
+          category: string
+          created_at?: string
+          created_by?: string | null
+          document_url?: string | null
+          effective_date?: string | null
+          id?: string
+          impact_level?: string
+          source_url?: string | null
+          status?: string
+          summary: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          announcement_date?: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          document_url?: string | null
+          effective_date?: string | null
+          id?: string
+          impact_level?: string
+          source_url?: string | null
+          status?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       popia_consent_records: {
         Row: {
           consent_date: string

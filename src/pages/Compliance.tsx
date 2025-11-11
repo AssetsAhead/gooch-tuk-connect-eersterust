@@ -1,4 +1,5 @@
 import { NLTAAComplianceDashboard } from "@/components/compliance/NLTAAComplianceDashboard";
+import { PolicyUpdatesSection } from "@/components/compliance/PolicyUpdatesSection";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +21,10 @@ export const Compliance = () => {
           </Button>
         </div>
         
-        <NLTAAComplianceDashboard />
+        <div className="space-y-8">
+          <PolicyUpdatesSection />
+          <NLTAAComplianceDashboard />
+        </div>
       </div>
     </div>
   );
