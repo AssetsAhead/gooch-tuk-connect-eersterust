@@ -7,6 +7,9 @@ import { Calendar, AlertCircle, FileText, ExternalLink, Plus } from "lucide-reac
 import { useToast } from "@/hooks/use-toast";
 import { useServerVerifiedAdmin } from "@/hooks/useServerVerifiedAdmin";
 import { format } from "date-fns";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +22,41 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
+const policyUpdateSchema = z.object({
+  title: z.string()
+    .trim()
+    .min(1, "Title is required")
+    .max(200, "Title must be less than 200 characters"),
+  category: z.enum(["AARTO", "SANTACO", "NLTAA", "Road Safety", "Licensing", "Other"], {
+    required_error: "Please select a category",
+  }),
+  impact_level: z.enum(["high", "medium", "low"], {
+    required_error: "Please select an impact level",
+  }),
+  announcement_date: z.string()
+    .min(1, "Announcement date is required")
+    .refine((date) => !isNaN(Date.parse(date)), "Invalid date format"),
+  effective_date: z.string()
+    .optional()
+    .refine((date) => !date || !isNaN(Date.parse(date)), "Invalid date format"),
+  status: z.enum(["announced", "active", "deferred", "cancelled"], {
+    required_error: "Please select a status",
+  }),
+  summary: z.string()
+    .trim()
+    .min(1, "Summary is required")
+    .max(2000, "Summary must be less than 2000 characters"),
+  source_url: z.string()
+    .trim()
+    .url("Must be a valid URL")
+    .max(500, "URL must be less than 500 characters")
+    .optional()
+    .or(z.literal("")),
+});
+
+type PolicyUpdateFormData = z.infer<typeof policyUpdateSchema>;
 
 interface PolicyUpdate {
   id: string;
@@ -39,6 +77,20 @@ export const PolicyUpdatesSection = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
   const { isAdmin } = useServerVerifiedAdmin();
+
+  const form = useForm<PolicyUpdateFormData>({
+    resolver: zodResolver(policyUpdateSchema),
+    defaultValues: {
+      title: "",
+      category: undefined,
+      impact_level: undefined,
+      announcement_date: "",
+      effective_date: "",
+      status: undefined,
+      summary: "",
+      source_url: "",
+    },
+  });
 
   useEffect(() => {
     loadPolicyUpdates();
@@ -87,20 +139,17 @@ export const PolicyUpdatesSection = () => {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const handleAddUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    
+  const handleAddUpdate = async (data: PolicyUpdateFormData) => {
     try {
       const { error } = await supabase.from("policy_updates").insert({
-        title: formData.get("title") as string,
-        category: formData.get("category") as string,
-        effective_date: formData.get("effective_date") as string || null,
-        announcement_date: formData.get("announcement_date") as string,
-        summary: formData.get("summary") as string,
-        impact_level: formData.get("impact_level") as string,
-        status: formData.get("status") as string,
-        source_url: formData.get("source_url") as string || null,
+        title: data.title,
+        category: data.category,
+        effective_date: data.effective_date || null,
+        announcement_date: data.announcement_date,
+        summary: data.summary,
+        impact_level: data.impact_level,
+        status: data.status,
+        source_url: data.source_url || null,
       });
 
       if (error) throw error;
@@ -110,6 +159,7 @@ export const PolicyUpdatesSection = () => {
         description: "Policy update added successfully",
       });
 
+      form.reset();
       setDialogOpen(false);
       loadPolicyUpdates();
     } catch (error) {
@@ -154,88 +204,171 @@ export const PolicyUpdatesSection = () => {
                   Add Update
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Add Policy Update</DialogTitle>
                   <DialogDescription>
                     Add a new government policy or legislation update
                   </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleAddUpdate} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Title</Label>
-                    <Input id="title" name="title" required />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
-                      <Select name="category" required>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="AARTO">AARTO</SelectItem>
-                          <SelectItem value="SANTACO">SANTACO</SelectItem>
-                          <SelectItem value="NLTAA">NLTAA</SelectItem>
-                          <SelectItem value="Road Safety">Road Safety</SelectItem>
-                          <SelectItem value="Licensing">Licensing</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(handleAddUpdate)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Title</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Enter policy title" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Category</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="AARTO">AARTO</SelectItem>
+                                <SelectItem value="SANTACO">SANTACO</SelectItem>
+                                <SelectItem value="NLTAA">NLTAA</SelectItem>
+                                <SelectItem value="Road Safety">Road Safety</SelectItem>
+                                <SelectItem value="Licensing">Licensing</SelectItem>
+                                <SelectItem value="Other">Other</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="impact_level"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Impact Level</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select impact" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="high">High</SelectItem>
+                                <SelectItem value="medium">Medium</SelectItem>
+                                <SelectItem value="low">Low</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="impact_level">Impact Level</Label>
-                      <Select name="impact_level" required>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select impact" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="high">High</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="low">Low</SelectItem>
-                        </SelectContent>
-                      </Select>
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="announcement_date"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Announcement Date</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="effective_date"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Effective Date (Optional)</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="announcement_date">Announcement Date</Label>
-                      <Input id="announcement_date" name="announcement_date" type="date" required />
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="announced">Announced</SelectItem>
+                              <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="deferred">Deferred</SelectItem>
+                              <SelectItem value="cancelled">Cancelled</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="summary"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Summary</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} rows={4} placeholder="Provide a brief summary of the policy update" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="source_url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Source URL (Optional)</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="url" placeholder="https://example.com/policy" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => {
+                          form.reset();
+                          setDialogOpen(false);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button type="submit" disabled={form.formState.isSubmitting}>
+                        {form.formState.isSubmitting ? "Adding..." : "Add Update"}
+                      </Button>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="effective_date">Effective Date</Label>
-                      <Input id="effective_date" name="effective_date" type="date" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select name="status" required>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="announced">Announced</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="deferred">Deferred</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="summary">Summary</Label>
-                    <Textarea id="summary" name="summary" rows={4} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="source_url">Source URL (optional)</Label>
-                    <Input id="source_url" name="source_url" type="url" />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button type="submit">Add Update</Button>
-                  </div>
-                </form>
+                  </form>
+                </Form>
               </DialogContent>
             </Dialog>
           )}
