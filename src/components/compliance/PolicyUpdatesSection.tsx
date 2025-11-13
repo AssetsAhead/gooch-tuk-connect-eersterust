@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, AlertCircle, FileText, ExternalLink, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useServerVerifiedAdmin } from "@/hooks/useServerVerifiedAdmin";
 import { format } from "date-fns";
 import {
   Dialog,
@@ -35,29 +36,13 @@ interface PolicyUpdate {
 export const PolicyUpdatesSection = () => {
   const [updates, setUpdates] = useState<PolicyUpdate[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
+  const { isAdmin } = useServerVerifiedAdmin();
 
   useEffect(() => {
     loadPolicyUpdates();
-    checkAdminStatus();
   }, []);
-
-  const checkAdminStatus = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .in("role", ["admin", "councillor"])
-      .eq("is_active", true)
-      .single();
-
-    setIsAdmin(!!data);
-  };
 
   const loadPolicyUpdates = async () => {
     try {
