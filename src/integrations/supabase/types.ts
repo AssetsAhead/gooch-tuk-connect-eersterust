@@ -776,6 +776,95 @@ export type Database = {
         }
         Relationships: []
       }
+      parts_inventory: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          minimum_stock: number | null
+          notes: string | null
+          part_name: string
+          part_number: string | null
+          price_rands: number
+          stock_quantity: number | null
+          supplier_id: string | null
+          updated_at: string
+          vehicle_type: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          minimum_stock?: number | null
+          notes?: string | null
+          part_name: string
+          part_number?: string | null
+          price_rands: number
+          stock_quantity?: number | null
+          supplier_id?: string | null
+          updated_at?: string
+          vehicle_type?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          minimum_stock?: number | null
+          notes?: string | null
+          part_name?: string
+          part_number?: string | null
+          price_rands?: number
+          stock_quantity?: number | null
+          supplier_id?: string | null
+          updated_at?: string
+          vehicle_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parts_inventory_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "parts_suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parts_suppliers: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pii_data_records: {
         Row: {
           created_at: string
