@@ -1411,6 +1411,66 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicles: {
+        Row: {
+          assigned_driver_id: string | null
+          color: string | null
+          created_at: string
+          id: string
+          insurance_expiry: string | null
+          make: string | null
+          model: string | null
+          notes: string | null
+          operating_license_number: string | null
+          owner_id: string | null
+          registration_number: string
+          roadworthy_expiry: string | null
+          route_number: string | null
+          status: string
+          updated_at: string
+          vehicle_type: string
+          year: number | null
+        }
+        Insert: {
+          assigned_driver_id?: string | null
+          color?: string | null
+          created_at?: string
+          id?: string
+          insurance_expiry?: string | null
+          make?: string | null
+          model?: string | null
+          notes?: string | null
+          operating_license_number?: string | null
+          owner_id?: string | null
+          registration_number: string
+          roadworthy_expiry?: string | null
+          route_number?: string | null
+          status?: string
+          updated_at?: string
+          vehicle_type?: string
+          year?: number | null
+        }
+        Update: {
+          assigned_driver_id?: string | null
+          color?: string | null
+          created_at?: string
+          id?: string
+          insurance_expiry?: string | null
+          make?: string | null
+          model?: string | null
+          notes?: string | null
+          operating_license_number?: string | null
+          owner_id?: string | null
+          registration_number?: string
+          roadworthy_expiry?: string | null
+          route_number?: string | null
+          status?: string
+          updated_at?: string
+          vehicle_type?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
