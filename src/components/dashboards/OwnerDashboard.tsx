@@ -10,6 +10,7 @@ import { CrimeMap } from "@/components/CrimeMap";
 import { SocialProof } from "@/components/SocialProof";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { FleetManagement } from "@/components/fleet/FleetManagement";
+import { PartsInventory } from "@/components/fleet/PartsInventory";
 
 export const OwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("fleet");
@@ -28,8 +29,9 @@ export const OwnerDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="fleet">🚗 Fleet</TabsTrigger>
+            <TabsTrigger value="parts">🔧 Parts</TabsTrigger>
             <TabsTrigger value="community">🛡️ Community</TabsTrigger>
             <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
             <TabsTrigger value="safety">🚨 Safety</TabsTrigger>
@@ -38,6 +40,11 @@ export const OwnerDashboard = () => {
           {/* Fleet Tab */}
           <TabsContent value="fleet" className="space-y-6">
             <FleetManagement />
+          </TabsContent>
+
+          {/* Parts Tab */}
+          <TabsContent value="parts" className="space-y-6">
+            <PartsInventory />
           </TabsContent>
 
           {/* Community Tab */}
