@@ -9,15 +9,10 @@ import { ReputationSystem } from "@/components/ReputationSystem";
 import { CrimeMap } from "@/components/CrimeMap";
 import { SocialProof } from "@/components/SocialProof";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
+import { FleetManagement } from "@/components/fleet/FleetManagement";
 
 export const OwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("fleet");
-  
-  const vehicles = [
-    { id: "TT001", driver: "Sipho Mthembu", status: "Active", location: "Denlyn Mall", earnings: "R320" },
-    { id: "TT002", driver: "Nomsa Dube", status: "Offline", location: "Pick n Pay Complex", earnings: "R180" },
-    { id: "TT003", driver: "Thabo Nkomo", status: "Active", location: "Municipal Clinic", earnings: "R450" }
-  ];
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -42,74 +37,7 @@ export const OwnerDashboard = () => {
 
           {/* Fleet Tab */}
           <TabsContent value="fleet" className="space-y-6">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <Card className="border-primary/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <Car className="h-8 w-8 text-primary" />
-                    <div className="ml-4">
-                      <p className="text-2xl font-bold">3</p>
-                      <p className="text-xs text-muted-foreground">Active Vehicles</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-success/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <div className="h-8 w-8 bg-success rounded-full flex items-center justify-center text-white text-sm font-bold">R</div>
-                    <div className="ml-4">
-                      <p className="text-2xl font-bold text-success">R950</p>
-                      <p className="text-xs text-muted-foreground">Today's Earnings</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-warning/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <User className="h-8 w-8 text-warning" />
-                    <div className="ml-4">
-                      <p className="text-2xl font-bold">2</p>
-                      <p className="text-xs text-muted-foreground">Active Drivers</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-danger/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <Settings className="h-8 w-8 text-danger" />
-                    <div className="ml-4">
-                      <p className="text-2xl font-bold">1</p>
-                      <p className="text-xs text-muted-foreground">Maintenance Due</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* ... keep existing code (vehicle tracking and driver performance) */}
-            
-            {/* Action Buttons */}
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Button className="bg-primary hover:bg-primary/90">
-                Add New Driver
-              </Button>
-              <Button variant="outline" className="border-secondary text-secondary">
-                Vehicle Maintenance Log
-              </Button>
-              <Button variant="outline" className="border-warning text-warning">
-                Generate Report
-              </Button>
-              <Button variant="outline" className="border-danger text-danger">
-                Emergency Contacts
-              </Button>
-            </div>
+            <FleetManagement />
           </TabsContent>
 
           {/* Community Tab */}
@@ -211,15 +139,12 @@ export const OwnerDashboard = () => {
                   <CardTitle className="text-success">Driver Compliance</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {vehicles.map((vehicle) => (
-                    <div key={vehicle.id} className="flex items-center justify-between p-3 bg-success/5 rounded-lg">
-                      <div>
-                        <div className="font-medium">{vehicle.driver}</div>
-                        <p className="text-sm text-muted-foreground">{vehicle.id}</p>
-                      </div>
-                      <Badge className="bg-success text-white">Compliant</Badge>
-                    </div>
-                  ))}
+                  <p className="text-sm text-muted-foreground">
+                    View driver compliance status in the Fleet tab
+                  </p>
+                  <Button variant="outline" onClick={() => setActiveTab('fleet')}>
+                    Go to Fleet Management
+                  </Button>
                 </CardContent>
               </Card>
             </div>
