@@ -15,19 +15,19 @@ const FLEET_DATA = [
   { registration: 'MK86MC GP', route: 'E53', owner: 'Roechdeen Adams', driver: 'Damien De Boer' },
   { registration: 'MD05LB GP', route: 'E105', owner: 'Roechdeen Adams', driver: 'Jonathan Prinsloo' },
   // Lloyd Pieters fleet
-  { registration: 'LC97TZ GP', route: 'E153', owner: 'Lloyd Pieters', driver: 'Jayvandrey Vyfers' },
-  { registration: 'LC97TY GP', route: 'E154', owner: 'Lloyd Pieters', driver: 'David Makhwanya' },
+  { registration: 'LC97TZ GP', route: 'E153', owner: 'Lloyd Pieters', driver: 'Jayvandrey Vyfers', color: 'Yellow', driverIdNumber: '0411045090080' },
+  { registration: 'LC97TY GP', route: 'E154', owner: 'Lloyd Pieters', driver: 'David Makhwanya', color: 'Black', driverIdNumber: '8509295199089' },
   // Dillan fleet
   { registration: 'LT48CW GP', route: 'E51', owner: 'Dillan', driver: 'Mathew Drywer' },
   { registration: 'LC70JM GP', route: 'E50', owner: 'Dillan', driver: 'Francois Kekana' },
-  // MK Nkale fleet
-  { registration: 'KP17RZ GP', route: 'E??', owner: 'MK Nkale', driver: 'Tainos Ndhlela' },
-  // Gershoom McPherson (Owner/Driver)
-  { registration: 'KN83MY GP', route: 'E221', owner: 'Gershoom McPherson', driver: 'Gershoom McPherson' },
+  // MK Nkale (Oom Koos) fleet
+  { registration: 'KP17RZ GP', route: 'E240', owner: 'MK Nkale (Oom Koos)', driver: 'Tainos Ndhlela' },
+  // Gershom Mac Pherson (Owner/Driver)
+  { registration: 'KN83MY GP', route: 'E221', owner: 'Gershom Mac Pherson', driver: 'Gershom Mac Pherson' },
   // Maligan Jeftha fleet
   { registration: 'JF64XB GP', route: 'E88', owner: 'Maligan Jeftha', driver: 'Rodney' },
-  { registration: 'HP00DJ GP', route: 'E87', owner: 'Maligan Jeftha', driver: 'Jeffrey' },
-  { registration: 'JL78MZ GP', route: 'E85', owner: 'Maligan Jeftha', driver: 'Neheimia' },
+  { registration: 'HP00DJ GP', route: 'E87', owner: 'Maligan Jeftha', driver: 'Joffrey' },
+  { registration: 'JL78MZ GP', route: 'E85', owner: 'Maligan Jeftha', driver: 'Nehemiah Student' },
   // NS Mabusha fleet
   { registration: 'KJ99NV GP', route: 'E123', owner: 'NS Mabusha', driver: 'Temba' },
   { registration: 'KM13RH GP', route: 'E135', owner: 'NS Mabusha', driver: 'Owen' },
@@ -35,7 +35,7 @@ const FLEET_DATA = [
   { registration: 'LH16BM GP', route: 'E81', owner: 'NS Mabusha', driver: 'Mathew' },
   { registration: 'LP40YP GP', route: 'E299', owner: 'NS Mabusha', driver: '' },
   { registration: 'MR86MH GP', route: 'E261', owner: 'NS Mabusha', driver: '' },
-];
+] as const;
 
 const FleetDataImport: React.FC = () => {
   const [importing, setImporting] = useState(false);
@@ -50,9 +50,10 @@ const FleetDataImport: React.FC = () => {
 
     for (const vehicle of FLEET_DATA) {
       try {
-        const notes = vehicle.driver 
-          ? `Owner: ${vehicle.owner} | Driver: ${vehicle.driver}`
-          : `Owner: ${vehicle.owner}`;
+        let notes = `Owner: ${vehicle.owner}`;
+        if (vehicle.driver) notes += ` | Driver: ${vehicle.driver}`;
+        if ('color' in vehicle && vehicle.color) notes += ` | Color: ${vehicle.color}`;
+        if ('driverIdNumber' in vehicle && vehicle.driverIdNumber) notes += ` | Driver ID: ${vehicle.driverIdNumber}`;
 
         const { error } = await supabase
           .from('vehicles')
@@ -60,6 +61,7 @@ const FleetDataImport: React.FC = () => {
             registration_number: vehicle.registration,
             route_number: vehicle.route,
             vehicle_type: 'tuk_tuk',
+            color: 'color' in vehicle ? vehicle.color : null,
             notes: notes,
             status: 'active'
           });
@@ -96,6 +98,10 @@ const FleetDataImport: React.FC = () => {
         </CardTitle>
         <CardDescription>
           Import {FLEET_DATA.length} vehicles from {uniqueOwners.length} owners
+          <br />
+          <span className="text-xs text-muted-foreground mt-1 block">
+            Cllr Debbie Williams (PA) - SALGA Regulatory Compliance Initiative
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
