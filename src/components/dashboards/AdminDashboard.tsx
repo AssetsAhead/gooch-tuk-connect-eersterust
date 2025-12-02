@@ -15,6 +15,7 @@ import { RoleSwitcher } from "@/components/RoleSwitcher";
 import { IPDocumentationSystem } from "@/components/IPDocumentationSystem";
 import { RoleRequestsManager } from "@/components/admin/RoleRequestsManager";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
+import FleetDataImport from "@/components/admin/FleetDataImport";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
@@ -160,7 +161,7 @@ export const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="approvals" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-9">
+          <TabsList className="grid w-full grid-cols-10">
             <TabsTrigger value="approvals">Approvals</TabsTrigger>
             <TabsTrigger value="role-requests">Role Requests</TabsTrigger>
             <TabsTrigger value="roles">Role Switch</TabsTrigger>
@@ -170,6 +171,7 @@ export const AdminDashboard = () => {
             <TabsTrigger value="incidents">Incidents</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
             <TabsTrigger value="ip-docs">🛡️ IP Docs</TabsTrigger>
+            <TabsTrigger value="fleet-import">🚛 Fleet Import</TabsTrigger>
           </TabsList>
 
           <TabsContent value="approvals" className="space-y-6">
@@ -468,6 +470,10 @@ export const AdminDashboard = () => {
 
           <TabsContent value="ip-docs" className="space-y-6">
             <IPDocumentationSystem />
+          </TabsContent>
+
+          <TabsContent value="fleet-import" className="space-y-6">
+            <FleetDataImport />
           </TabsContent>
         </Tabs>
       </div>
