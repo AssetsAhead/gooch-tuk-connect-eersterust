@@ -585,6 +585,60 @@ export type Database = {
         }
         Relationships: []
       }
+      maintenance_expenses: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          expense_date: string
+          expense_type: string
+          id: string
+          owner_id: string
+          purchase_order_id: string | null
+          updated_at: string
+          vehicle_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          expense_date?: string
+          expense_type: string
+          id?: string
+          owner_id: string
+          purchase_order_id?: string | null
+          updated_at?: string
+          vehicle_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          expense_date?: string
+          expense_type?: string
+          id?: string
+          owner_id?: string
+          purchase_order_id?: string | null
+          updated_at?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_expenses_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_expenses_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       municipal_bills: {
         Row: {
           amount: number
@@ -1071,6 +1125,108 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      purchase_order_items: {
+        Row: {
+          created_at: string
+          id: string
+          part_id: string | null
+          part_name: string
+          purchase_order_id: string
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          part_id?: string | null
+          part_name: string
+          purchase_order_id: string
+          quantity?: number
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          part_id?: string | null
+          part_name?: string
+          purchase_order_id?: string
+          quantity?: number
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_order_items_part_id_fkey"
+            columns: ["part_id"]
+            isOneToOne: false
+            referencedRelation: "parts_inventory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_order_items_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      purchase_orders: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          order_number: string
+          owner_id: string
+          status: string
+          supplier_id: string | null
+          total_amount: number
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_number: string
+          owner_id: string
+          status?: string
+          supplier_id?: string | null
+          total_amount?: number
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_number?: string
+          owner_id?: string
+          status?: string
+          supplier_id?: string | null
+          total_amount?: number
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "parts_suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_orders_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ride_updates: {
         Row: {
