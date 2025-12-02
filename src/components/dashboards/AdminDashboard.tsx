@@ -16,6 +16,8 @@ import { IPDocumentationSystem } from "@/components/IPDocumentationSystem";
 import { RoleRequestsManager } from "@/components/admin/RoleRequestsManager";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import FleetDataImport from "@/components/admin/FleetDataImport";
+import OwnerRegistration from "@/components/admin/OwnerRegistration";
+import DriverOnboarding from "@/components/admin/DriverOnboarding";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
@@ -161,7 +163,7 @@ export const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="approvals" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-10">
+          <TabsList className="flex flex-wrap gap-1">
             <TabsTrigger value="approvals">Approvals</TabsTrigger>
             <TabsTrigger value="role-requests">Role Requests</TabsTrigger>
             <TabsTrigger value="roles">Role Switch</TabsTrigger>
@@ -171,7 +173,9 @@ export const AdminDashboard = () => {
             <TabsTrigger value="incidents">Incidents</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
             <TabsTrigger value="ip-docs">🛡️ IP Docs</TabsTrigger>
-            <TabsTrigger value="fleet-import">🚛 Fleet Import</TabsTrigger>
+            <TabsTrigger value="fleet-import">🚛 Fleet</TabsTrigger>
+            <TabsTrigger value="owner-reg">👤 Owners</TabsTrigger>
+            <TabsTrigger value="driver-onboard">🚗 Drivers</TabsTrigger>
           </TabsList>
 
           <TabsContent value="approvals" className="space-y-6">
@@ -474,6 +478,14 @@ export const AdminDashboard = () => {
 
           <TabsContent value="fleet-import" className="space-y-6">
             <FleetDataImport />
+          </TabsContent>
+
+          <TabsContent value="owner-reg" className="space-y-6">
+            <OwnerRegistration />
+          </TabsContent>
+
+          <TabsContent value="driver-onboard" className="space-y-6">
+            <DriverOnboarding />
           </TabsContent>
         </Tabs>
       </div>
