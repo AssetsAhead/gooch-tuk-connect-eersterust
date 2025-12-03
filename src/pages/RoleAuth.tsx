@@ -79,13 +79,16 @@ export const RoleAuth = () => {
 
   const config = roleConfig[role as keyof typeof roleConfig];
 
-  // Check for password reset flow on page load
+  // Check for password reset flow on page load (Supabase uses hash fragment)
   useEffect(() => {
+    // Check both search params and hash fragment for recovery type
     const urlParams = new URLSearchParams(location.search);
-    if (urlParams.has('type') && urlParams.get('type') === 'recovery') {
+    const hashParams = new URLSearchParams(location.hash.replace('#', ''));
+    
+    if (urlParams.get('type') === 'recovery' || hashParams.get('type') === 'recovery') {
       setIsResettingPassword(true);
     }
-  }, [location.search]);
+  }, [location.search, location.hash]);
   
   if (!config) {
     return (
