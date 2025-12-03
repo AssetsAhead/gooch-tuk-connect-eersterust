@@ -81,11 +81,18 @@ export const RoleAuth = () => {
 
   // Listen for PASSWORD_RECOVERY event from Supabase auth
   useEffect(() => {
-    // Check URL params first (in case we navigate here directly)
+    // Check sessionStorage first - this persists the recovery state across remounts
+    if (sessionStorage.getItem('password_recovery_mode') === 'true') {
+      setIsResettingPassword(true);
+    }
+
+    // Check URL params (in case we navigate here directly with ?type=recovery)
     const urlParams = new URLSearchParams(location.search);
     const hashParams = new URLSearchParams(location.hash.replace('#', ''));
     
     if (urlParams.get('type') === 'recovery' || hashParams.get('type') === 'recovery') {
+      console.log('Recovery detected in URL params');
+      sessionStorage.setItem('password_recovery_mode', 'true');
       setIsResettingPassword(true);
     }
 
@@ -93,6 +100,8 @@ export const RoleAuth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('RoleAuth auth event:', event);
       if (event === 'PASSWORD_RECOVERY') {
+        console.log('PASSWORD_RECOVERY event received');
+        sessionStorage.setItem('password_recovery_mode', 'true');
         setIsResettingPassword(true);
       }
     });
@@ -209,6 +218,9 @@ export const RoleAuth = () => {
 
       if (error) throw error;
 
+      // Clear the recovery mode flag
+      sessionStorage.removeItem('password_recovery_mode');
+      
       setPasswordResetSuccess(true);
       setIsResettingPassword(false);
       
@@ -330,6 +342,7 @@ export const RoleAuth = () => {
                       size="sm"
                       onClick={() => {
                         setIsResettingPassword(false);
+                        sessionStorage.removeItem('password_recovery_mode');
                         navigate('/auth/admin', { replace: true });
                       }}
                       className="text-xs p-0 h-auto"
