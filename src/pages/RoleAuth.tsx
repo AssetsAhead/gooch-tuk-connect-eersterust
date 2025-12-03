@@ -79,15 +79,25 @@ export const RoleAuth = () => {
 
   const config = roleConfig[role as keyof typeof roleConfig];
 
-  // Check for password reset flow on page load (Supabase uses hash fragment)
+  // Listen for PASSWORD_RECOVERY event from Supabase auth
   useEffect(() => {
-    // Check both search params and hash fragment for recovery type
+    // Check URL params first (in case we navigate here directly)
     const urlParams = new URLSearchParams(location.search);
     const hashParams = new URLSearchParams(location.hash.replace('#', ''));
     
     if (urlParams.get('type') === 'recovery' || hashParams.get('type') === 'recovery') {
       setIsResettingPassword(true);
     }
+
+    // Listen for Supabase auth events - this catches the recovery event after token processing
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('RoleAuth auth event:', event);
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsResettingPassword(true);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [location.search, location.hash]);
   
   if (!config) {
