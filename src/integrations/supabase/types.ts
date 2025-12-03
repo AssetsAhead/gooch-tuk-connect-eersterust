@@ -1479,6 +1479,33 @@ export type Database = {
         }
         Relationships: []
       }
+      sms_verification_codes: {
+        Row: {
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          phone_number: string
+          verified: boolean | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          phone_number: string
+          verified?: boolean | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone_number?: string
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
@@ -1722,6 +1749,7 @@ export type Database = {
     }
     Functions: {
       cleanup_expired_admin_sessions: { Args: never; Returns: number }
+      cleanup_expired_sms_codes: { Args: never; Returns: undefined }
       create_admin_session: {
         Args: { _ip_address?: string; _user_agent?: string }
         Returns: string
