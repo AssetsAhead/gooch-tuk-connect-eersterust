@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AuthForm } from '@/components/auth/AuthForm';
 import { VerificationSent } from '@/components/auth/VerificationSent';
-import { useAuth } from '@/hooks/useAuth';
+import { SmsOtpAuth } from '@/components/auth/SmsOtpAuth';
 import { ArrowLeft, Shield, Car, Users, CreditCard, UserCheck, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -60,14 +59,10 @@ const roleConfig = {
 export const RoleAuth = () => {
   const { role } = useParams<{ role: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [verificationSent, setVerificationSent] = useState(false);
   const [signingIn, setSigningIn] = useState(false);
   const [adminError, setAdminError] = useState<string | null>(null);
@@ -89,7 +84,6 @@ export const RoleAuth = () => {
     return false;
   });
   
-  const { loading, handleEmailAuth, handlePhoneAuth } = useAuth();
   const { toast } = useToast();
 
   const config = roleConfig[role as keyof typeof roleConfig];
@@ -130,20 +124,6 @@ export const RoleAuth = () => {
       </div>
     );
   }
-
-  const onEmailAuth = async () => {
-    const success = await handleEmailAuth(
-      email, 
-      authMode === 'signup' ? name : undefined, 
-      authMode === 'signup' ? role : undefined
-    );
-    if (success) setVerificationSent(true);
-  };
-
-  const onPhoneAuth = async () => {
-    const success = await handlePhoneAuth(phone);
-    if (success) setVerificationSent(true);
-  };
 
   const onGoogleAuth = async () => {
     try {
@@ -244,15 +224,6 @@ export const RoleAuth = () => {
       setSigningIn(false);
     }
   };
-  if (verificationSent) {
-    return (
-      <VerificationSent 
-        email={email || undefined}
-        phone={phone || undefined}
-        onBack={() => setVerificationSent(false)}
-      />
-    );
-  }
 
   const IconComponent = config.icon;
 
@@ -433,23 +404,15 @@ export const RoleAuth = () => {
               )
             ) : (
               <>
-                <AuthForm
-                  loading={loading}
-                  email={email}
-                  phone={phone}
-                  name={name}
-                  role={role || 'passenger'}
-                  authMode={authMode}
-                  setEmail={setEmail}
-                  setPhone={setPhone}
-                  setName={setName}
-                  setRole={() => {}} // Role is fixed based on route
-                  setAuthMode={setAuthMode}
-                  onPhoneAuth={onPhoneAuth}
-                  onEmailAuth={onEmailAuth}
+                <SmsOtpAuth
+                  onSuccess={(userId, isNewUser) => {
+                    console.log('SMS OTP auth success:', userId, isNewUser);
+                    // Navigate to home after successful auth
+                    navigate('/');
+                  }}
                 />
                 <div className="mt-6 text-center text-xs text-muted-foreground">
-                  Role-specific access • SASSA verification • WhatsApp-style auth
+                  SMS verification • Role-specific access • SASSA verification
                 </div>
               </>
             )}
