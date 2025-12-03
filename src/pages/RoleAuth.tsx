@@ -71,8 +71,23 @@ export const RoleAuth = () => {
   const [verificationSent, setVerificationSent] = useState(false);
   const [signingIn, setSigningIn] = useState(false);
   const [adminError, setAdminError] = useState<string | null>(null);
-  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
+  
+  // Initialize recovery state from sessionStorage synchronously to prevent flash
+  const [isResettingPassword, setIsResettingPassword] = useState(() => {
+    // Check sessionStorage first (persists across navigations)
+    if (sessionStorage.getItem('password_recovery_mode') === 'true') {
+      return true;
+    }
+    // Check URL params (for direct navigation from recovery link)
+    const urlParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace('#', ''));
+    if (urlParams.get('type') === 'recovery' || hashParams.get('type') === 'recovery') {
+      sessionStorage.setItem('password_recovery_mode', 'true');
+      return true;
+    }
+    return false;
+  });
   
   const { loading, handleEmailAuth, handlePhoneAuth } = useAuth();
   const { toast } = useToast();
@@ -81,33 +96,29 @@ export const RoleAuth = () => {
 
   // Listen for PASSWORD_RECOVERY event from Supabase auth
   useEffect(() => {
-    // Check sessionStorage first - this persists the recovery state across remounts
-    if (sessionStorage.getItem('password_recovery_mode') === 'true') {
-      setIsResettingPassword(true);
-    }
-
-    // Check URL params (in case we navigate here directly with ?type=recovery)
-    const urlParams = new URLSearchParams(location.search);
-    const hashParams = new URLSearchParams(location.hash.replace('#', ''));
+    console.log('RoleAuth mounted, isResettingPassword:', isResettingPassword);
+    console.log('sessionStorage password_recovery_mode:', sessionStorage.getItem('password_recovery_mode'));
     
-    if (urlParams.get('type') === 'recovery' || hashParams.get('type') === 'recovery') {
-      console.log('Recovery detected in URL params');
-      sessionStorage.setItem('password_recovery_mode', 'true');
-      setIsResettingPassword(true);
-    }
-
     // Listen for Supabase auth events - this catches the recovery event after token processing
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('RoleAuth auth event:', event);
+      console.log('RoleAuth auth event:', event, 'isResettingPassword:', isResettingPassword);
+      
       if (event === 'PASSWORD_RECOVERY') {
-        console.log('PASSWORD_RECOVERY event received');
+        console.log('PASSWORD_RECOVERY event received - setting recovery mode');
         sessionStorage.setItem('password_recovery_mode', 'true');
+        setIsResettingPassword(true);
+      }
+      
+      // IMPORTANT: Don't let SIGNED_IN or other events disrupt password recovery mode
+      // If we're in recovery mode, stay in recovery mode until password is updated
+      if (sessionStorage.getItem('password_recovery_mode') === 'true') {
+        console.log('Maintaining recovery mode despite auth event:', event);
         setIsResettingPassword(true);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [location.search, location.hash]);
+  }, []); // Remove location dependencies to prevent unnecessary re-runs
   
   if (!config) {
     return (
