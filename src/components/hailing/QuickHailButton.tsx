@@ -69,47 +69,67 @@ export const QuickHailButton = ({
 
       // Use AI-powered smart matching to find the best driver
       console.log('Invoking smart-match-driver...');
-      const { data: matchResult, error: matchError } = await supabase.functions.invoke('smart-match-driver', {
-        body: {
-          passengerId: userId,
-          pickupLocation: pickupLocation,
-          destination: 'Quick Hail - To be confirmed',
-          userLocation: {
-            latitude: userLocation.latitude,
-            longitude: userLocation.longitude
-          },
-          preferences: {
-            prioritizeETA: true // For quick hail, prioritize nearest driver
+      
+      // Try smart matching first, fallback to direct driver lookup
+      let bestDriver = null;
+      
+      try {
+        const { data: matchResult, error: matchError } = await supabase.functions.invoke('smart-match-driver', {
+          body: {
+            passengerId: userId,
+            pickupLocation: pickupLocation,
+            destination: 'Quick Hail - To be confirmed',
+            userLocation: {
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude
+            },
+            preferences: {
+              prioritizeETA: true
+            }
           }
-        }
-      });
+        });
 
-      if (matchError) {
-        console.error('Smart match error:', matchError);
-        throw matchError;
+        if (!matchError && matchResult?.success && matchResult?.bestMatch) {
+          bestDriver = matchResult.bestMatch.driver;
+          console.log('Smart match found:', bestDriver.name);
+        }
+      } catch (smError) {
+        console.warn('Smart match unavailable, using fallback:', smError);
       }
 
-      if (!matchResult?.success || !matchResult?.bestMatch) {
+      // Fallback: get any online driver directly
+      if (!bestDriver) {
+        const { data: drivers } = await supabase
+          .from('drivers')
+          .select('*')
+          .eq('status', 'online')
+          .limit(1)
+          .single();
+        
+        if (drivers) {
+          bestDriver = drivers;
+          console.log('Fallback driver found:', bestDriver.name);
+        }
+      }
+
+      if (!bestDriver) {
         toast({
           title: 'No drivers available',
-          description: matchResult?.recommendation || 'Please try again in a moment',
+          description: 'Please try again in a moment',
           variant: 'destructive'
         });
         return;
       }
 
-      const bestDriver = matchResult.bestMatch.driver;
-      console.log('Smart match found:', bestDriver.name, 'Score:', matchResult.bestMatch.score);
-
-      // Create the ride with the AI-matched driver
+      // Create the ride with the matched driver
       const { data: ride, error: rideError } = await supabase
         .from('rides')
         .insert({
           passenger_id: userId,
-          driver_id: bestDriver.user_id,
+          driver_id: bestDriver.user_id || bestDriver.id,
           pickup_location: pickupLocation,
           destination: 'To be confirmed',
-          price: 15, // Base fare
+          price: 15,
           ride_type: 'quick_hail',
           status: 'requested'
         })
@@ -126,10 +146,7 @@ export const QuickHailButton = ({
         accuracy: userLocation.accuracy
       });
 
-      // Show AI recommendation if available
-      const description = matchResult.bestMatch.aiRecommendation 
-        ? matchResult.bestMatch.aiRecommendation
-        : `${bestDriver.name} is on the way. ETA: ~${bestDriver.estimated_eta || 5} min`;
+      const description = `${bestDriver.name} is on the way. ETA: ~${bestDriver.eta || 5} min`;
 
       toast({
         title: '🚗 Smart Match Found!',
