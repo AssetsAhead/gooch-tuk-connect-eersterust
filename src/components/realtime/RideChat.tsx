@@ -3,9 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, Phone, MapPin, Clock } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { MessageCircle, Send, Phone, MapPin, Clock, Languages, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { SpeechTranslator } from "@/components/translation/SpeechTranslator";
 
 interface ChatMessage {
   id: string;
@@ -29,8 +31,26 @@ export const RideChat = ({ rideId, userId, userType, driverName, passengerName }
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [otherUserTyping, setOtherUserTyping] = useState(false);
+  const [showTranslator, setShowTranslator] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  const handleTranslation = (original: string, translated: string, targetLang: string) => {
+    // Send the translated message automatically
+    const message: ChatMessage = {
+      id: Date.now().toString(),
+      sender_id: userId,
+      sender_type: userType,
+      message: `${translated}`,
+      timestamp: new Date().toISOString(),
+      message_type: 'text'
+    };
+    setMessages(prev => [...prev, message]);
+    toast({
+      title: "Message translated & sent",
+      description: `Original: "${original}"`,
+    });
+  };
 
   // Initialize with mock messages
   useEffect(() => {
@@ -231,6 +251,20 @@ export const RideChat = ({ rideId, userId, userType, driverName, passengerName }
             ))}
           </div>
         </div>
+
+        {/* Speech Translator */}
+        <Collapsible open={showTranslator} onOpenChange={setShowTranslator}>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-full flex items-center justify-center gap-2 text-xs text-muted-foreground hover:text-foreground">
+              <Languages className="h-3 w-3" />
+              Speech Translation
+              <ChevronDown className={`h-3 w-3 transition-transform ${showTranslator ? 'rotate-180' : ''}`} />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="px-4 pb-2">
+            <SpeechTranslator compact onTranslation={handleTranslation} />
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Message Input */}
         <div className="p-4 pt-2 border-t">
