@@ -26,9 +26,36 @@ export const AuthPage = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
 
-  // If user is already authenticated, redirect to dashboard for role-based routing
+  // If user is already authenticated, show sign-out option or redirect
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.reload();
+  };
+
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted p-4 flex items-center justify-center">
+        <Card className="w-full max-w-md p-6 text-center">
+          <h1 className="text-2xl font-bold text-sa-green mb-4">Already Signed In</h1>
+          <p className="text-muted-foreground mb-6">You're logged in as {user.email || user.phone}</p>
+          <div className="space-y-3">
+            <Button 
+              onClick={() => window.location.href = '/dashboard'}
+              className="w-full bg-sa-green hover:bg-sa-green-light text-white"
+            >
+              Go to Dashboard
+            </Button>
+            <Button 
+              onClick={handleSignOut}
+              variant="outline"
+              className="w-full"
+            >
+              Sign Out (Test Login Again)
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
   }
 
   const onPhoneAuth = async () => {
