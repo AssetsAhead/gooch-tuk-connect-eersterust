@@ -64,36 +64,50 @@ export const QuickHailButton = ({
     setPulseAnimation(true);
 
     try {
-      // Get nearby available drivers
-      const { data: drivers, error: driversError } = await supabase
-        .from('drivers')
-        .select('*')
-        .eq('status', 'online')
-        .limit(5);
+      const locationName = `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}`;
+      const pickupLocation = `My Location (${locationName})`;
 
-      if (driversError) throw driversError;
+      // Use AI-powered smart matching to find the best driver
+      console.log('Invoking smart-match-driver...');
+      const { data: matchResult, error: matchError } = await supabase.functions.invoke('smart-match-driver', {
+        body: {
+          passengerId: userId,
+          pickupLocation: pickupLocation,
+          destination: 'Quick Hail - To be confirmed',
+          userLocation: {
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude
+          },
+          preferences: {
+            prioritizeETA: true // For quick hail, prioritize nearest driver
+          }
+        }
+      });
 
-      if (!drivers || drivers.length === 0) {
+      if (matchError) {
+        console.error('Smart match error:', matchError);
+        throw matchError;
+      }
+
+      if (!matchResult?.success || !matchResult?.bestMatch) {
         toast({
           title: 'No drivers available',
-          description: 'Please try again in a moment',
+          description: matchResult?.recommendation || 'Please try again in a moment',
           variant: 'destructive'
         });
         return;
       }
 
-      // Pick the first available driver (in production, use smart matching)
-      const selectedDriver = drivers[0];
+      const bestDriver = matchResult.bestMatch.driver;
+      console.log('Smart match found:', bestDriver.name, 'Score:', matchResult.bestMatch.score);
 
-      // Create the ride with current location
-      const locationName = `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}`;
-      
+      // Create the ride with the AI-matched driver
       const { data: ride, error: rideError } = await supabase
         .from('rides')
         .insert({
           passenger_id: userId,
-          driver_id: selectedDriver.user_id,
-          pickup_location: `My Location (${locationName})`,
+          driver_id: bestDriver.user_id,
+          pickup_location: pickupLocation,
           destination: 'To be confirmed',
           price: 15, // Base fare
           ride_type: 'quick_hail',
@@ -112,9 +126,14 @@ export const QuickHailButton = ({
         accuracy: userLocation.accuracy
       });
 
+      // Show AI recommendation if available
+      const description = matchResult.bestMatch.aiRecommendation 
+        ? matchResult.bestMatch.aiRecommendation
+        : `${bestDriver.name} is on the way. ETA: ~${bestDriver.estimated_eta || 5} min`;
+
       toast({
-        title: '🚗 Ride Requested!',
-        description: `${selectedDriver.name} is on the way. ETA: ~${selectedDriver.eta || 5} min`,
+        title: '🚗 Smart Match Found!',
+        description: description,
       });
 
       onHailSuccess?.(ride);
