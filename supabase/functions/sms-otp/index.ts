@@ -183,12 +183,18 @@ const handler = async (req: Request): Promise<Response> => {
         .update({ verified: true })
         .eq('id', verification.id);
 
-      // Check if user exists by phone
-      const { data: existingUsers } = await supabase.auth.admin.listUsers();
-      const existingUser = existingUsers?.users?.find(u => u.phone === formattedPhone);
-      
+      // Check if user exists by phone OR by temp email
       const tempEmail = `${formattedPhone.replace('+', '')}@phone.tukconnect.app`;
       const tempPassword = `TC_${formattedPhone}_${Date.now()}`;
+      
+      const { data: existingUsers } = await supabase.auth.admin.listUsers();
+      
+      // Find user by phone number OR by the temp email we generate
+      const existingUser = existingUsers?.users?.find(u => 
+        u.phone === formattedPhone || 
+        u.email === tempEmail ||
+        u.user_metadata?.phone === formattedPhone
+      );
 
       if (existingUser) {
         console.log('Existing user found:', existingUser.id);
@@ -235,6 +241,37 @@ const handler = async (req: Request): Promise<Response> => {
 
         if (createError) {
           console.error('User creation error:', createError);
+          
+          // If phone exists error, try to find and update that user instead
+          if (createError.message?.includes('Phone number already registered') || 
+              createError.message?.includes('phone_exists')) {
+            console.log('Phone exists, attempting to find user...');
+            
+            // Refetch users to find by phone
+            const { data: refetchedUsers } = await supabase.auth.admin.listUsers();
+            const phoneUser = refetchedUsers?.users?.find(u => u.phone === formattedPhone);
+            
+            if (phoneUser) {
+              const { error: updateErr } = await supabase.auth.admin.updateUserById(phoneUser.id, {
+                password: tempPassword,
+              });
+              
+              if (!updateErr) {
+                return new Response(
+                  JSON.stringify({ 
+                    success: true, 
+                    verified: true,
+                    userId: phoneUser.id,
+                    isNewUser: false,
+                    email: phoneUser.email || tempEmail,
+                    tempPassword: tempPassword,
+                  }),
+                  { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                );
+              }
+            }
+          }
+          
           return new Response(
             JSON.stringify({ error: 'Failed to create account' }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
