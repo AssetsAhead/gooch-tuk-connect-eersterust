@@ -188,7 +188,16 @@ const handler = async (req: Request): Promise<Response> => {
       const tempPassword = `TC_${formattedPhone}_${Date.now()}`;
       
       // Helper function to find user by phone across all pages
+      // Check multiple phone formats: +27..., 27..., 0...
       async function findUserByPhone(phone: string, email: string): Promise<any> {
+        const phoneVariants = [
+          phone,                                    // +27826370673
+          phone.replace('+', ''),                   // 27826370673  
+          '0' + phone.slice(3),                     // 0826370673 (if +27...)
+        ];
+        
+        console.log('Searching for phone variants:', phoneVariants);
+        
         let page = 1;
         const perPage = 1000;
         
@@ -198,18 +207,39 @@ const handler = async (req: Request): Promise<Response> => {
             perPage,
           });
           
-          if (error || !data?.users?.length) break;
+          if (error) {
+            console.error('listUsers error:', error);
+            break;
+          }
           
-          const found = data.users.find(u => 
-            u.phone === phone || 
-            u.email === email ||
-            u.user_metadata?.phone === phone
-          );
+          if (!data?.users?.length) {
+            console.log('No users found on page', page);
+            break;
+          }
           
-          if (found) return found;
+          console.log(`Checking ${data.users.length} users on page ${page}`);
+          
+          const found = data.users.find(u => {
+            const userPhone = u.phone || '';
+            const metaPhone = u.user_metadata?.phone || '';
+            
+            return phoneVariants.some(variant => 
+              userPhone === variant || 
+              metaPhone === variant ||
+              u.email === email
+            );
+          });
+          
+          if (found) {
+            console.log('Found matching user:', found.id, 'phone:', found.phone, 'email:', found.email);
+            return found;
+          }
+          
           if (data.users.length < perPage) break;
           page++;
         }
+        
+        console.log('No user found after searching all pages');
         return null;
       }
       
