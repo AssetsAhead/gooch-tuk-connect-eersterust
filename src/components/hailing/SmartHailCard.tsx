@@ -9,6 +9,7 @@ import { SmartLocationInput } from '@/components/SmartLocationInput';
 import { QuickHailButton } from './QuickHailButton';
 import { LiveDriverMap } from './LiveDriverMap';
 import VoiceHailButton from './VoiceHailButton';
+import { SpeechTranslator } from '@/components/translation/SpeechTranslator';
 import {
   MapPin,
   Navigation,
@@ -19,7 +20,8 @@ import {
   Loader2,
   ChevronRight,
   Sparkles,
-  Mic
+  Mic,
+  Languages
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -309,6 +311,9 @@ export const SmartHailCard = ({
                 />
               </div>
             </div>
+
+            {/* Speech Translation for driver communication */}
+            <SpeechTranslator compact />
 
             {/* Live Driver Map */}
             <LiveDriverMap

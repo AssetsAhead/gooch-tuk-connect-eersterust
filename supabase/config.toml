@@ -78,3 +78,6 @@ verify_jwt = true
 
 [functions.smart-match-driver]
 verify_jwt = true
+
+[functions.translate-speech]
+verify_jwt = false
