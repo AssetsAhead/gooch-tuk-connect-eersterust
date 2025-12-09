@@ -9,7 +9,9 @@ interface SmsOtpResult {
   verified?: boolean;
   userId?: string;
   isNewUser?: boolean;
-  devCode?: string; // Only in dev mode
+  devCode?: string;
+  email?: string;
+  tempPassword?: string;
 }
 
 export const useSmsOtp = () => {
@@ -30,9 +32,12 @@ export const useSmsOtp = () => {
 
     setLoading(true);
     try {
+      console.log('Sending OTP to:', phoneNumber);
       const { data, error } = await supabase.functions.invoke<SmsOtpResult>('sms-otp', {
         body: { phone: phoneNumber, action: 'send' },
       });
+
+      console.log('Send OTP response:', data, error);
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -80,30 +85,38 @@ export const useSmsOtp = () => {
 
     setLoading(true);
     try {
+      console.log('Verifying OTP for phone:', phone);
       const { data, error } = await supabase.functions.invoke<SmsOtpResult>('sms-otp', {
         body: { phone, action: 'verify', code },
       });
 
+      console.log('Verify OTP response:', data, error);
+
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
-      if (data?.verified) {
+      if (data?.verified && data?.email && data?.tempPassword) {
+        // Sign in using the temporary password created by the edge function
+        console.log('Signing in with email:', data.email);
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.tempPassword,
+        });
+
+        if (signInError) {
+          console.error('Sign in error:', signInError);
+          toast({
+            title: "Authentication Error",
+            description: "Verification successful but sign-in failed. Please try again.",
+            variant: "destructive",
+          });
+          return { success: false };
+        }
+
         toast({
           title: "Verified!",
           description: data.isNewUser ? "Account created successfully" : "Welcome back!",
         });
-
-        // Sign in the user using a workaround - refresh the session
-        // The edge function created/verified the user, now we need to establish the session
-        // We'll use signInWithOtp as a fallback method
-        const { error: signInError } = await supabase.auth.signInWithOtp({
-          phone: phone.startsWith('+27') ? phone : `+27${phone.replace(/^0/, '')}`,
-        });
-
-        // Even if this fails, the user is verified - they may need to use magic link
-        if (signInError) {
-          console.log('Session establishment note:', signInError.message);
-        }
 
         return { 
           success: true, 
