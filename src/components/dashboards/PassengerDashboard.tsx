@@ -32,6 +32,7 @@ import { SmartLocationInput } from "@/components/SmartLocationInput";
 import { RoleRequestForm } from "@/components/roles/RoleRequestForm";
 import { MyRoleRequests } from "@/components/roles/MyRoleRequests";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
+import { SmartHailCard } from "@/components/hailing/SmartHailCard";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
@@ -155,109 +156,116 @@ export const PassengerDashboard = () => {
           </TabsList>
 
           {/* Booking Tab */}
-          <TabsContent value="booking" className="space-y-6">{/* ... keep existing code (booking content) */}
+          <TabsContent value="booking" className="space-y-6">
+            {/* Smart Hail Card - The Main Hailing Experience */}
+            <SmartHailCard
+              userId={user?.id}
+              onRideCreated={(ride) => {
+                toast({
+                  title: "🚗 Ride Created!",
+                  description: `Your ride to ${ride.destination} has been booked.`,
+                });
+              }}
+              discountInfo={{
+                isVerified: discountInfo.isVerified,
+                discountPercentage: discountInfo.discountPercentage
+              }}
+            />
 
-            {/* SASSA Discount Banner */}
-            {discountInfo.isVerified && (
-              <Card className="mb-6 border-success/50 bg-success/5">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
-                      <span className="text-success text-sm">✓</span>
+            {/* Active Ride Tracking */}
+            {activeRide && (
+              <Card className="border-primary/50 bg-primary/5">
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Car className="mr-2 h-5 w-5" />
+                      Active Ride
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-success">SASSA Verified - {discountInfo.discountPercentage}% Discount Applied</h3>
-                      <p className="text-xs text-muted-foreground">
-                        {discountInfo.grantType?.replace(/_/g, ' ').toUpperCase()} - Automatic discounts on all rides
-                      </p>
+                    <Badge className={`${
+                      activeRide.status === 'accepted' ? 'bg-warning' :
+                      activeRide.status === 'in_progress' ? 'bg-primary' :
+                      'bg-secondary'
+                    } text-white`}>
+                      {activeRide.status?.toUpperCase()}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-background rounded-lg">
+                    <div>
+                      <div className="font-medium">{activeRide.pickup_location} → {activeRide.destination}</div>
+                      <div className="text-sm text-muted-foreground">Fare: R{activeRide.price}</div>
                     </div>
+                    <MapsButton 
+                      destination={activeRide.destination}
+                      startLocation={activeRide.pickup_location}
+                      variant="outline"
+                      size="sm"
+                    />
                   </div>
+                  
+                  {rideUpdates.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-sm">Real-time Updates:</h4>
+                      {rideUpdates.slice(0, 3).map((update) => (
+                        <div key={update.id} className="p-3 bg-muted/30 rounded-lg">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              {update.status_message && (
+                                <p className="text-sm">{update.status_message}</p>
+                              )}
+                              {update.estimated_arrival && (
+                                <p className="text-xs text-muted-foreground">
+                                  ETA: {new Date(update.estimated_arrival).toLocaleTimeString()}
+                                </p>
+                              )}
+                            </div>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(update.created_at).toLocaleTimeString()}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
 
             {/* Pricing Info */}
-            <Card className="mb-8 border-primary/20">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-semibold">Standard Pricing</h3>
+            <Card className="border-muted">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-semibold text-sm">Fare Guide</h3>
                   {discountInfo.isVerified && (
-                    <span className="text-xs bg-success/20 text-success px-2 py-1 rounded-full">
-                      -{discountInfo.discountPercentage}% SASSA Discount
-                    </span>
+                    <Badge className="bg-success/20 text-success text-xs">
+                      -{discountInfo.discountPercentage}% SASSA
+                    </Badge>
                   )}
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                  <div>
-                    <div className="text-xl font-bold text-success">
-                      R{discountInfo.isVerified ? calculateDiscountedPrice(15).finalPrice : 15}
-                      {discountInfo.isVerified && <span className="text-xs text-muted-foreground line-through ml-1">R15</span>}
-                    </div>
-                    <p className="text-xs text-muted-foreground">In-Poort (Day)</p>
+                <div className="grid grid-cols-4 gap-2 text-center text-xs">
+                  <div className="p-2 bg-muted/30 rounded">
+                    <div className="font-bold text-success">R15</div>
+                    <p className="text-muted-foreground">In-Poort</p>
                   </div>
-                  <div>
-                    <div className="text-xl font-bold text-tuk-orange">
-                      R{discountInfo.isVerified ? calculateDiscountedPrice(25).finalPrice : 25}
-                      {discountInfo.isVerified && <span className="text-xs text-muted-foreground line-through ml-1">R25</span>}
-                    </div>
-                    <p className="text-xs text-muted-foreground">Out-of-Township</p>
+                  <div className="p-2 bg-muted/30 rounded">
+                    <div className="font-bold text-tuk-orange">R25</div>
+                    <p className="text-muted-foreground">Out-Poort</p>
                   </div>
-                  <div>
-                    <div className="text-xl font-bold text-tuk-blue">R30</div>
-                    <p className="text-xs text-muted-foreground">Night In-Poort</p>
+                  <div className="p-2 bg-muted/30 rounded">
+                    <div className="font-bold text-tuk-blue">R30</div>
+                    <p className="text-muted-foreground">Night</p>
                   </div>
-                  <div>
-                    <div className="text-xl font-bold text-warning">R50</div>
-                    <p className="text-xs text-muted-foreground">Night Out-Township</p>
+                  <div className="p-2 bg-muted/30 rounded">
+                    <div className="font-bold text-warning">R50</div>
+                    <p className="text-muted-foreground">Night Out</p>
                   </div>
-                </div>
-                <div className="mt-4 text-center">
-                  <Badge className="bg-success/20 text-success">33% OFF on Pension Collection Days</Badge>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Ride Booking */}
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <MapPin className="mr-2 h-5 w-5" />
-                  Book a Ride
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Pickup Location</label>
-                  <SmartLocationInput
-                    placeholder="Enter pickup location..."
-                    value={pickup}
-                    onChange={setPickup}
-                    storageKey="pickup"
-                    quickSuggestions={quickDestinations.map((d) => d.name)}
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Destination</label>
-                  <SmartLocationInput
-                    placeholder="Where to?"
-                    value={destination}
-                    onChange={setDestination}
-                    storageKey="destination"
-                    quickSuggestions={quickDestinations.map((d) => d.name)}
-                  />
-                </div>
-                <Button 
-                  className="w-full bg-primary hover:bg-primary/90"
-                  onClick={handleBookRide}
-                  disabled={!user || !!activeRide}
-                >
-                  {activeRide ? "Ride in Progress" : "Book Ride"}
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Quick Destinations */}
-            <Card className="mb-8">
+            {/* Legacy Quick Destinations - keeping for reference */}
+            <Card className="mb-8 hidden">
               <CardHeader>
                 <CardTitle>Popular Destinations</CardTitle>
               </CardHeader>
