@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Shield, ArrowLeft } from 'lucide-react';
 import { AuthForm } from '@/components/auth/AuthForm';
 import { VerificationSent } from '@/components/auth/VerificationSent';
-import { useAuth } from '@/hooks/useAuth';
 import { useAuth as useAuthContext } from "@/contexts/AuthContext";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
@@ -12,16 +11,18 @@ import { Label } from "@/components/ui/label";
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
+import { useSmsOtp } from '@/hooks/useSmsOtp';
+
 export const AuthPage = () => {
   const { role } = useParams<{ role?: string }>();
   const { user } = useAuthContext();
-  const { loading, handleEmailAuth, handlePhoneAuth } = useAuth();
   const { toast } = useToast();
+  const { loading: smsLoading, otpSent, phone: smsPhone, sendOtp, verifyOtp, resetOtp } = useSmsOtp();
+  
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [verificationSent, setVerificationSent] = useState(false);
   const [otp, setOtp] = useState("");
-  const [verifying, setVerifying] = useState(false);
+  const [emailLoading, setEmailLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
 
@@ -31,16 +32,41 @@ export const AuthPage = () => {
   }
 
   const onPhoneAuth = async () => {
-    const success = await handlePhoneAuth(phone);
-    if (success) {
-      setVerificationSent(true);
-    }
+    const formattedPhone = phone.startsWith('+27') ? phone : `+27${phone.replace(/^0/, '')}`;
+    await sendOtp(formattedPhone);
   };
 
   const onEmailAuth = async () => {
-    const success = await handleEmailAuth(email);
-    if (success) {
-      setVerificationSent(true);
+    if (!email) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setEmailLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+      if (error) throw error;
+      toast({
+        title: "Check your email",
+        description: "We sent you a magic link to sign in",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to send email",
+        variant: "destructive",
+      });
+    } finally {
+      setEmailLoading(false);
     }
   };
 
@@ -80,24 +106,13 @@ export const AuthPage = () => {
   };
 
   const onVerifyOtp = async () => {
-    setVerifying(true);
-    try {
-      const formattedPhone = phone.startsWith('+27') ? phone : `+27${phone.replace(/^0/, '')}`;
-      const { error } = await supabase.auth.verifyOtp({
-        phone: formattedPhone,
-        token: otp,
-        type: 'sms',
-      });
-      if (error) throw error;
-      // On success, AuthContext listener should update and route will allow access
-    } catch (err: any) {
-      alert(err.message || 'Verification failed');
-    } finally {
-      setVerifying(false);
+    const result = await verifyOtp(otp);
+    if (result.success) {
+      // Auth state will update automatically via AuthContext listener
     }
   };
 
-  if (verificationSent) {
+  if (otpSent) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-muted p-4 flex items-center justify-center">
         <Card className="w-full max-w-md p-6">
@@ -119,12 +134,12 @@ export const AuthPage = () => {
             />
             <Button 
               onClick={onVerifyOtp}
-              disabled={verifying || otp.length < 4}
+              disabled={smsLoading || otp.length < 4}
               className="w-full bg-sa-green hover:bg-sa-green-light text-white"
             >
-              {verifying ? "Verifying..." : "Verify Code"}
+              {smsLoading ? "Verifying..." : "Verify Code"}
             </Button>
-            <Button variant="ghost" onClick={() => setVerificationSent(false)} className="w-full">
+            <Button variant="ghost" onClick={resetOtp} className="w-full">
               Back
             </Button>
           </div>
@@ -184,7 +199,7 @@ export const AuthPage = () => {
                 {role ? `${role.charAt(0).toUpperCase() + role.slice(1)} Login` : "Login"}
               </h1>
               <p className="text-muted-foreground">
-                Enter your email to sign in to PoortLink
+                Enter your phone number to sign in to PoortLink
               </p>
             </div>
 
@@ -206,10 +221,10 @@ export const AuthPage = () => {
 
               <Button 
                 onClick={onPhoneAuth}
-                disabled={loading || !phone}
+                disabled={smsLoading || !phone}
                 className="w-full bg-sa-green hover:bg-sa-green-light text-white"
               >
-                {loading ? "Sending..." : "Send SMS Code"}
+                {smsLoading ? "Sending..." : "Send SMS Code"}
               </Button>
 
               <div className="relative">
@@ -235,11 +250,11 @@ export const AuthPage = () => {
 
               <Button 
                 onClick={onEmailAuth}
-                disabled={loading || !email}
+                disabled={emailLoading || !email}
                 variant="outline"
                 className="w-full"
               >
-                {loading ? "Sending..." : "Send Email Link"}
+                {emailLoading ? "Sending..." : "Send Email Link"}
               </Button>
 
               <div className="relative">
@@ -251,7 +266,7 @@ export const AuthPage = () => {
                 </div>
               </div>
 
-              <GoogleAuthButton disabled={loading} />
+              <GoogleAuthButton disabled={smsLoading || emailLoading} />
 
               <div className="text-center">
                 <Button
