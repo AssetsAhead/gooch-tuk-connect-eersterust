@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { SmartLocationInput } from '@/components/SmartLocationInput';
@@ -19,9 +19,7 @@ import {
   Car,
   Loader2,
   ChevronRight,
-  Sparkles,
-  Mic,
-  Languages
+  Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -102,15 +100,27 @@ export const SmartHailCard = ({
         ? `My Location (${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)})`
         : 'Current Location';
 
+      // Find an available driver
+      const { data: availableDriver } = await supabase
+        .from('drivers')
+        .select('id, user_id, name, eta')
+        .eq('status', 'online')
+        .order('eta', { ascending: true })
+        .limit(1)
+        .single();
+
+      const finalPrice = discountInfo?.isVerified 
+        ? Math.round(dest.fare * (1 - discountInfo.discountPercentage / 100))
+        : dest.fare;
+
       const { data: ride, error } = await supabase
         .from('rides')
         .insert({
           passenger_id: userId,
+          driver_id: availableDriver?.user_id || null,
           pickup_location: pickupLocation,
           destination: dest.name,
-          price: discountInfo?.isVerified 
-            ? Math.round(dest.fare * (1 - discountInfo.discountPercentage / 100))
-            : dest.fare,
+          price: finalPrice,
           ride_type: 'quick_destination',
           status: 'requested'
         })
@@ -119,17 +129,21 @@ export const SmartHailCard = ({
 
       if (error) throw error;
 
+      const driverMsg = availableDriver 
+        ? `${availableDriver.name} will arrive in ~${availableDriver.eta || 5} min`
+        : 'Finding a driver for you...';
+
       toast({
         title: '🎉 Ride Booked!',
-        description: `Heading to ${dest.name}. Driver on the way!`,
+        description: `${dest.name} - R${finalPrice}. ${driverMsg}`,
       });
 
       onRideCreated?.(ride);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Booking error:', error);
       toast({
         title: 'Booking failed',
-        description: 'Please try again',
+        description: error.message || 'Please try again',
         variant: 'destructive'
       });
     } finally {
@@ -137,8 +151,29 @@ export const SmartHailCard = ({
     }
   };
 
+  const handleUseCurrentLocation = () => {
+    if (userLocation) {
+      setPickup(`Current Location (${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)})`);
+    } else {
+      toast({
+        title: 'Location unavailable',
+        description: 'Please enable location services',
+        variant: 'destructive'
+      });
+    }
+  };
+
   const handleCustomBooking = async () => {
-    if (!userId || !pickup || !destination) {
+    if (!userId) {
+      toast({
+        title: 'Sign in required',
+        description: 'Please sign in to book a ride',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    if (!pickup || !destination) {
       toast({
         title: 'Missing information',
         description: 'Please enter pickup and destination',
@@ -150,11 +185,30 @@ export const SmartHailCard = ({
     setIsBooking(true);
 
     try {
+      // Use selected driver or find best available
+      let driverId = selectedDriver?.user_id || selectedDriver?.id || null;
+      let driverName = selectedDriver?.name;
+
+      if (!driverId) {
+        const { data: bestDriver } = await supabase
+          .from('drivers')
+          .select('id, user_id, name')
+          .eq('status', 'online')
+          .order('rating', { ascending: false })
+          .limit(1)
+          .single();
+        
+        if (bestDriver) {
+          driverId = bestDriver.user_id;
+          driverName = bestDriver.name;
+        }
+      }
+
       const { data: ride, error } = await supabase
         .from('rides')
         .insert({
           passenger_id: userId,
-          driver_id: selectedDriver?.user_id || null,
+          driver_id: driverId,
           pickup_location: pickup,
           destination: destination,
           price: estimatedFare || 20,
@@ -168,8 +222,8 @@ export const SmartHailCard = ({
 
       toast({
         title: '🚗 Ride Requested!',
-        description: selectedDriver 
-          ? `${selectedDriver.name} will pick you up soon`
+        description: driverName 
+          ? `${driverName} will pick you up soon`
           : 'Finding the best driver for you...',
       });
 
@@ -177,11 +231,11 @@ export const SmartHailCard = ({
       setPickup('');
       setDestination('');
       setSelectedDriver(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Booking error:', error);
       toast({
         title: 'Booking failed',
-        description: 'Please try again',
+        description: error.message || 'Please try again',
         variant: 'destructive'
       });
     } finally {
@@ -291,7 +345,19 @@ export const SmartHailCard = ({
             {/* Custom Trip Form */}
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium mb-1.5 block">Pickup</label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-sm font-medium">Pickup</label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 text-xs text-primary"
+                    onClick={handleUseCurrentLocation}
+                    disabled={!userLocation}
+                  >
+                    <MapPin className="h-3 w-3 mr-1" />
+                    Use Current Location
+                  </Button>
+                </div>
                 <SmartLocationInput
                   placeholder="Where are you?"
                   value={pickup}
