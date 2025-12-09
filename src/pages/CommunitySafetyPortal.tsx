@@ -12,19 +12,34 @@ import {
   AlertTriangle, 
   Heart,
   Building,
-  ArrowLeft
+  ArrowLeft,
+  Sparkles
 } from "lucide-react";
+import AIIncidentDetector from "@/components/camera/AIIncidentDetector";
 
 const CommunitySafetyPortal = () => {
-  const [activeTab, setActiveTab] = useState("witness");
+  const [activeTab, setActiveTab] = useState("ai-detection");
 
   const safetyFeatures = [
+    {
+      id: "ai-detection",
+      icon: Sparkles,
+      title: "AI Incident Detection",
+      description: "AI-powered analysis of camera feeds",
+      color: "primary",
+      features: [
+        "Automatic incident detection",
+        "License plate recognition",
+        "Traffic violation detection",
+        "Real-time safety alerts"
+      ]
+    },
     {
       id: "witness",
       icon: Eye,
       title: "Safety Witness Network",
       description: "Report incidents anonymously via QR codes",
-      color: "primary",
+      color: "success",
       features: [
         "Anonymous incident reporting",
         "Photo/video evidence upload",
@@ -157,57 +172,63 @@ const CommunitySafetyPortal = () => {
         </div>
 
         {/* Active Feature Details */}
-        <Card className="mb-12">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              {(() => {
-                const activeFeature = safetyFeatures.find(f => f.id === activeTab);
-                const IconComponent = activeFeature?.icon || Shield;
-                return (
-                  <>
-                    <IconComponent className="w-6 h-6 text-primary" />
-                    {activeFeature?.title}
-                  </>
-                );
-              })()}
-            </CardTitle>
-            <CardDescription>
-              How you can contribute to community safety
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold mb-3">Key Features:</h4>
-                <ul className="space-y-2">
-                  {safetyFeatures.find(f => f.id === activeTab)?.features.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-primary rounded-full" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-3">Getting Started:</h4>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-xs font-bold text-primary">1</div>
-                    <p className="text-sm">Register as a community safety volunteer</p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-xs font-bold text-primary">2</div>
-                    <p className="text-sm">Choose your preferred participation level</p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-xs font-bold text-primary">3</div>
-                    <p className="text-sm">Start contributing to community safety</p>
+        {activeTab === "ai-detection" ? (
+          <div className="mb-12">
+            <AIIncidentDetector />
+          </div>
+        ) : (
+          <Card className="mb-12">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                {(() => {
+                  const activeFeature = safetyFeatures.find(f => f.id === activeTab);
+                  const IconComponent = activeFeature?.icon || Shield;
+                  return (
+                    <>
+                      <IconComponent className="w-6 h-6 text-primary" />
+                      {activeFeature?.title}
+                    </>
+                  );
+                })()}
+              </CardTitle>
+              <CardDescription>
+                How you can contribute to community safety
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-3">Key Features:</h4>
+                  <ul className="space-y-2">
+                    {safetyFeatures.find(f => f.id === activeTab)?.features.map((feature, index) => (
+                      <li key={index} className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-3">Getting Started:</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-xs font-bold text-primary">1</div>
+                      <p className="text-sm">Register as a community safety volunteer</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-xs font-bold text-primary">2</div>
+                      <p className="text-sm">Choose your preferred participation level</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-xs font-bold text-primary">3</div>
+                      <p className="text-sm">Start contributing to community safety</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Integration Partners */}
         <Card className="mb-8">
