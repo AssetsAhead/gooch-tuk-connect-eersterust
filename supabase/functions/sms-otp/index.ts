@@ -187,14 +187,33 @@ const handler = async (req: Request): Promise<Response> => {
       const tempEmail = `${formattedPhone.replace('+', '')}@phone.tukconnect.app`;
       const tempPassword = `TC_${formattedPhone}_${Date.now()}`;
       
-      const { data: existingUsers } = await supabase.auth.admin.listUsers();
+      // Helper function to find user by phone across all pages
+      async function findUserByPhone(phone: string, email: string): Promise<any> {
+        let page = 1;
+        const perPage = 1000;
+        
+        while (true) {
+          const { data, error } = await supabase.auth.admin.listUsers({
+            page,
+            perPage,
+          });
+          
+          if (error || !data?.users?.length) break;
+          
+          const found = data.users.find(u => 
+            u.phone === phone || 
+            u.email === email ||
+            u.user_metadata?.phone === phone
+          );
+          
+          if (found) return found;
+          if (data.users.length < perPage) break;
+          page++;
+        }
+        return null;
+      }
       
-      // Find user by phone number OR by the temp email we generate
-      const existingUser = existingUsers?.users?.find(u => 
-        u.phone === formattedPhone || 
-        u.email === tempEmail ||
-        u.user_metadata?.phone === formattedPhone
-      );
+      const existingUser = await findUserByPhone(formattedPhone, tempEmail);
 
       if (existingUser) {
         console.log('Existing user found:', existingUser.id);
@@ -242,16 +261,16 @@ const handler = async (req: Request): Promise<Response> => {
         if (createError) {
           console.error('User creation error:', createError);
           
-          // If phone exists error, try to find and update that user instead
+          // If phone exists error, try harder to find the user
           if (createError.message?.includes('Phone number already registered') || 
               createError.message?.includes('phone_exists')) {
-            console.log('Phone exists, attempting to find user...');
+            console.log('Phone exists, searching all users...');
             
-            // Refetch users to find by phone
-            const { data: refetchedUsers } = await supabase.auth.admin.listUsers();
-            const phoneUser = refetchedUsers?.users?.find(u => u.phone === formattedPhone);
+            // Search with pagination again
+            const phoneUser = await findUserByPhone(formattedPhone, tempEmail);
             
             if (phoneUser) {
+              console.log('Found user on retry:', phoneUser.id);
               const { error: updateErr } = await supabase.auth.admin.updateUserById(phoneUser.id, {
                 password: tempPassword,
               });
