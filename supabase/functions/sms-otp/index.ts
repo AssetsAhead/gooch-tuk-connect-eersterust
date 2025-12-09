@@ -97,17 +97,20 @@ const handler = async (req: Request): Promise<Response> => {
       // Send SMS via Twilio
       const twilioSid = Deno.env.get('TWILIO_ACCOUNT_SID');
       const twilioToken = Deno.env.get('TWILIO_AUTH_TOKEN');
-      const twilioPhone = Deno.env.get('TWILIO_PHONE_NUMBER') || '+15005550006'; // Test number fallback
+      const twilioPhone = Deno.env.get('TWILIO_PHONE_NUMBER');
 
-      if (!twilioSid || !twilioToken) {
-        console.error('Twilio credentials not configured');
+      if (!twilioSid || !twilioToken || !twilioPhone) {
+        console.error('Twilio credentials not fully configured');
+        console.log('TWILIO_ACCOUNT_SID:', twilioSid ? 'set' : 'missing');
+        console.log('TWILIO_AUTH_TOKEN:', twilioToken ? 'set' : 'missing');
+        console.log('TWILIO_PHONE_NUMBER:', twilioPhone ? 'set' : 'missing');
+        
         // In development, return the OTP for testing
         console.log(`DEV MODE - OTP for ${formattedPhone}: ${otp}`);
         return new Response(
           JSON.stringify({ 
             success: true, 
-            message: 'Verification code sent',
-            // Remove this in production!
+            message: 'Verification code sent (dev mode)',
             devCode: otp 
           }),
           { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -116,6 +119,8 @@ const handler = async (req: Request): Promise<Response> => {
 
       const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`;
       const twilioAuth = btoa(`${twilioSid}:${twilioToken}`);
+
+      console.log(`Sending SMS to ${formattedPhone} from ${twilioPhone}`);
 
       const smsResponse = await fetch(twilioUrl, {
         method: 'POST',
@@ -130,16 +135,17 @@ const handler = async (req: Request): Promise<Response> => {
         }),
       });
 
+      const smsResult = await smsResponse.text();
+      
       if (!smsResponse.ok) {
-        const errorText = await smsResponse.text();
-        console.error('Twilio error:', errorText);
+        console.error('Twilio error response:', smsResult);
         return new Response(
-          JSON.stringify({ error: 'Failed to send SMS. Please try again.' }),
+          JSON.stringify({ error: 'Failed to send SMS. Please check your phone number and try again.' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      console.log(`OTP sent successfully to ${formattedPhone}`);
+      console.log(`OTP sent successfully to ${formattedPhone}`, smsResult);
       return new Response(
         JSON.stringify({ success: true, message: 'Verification code sent' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -177,20 +183,27 @@ const handler = async (req: Request): Promise<Response> => {
         .update({ verified: true })
         .eq('id', verification.id);
 
-      // Create or sign in user via Supabase Auth
-      // First check if user exists
+      // Check if user exists by phone
       const { data: existingUsers } = await supabase.auth.admin.listUsers();
       const existingUser = existingUsers?.users?.find(u => u.phone === formattedPhone);
+      
+      const tempEmail = `${formattedPhone.replace('+', '')}@phone.tukconnect.app`;
+      const tempPassword = `TC_${formattedPhone}_${Date.now()}`;
 
       if (existingUser) {
-        // Generate a magic link token for existing user
-        const { data: signInData, error: signInError } = await supabase.auth.admin.generateLink({
-          type: 'magiclink',
-          email: existingUser.email || `${formattedPhone.replace('+', '')}@phone.tukconnect.app`,
+        console.log('Existing user found:', existingUser.id);
+        
+        // Update user's password for this session
+        const { error: updateError } = await supabase.auth.admin.updateUserById(existingUser.id, {
+          password: tempPassword,
         });
 
-        if (signInError) {
-          console.error('Sign in error:', signInError);
+        if (updateError) {
+          console.error('Failed to update user password:', updateError);
+          return new Response(
+            JSON.stringify({ error: 'Failed to authenticate' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
         }
 
         return new Response(
@@ -199,15 +212,19 @@ const handler = async (req: Request): Promise<Response> => {
             verified: true,
             userId: existingUser.id,
             isNewUser: false,
+            email: existingUser.email || tempEmail,
+            tempPassword: tempPassword,
           }),
           { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       } else {
         // Create new user with phone
-        const tempEmail = `${formattedPhone.replace('+', '')}@phone.tukconnect.app`;
+        console.log('Creating new user for phone:', formattedPhone);
+        
         const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
           phone: formattedPhone,
           email: tempEmail,
+          password: tempPassword,
           phone_confirm: true,
           email_confirm: true,
           user_metadata: {
@@ -245,6 +262,8 @@ const handler = async (req: Request): Promise<Response> => {
             verified: true,
             userId: newUser?.user?.id,
             isNewUser: true,
+            email: tempEmail,
+            tempPassword: tempPassword,
           }),
           { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
