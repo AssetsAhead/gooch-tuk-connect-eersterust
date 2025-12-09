@@ -318,6 +318,56 @@ export type Database = {
         }
         Relationships: []
       }
+      deadline_reminders: {
+        Row: {
+          created_at: string
+          deadline_date: string
+          description: string | null
+          id: string
+          is_active: boolean
+          last_reminder_sent: string | null
+          registration_id: string | null
+          reminder_days: number[] | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deadline_date: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          last_reminder_sent?: string | null
+          registration_id?: string | null
+          reminder_days?: number[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deadline_date?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          last_reminder_sent?: string | null
+          registration_id?: string | null
+          reminder_days?: number[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deadline_reminders_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "regulatory_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       driver_reputation: {
         Row: {
           champion_acts: number | null
@@ -1227,6 +1277,107 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      regulatory_documents: {
+        Row: {
+          document_type: string | null
+          file_name: string
+          file_path: string
+          file_size: number | null
+          file_type: string | null
+          id: string
+          is_current: boolean
+          notes: string | null
+          registration_id: string
+          uploaded_at: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          document_type?: string | null
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          is_current?: boolean
+          notes?: string | null
+          registration_id: string
+          uploaded_at?: string
+          user_id: string
+          version?: number
+        }
+        Update: {
+          document_type?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          is_current?: boolean
+          notes?: string | null
+          registration_id?: string
+          uploaded_at?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regulatory_documents_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "regulatory_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      regulatory_registrations: {
+        Row: {
+          approved_date: string | null
+          created_at: string
+          deadline: string | null
+          description: string | null
+          id: string
+          notes: string | null
+          organization_code: string
+          organization_name: string
+          registration_number: string | null
+          status: string
+          submitted_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approved_date?: string | null
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          organization_code: string
+          organization_name: string
+          registration_number?: string | null
+          status?: string
+          submitted_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approved_date?: string | null
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          organization_code?: string
+          organization_name?: string
+          registration_number?: string | null
+          status?: string
+          submitted_date?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       ride_updates: {
         Row: {
