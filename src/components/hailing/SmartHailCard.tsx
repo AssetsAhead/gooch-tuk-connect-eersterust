@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { SmartLocationInput } from '@/components/SmartLocationInput';
 import { QuickHailButton } from './QuickHailButton';
 import { LiveDriverMap } from './LiveDriverMap';
+import VoiceHailButton from './VoiceHailButton';
 import {
   MapPin,
   Navigation,
@@ -17,7 +18,8 @@ import {
   Car,
   Loader2,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Mic
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -226,17 +228,25 @@ export const SmartHailCard = ({
       <CardContent className="p-4 space-y-4">
         {mode === 'quick' ? (
           <>
-            {/* One-Tap Hail Button */}
-            <div className="flex flex-col items-center py-6">
+            {/* One-Tap Hail & Voice Hail Buttons */}
+            <div className="flex items-center justify-center gap-8 py-6">
               <QuickHailButton
                 userId={userId}
                 onHailSuccess={onRideCreated}
                 disabled={isBooking}
               />
-              <p className="text-sm text-muted-foreground mt-10 text-center">
-                Instantly hail the nearest available driver
-              </p>
+              <div className="w-px h-16 bg-border" />
+              <VoiceHailButton
+                onDestinationDetected={(dest) => {
+                  setDestination(dest);
+                  setMode('custom');
+                }}
+                disabled={isBooking}
+              />
             </div>
+            <p className="text-sm text-muted-foreground text-center -mt-2">
+              Tap to hail instantly or speak your destination
+            </p>
 
             {/* Quick Destinations */}
             <div>
