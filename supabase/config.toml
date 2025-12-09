@@ -75,3 +75,6 @@ verify_jwt = false
 
 [functions.analyze-incident]
 verify_jwt = true
+
+[functions.smart-match-driver]
+verify_jwt = true
