@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 
 interface Driver {
   id: string;
+  user_id: string;
   name: string;
   vehicle: string;
   rating: number;
@@ -24,6 +25,8 @@ interface Driver {
   location: string;
   eta: number;
   distance: string;
+  posX?: number;
+  posY?: number;
 }
 
 interface LiveDriverMapProps {
@@ -46,23 +49,26 @@ export const LiveDriverMap = ({
     try {
       const { data, error } = await supabase
         .from('drivers')
-        .select('*')
+        .select('id, user_id, name, vehicle, rating, status, location, eta')
         .eq('status', 'online')
         .limit(8);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching drivers:', error);
+        return;
+      }
 
-      // Simulate real-time positioning
-      const driversWithPosition = (data || []).map((driver, index) => ({
+      // Add positioning for visual display
+      const driversWithPosition: Driver[] = (data || []).map((driver, index) => ({
         id: driver.id,
+        user_id: driver.user_id,
         name: driver.name,
         vehicle: driver.vehicle,
         rating: driver.rating || 4.5,
-        status: driver.status,
+        status: driver.status || 'online',
         location: driver.location,
-        eta: Math.floor(Math.random() * 8 + 2),
+        eta: driver.eta || Math.floor(Math.random() * 8 + 2),
         distance: `${(Math.random() * 2 + 0.3).toFixed(1)}km`,
-        // Simulated position for visual display
         posX: 20 + (index % 3) * 30 + Math.random() * 10,
         posY: 20 + Math.floor(index / 3) * 25 + Math.random() * 10,
       }));
@@ -179,8 +185,8 @@ export const LiveDriverMap = ({
                 selectedDriverId === driver.id && 'scale-125 z-30'
               )}
               style={{ 
-                left: `${(driver as any).posX}%`, 
-                top: `${(driver as any).posY}%`,
+                left: `${driver.posX}%`, 
+                top: `${driver.posY}%`,
                 transform: 'translate(-50%, -50%)'
               }}
               onClick={() => onSelectDriver?.(driver)}
