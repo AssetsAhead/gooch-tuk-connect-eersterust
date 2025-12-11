@@ -31,6 +31,7 @@ import {
   Pie,
   Cell
 } from "recharts";
+import { InvestorPitchExport } from "./InvestorPitchExport";
 
 interface ROIInputs {
   vehicleCost: number;
@@ -140,16 +141,38 @@ export const FleetROICalculator = () => {
       {/* Header */}
       <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10">
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-primary/20">
-              <Calculator className="h-6 w-6 text-primary" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl bg-primary/20">
+                <Calculator className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl">Fleet ROI Calculator</CardTitle>
+                <CardDescription>
+                  Electric Bike Fleet Financial Model • 60/40 Split • SA Employment Compliant
+                </CardDescription>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-2xl">Fleet ROI Calculator</CardTitle>
-              <CardDescription>
-                Electric Bike Fleet Financial Model • 60/40 Split • SA Employment Compliant
-              </CardDescription>
-            </div>
+            <InvestorPitchExport 
+              data={{
+                vehicleCost: inputs.vehicleCost,
+                fleetSize: inputs.fleetSize,
+                dailyRevenue: inputs.dailyRevenue,
+                fuelSavingsPerDay: inputs.fuelSavingsPerDay,
+                maintenanceCostMonthly: inputs.maintenanceCostMonthly,
+                operatingDaysPerMonth: inputs.operatingDaysPerMonth,
+                monthlyGrossRevenue,
+                ownerGrossShare,
+                driverGrossShare,
+                employmentCostsMonthly,
+                monthlyFuelSavings,
+                netOwnerIncomePerVehicle,
+                totalInvestment,
+                totalMonthlyNetIncome,
+                paybackMonths,
+                annualROI,
+              }}
+            />
           </div>
         </CardHeader>
       </Card>
