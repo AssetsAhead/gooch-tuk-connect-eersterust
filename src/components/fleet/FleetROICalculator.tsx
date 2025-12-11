@@ -32,6 +32,7 @@ import {
   Cell
 } from "recharts";
 import { InvestorPitchExport } from "./InvestorPitchExport";
+import { RevenueTracking } from "./RevenueTracking";
 
 interface ROIInputs {
   vehicleCost: number;
@@ -496,6 +497,16 @@ export const FleetROICalculator = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Actual Revenue Tracking */}
+      <RevenueTracking 
+        projectedValues={{
+          dailyRevenue: inputs.dailyRevenue,
+          fuelSavingsPerDay: inputs.fuelSavingsPerDay,
+          maintenanceCostMonthly: inputs.maintenanceCostMonthly,
+          operatingDaysPerMonth: inputs.operatingDaysPerMonth,
+        }}
+      />
     </div>
   );
 };
