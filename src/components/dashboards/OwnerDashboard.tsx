@@ -15,6 +15,7 @@ import { FleetROICalculator } from "@/components/fleet/FleetROICalculator";
 import { EmploymentContractGenerator } from "@/components/fleet/EmploymentContractGenerator";
 import { PayrollCalculator } from "@/components/fleet/PayrollCalculator";
 import { DriverOnboardingChecklist } from "@/components/fleet/DriverOnboardingChecklist";
+import { DriverDocumentUpload } from "@/components/fleet/DriverDocumentUpload";
 
 export const OwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("fleet");
@@ -53,6 +54,7 @@ export const OwnerDashboard = () => {
           {/* Drivers Tab */}
           <TabsContent value="drivers" className="space-y-6">
             <DriverOnboardingChecklist />
+            <DriverDocumentUpload />
           </TabsContent>
 
           {/* Payroll Tab */}

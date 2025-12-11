@@ -368,6 +368,45 @@ export type Database = {
           },
         ]
       }
+      driver_documents: {
+        Row: {
+          document_type: string
+          driver_id: string
+          expiry_date: string | null
+          file_name: string
+          file_path: string
+          id: string
+          is_current: boolean
+          notes: string | null
+          updated_at: string
+          uploaded_at: string
+        }
+        Insert: {
+          document_type: string
+          driver_id: string
+          expiry_date?: string | null
+          file_name: string
+          file_path: string
+          id?: string
+          is_current?: boolean
+          notes?: string | null
+          updated_at?: string
+          uploaded_at?: string
+        }
+        Update: {
+          document_type?: string
+          driver_id?: string
+          expiry_date?: string | null
+          file_name?: string
+          file_path?: string
+          id?: string
+          is_current?: boolean
+          notes?: string | null
+          updated_at?: string
+          uploaded_at?: string
+        }
+        Relationships: []
+      }
       driver_reputation: {
         Row: {
           champion_acts: number | null
