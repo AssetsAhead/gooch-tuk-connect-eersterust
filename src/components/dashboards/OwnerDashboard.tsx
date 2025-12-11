@@ -12,6 +12,7 @@ import { NotificationCenter } from "@/components/notifications/NotificationCente
 import { FleetManagement } from "@/components/fleet/FleetManagement";
 import { PartsInventory } from "@/components/fleet/PartsInventory";
 import { FleetROICalculator } from "@/components/fleet/FleetROICalculator";
+import { EmploymentContractGenerator } from "@/components/fleet/EmploymentContractGenerator";
 
 export const OwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("fleet");
@@ -42,6 +43,7 @@ export const OwnerDashboard = () => {
           {/* Fleet Tab */}
           <TabsContent value="fleet" className="space-y-6">
             <FleetManagement />
+            <EmploymentContractGenerator />
           </TabsContent>
 
           {/* ROI Calculator Tab */}
