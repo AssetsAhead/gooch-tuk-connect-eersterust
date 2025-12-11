@@ -33,6 +33,7 @@ import RegisterComplete from "./pages/RegisterComplete";
 import { SafeMode } from "./pages/SafeMode";
 import { Compliance } from "./pages/Compliance";
 import { RegulatoryRegistration } from "./pages/RegulatoryRegistration";
+import CommunityAnnouncements from "./pages/CommunityAnnouncements";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
 import { PerformanceProfiler } from "./components/dev/PerformanceProfiler";
@@ -114,6 +115,7 @@ const App = () => {
                 <Route path="/passenger-recruitment" element={<PassengerRecruitment />} />
                 <Route path="/compliance" element={<Compliance />} />
                 <Route path="/regulatory-registration" element={<RegulatoryRegistration />} />
+                <Route path="/community-announcements" element={<CommunityAnnouncements />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />

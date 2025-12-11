@@ -156,9 +156,11 @@ const Index = () => {
                   🛡️ Safety Portal
                 </Button>
               </Link>
-              <Button className="w-full bg-sa-blue hover:bg-sa-blue-light text-white font-bold py-4 px-6 text-lg">
-                🤖 AI Assistant
-              </Button>
+              <Link to="/community-announcements">
+                <Button className="w-full bg-sa-blue hover:bg-sa-blue-light text-white font-bold py-4 px-6 text-lg">
+                  📢 Announcements
+                </Button>
+              </Link>
             </div>
             <div className="text-center mt-4">
               <p className="text-sm text-muted-foreground">
