@@ -6,6 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import { 
   ArrowLeft, 
   Megaphone, 
@@ -16,7 +21,8 @@ import {
   AlertTriangle,
   Construction,
   Bell,
-  Phone
+  Phone,
+  Plus
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -39,10 +45,87 @@ const CommunityAnnouncements = () => {
   const [loading, setLoading] = useState(true);
   const [selectedWard, setSelectedWard] = useState<string>("all");
   const [wards, setWards] = useState<string[]>([]);
+  const [isCouncillor, setIsCouncillor] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  // Form state
+  const [formData, setFormData] = useState({
+    title: "",
+    message: "",
+    type: "general",
+    priority: "medium",
+    ward: "",
+    area: ""
+  });
 
   useEffect(() => {
     fetchMessages();
+    checkCouncillorRole();
   }, []);
+
+  const checkCouncillorRole = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .in('role', ['admin', 'councillor']);
+
+    setIsCouncillor((data?.length || 0) > 0);
+  };
+
+  const handleCreateAnnouncement = async () => {
+    if (!formData.title.trim() || !formData.message.trim() || !formData.ward.trim()) {
+      toast({
+        title: "Missing fields",
+        description: "Please fill in title, message, and ward.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      const { error } = await supabase
+        .from('emergency_messages')
+        .insert({
+          title: formData.title.trim(),
+          message: formData.message.trim(),
+          type: formData.type,
+          priority: formData.priority,
+          ward: formData.ward.trim(),
+          area: formData.area.trim() || null,
+          created_by: user?.id,
+          status: 'active'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Announcement created",
+        description: "Your announcement has been published."
+      });
+
+      setFormData({ title: "", message: "", type: "general", priority: "medium", ward: "", area: "" });
+      setDialogOpen(false);
+      fetchMessages();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create announcement.",
+        variant: "destructive"
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const fetchMessages = async () => {
     try {
@@ -123,7 +206,7 @@ const CommunityAnnouncements = () => {
 
       {/* Filter Section */}
       <div className="container mx-auto max-w-4xl px-4 py-6">
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex flex-wrap items-center gap-4 mb-6">
           <div className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-muted-foreground" />
             <span className="text-sm font-medium">Filter by Ward:</span>
@@ -139,9 +222,104 @@ const CommunityAnnouncements = () => {
               ))}
             </SelectContent>
           </Select>
-          <Badge variant="secondary" className="ml-auto">
+          <Badge variant="secondary">
             {filteredMessages.length} announcement{filteredMessages.length !== 1 ? 's' : ''}
           </Badge>
+          
+          {isCouncillor && (
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="ml-auto">
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Announcement
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>Create Announcement</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Title *</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="Announcement title"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="message">Message *</Label>
+                    <Textarea
+                      id="message"
+                      value={formData.message}
+                      onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                      placeholder="Enter your announcement message..."
+                      rows={4}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="type">Type</Label>
+                      <Select value={formData.type} onValueChange={(v) => setFormData(prev => ({ ...prev, type: v }))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="general">General</SelectItem>
+                          <SelectItem value="water">Water</SelectItem>
+                          <SelectItem value="electricity">Electricity</SelectItem>
+                          <SelectItem value="construction">Construction</SelectItem>
+                          <SelectItem value="emergency">Emergency</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="priority">Priority</Label>
+                      <Select value={formData.priority} onValueChange={(v) => setFormData(prev => ({ ...prev, priority: v }))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="critical">Critical</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="ward">Ward *</Label>
+                      <Input
+                        id="ward"
+                        value={formData.ward}
+                        onChange={(e) => setFormData(prev => ({ ...prev, ward: e.target.value }))}
+                        placeholder="e.g., Ward 23"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="area">Area (optional)</Label>
+                      <Input
+                        id="area"
+                        value={formData.area}
+                        onChange={(e) => setFormData(prev => ({ ...prev, area: e.target.value }))}
+                        placeholder="e.g., Mitchells Plain"
+                      />
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={handleCreateAnnouncement} 
+                    className="w-full" 
+                    disabled={submitting}
+                  >
+                    {submitting ? "Publishing..." : "Publish Announcement"}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
 
         {/* Messages List */}
