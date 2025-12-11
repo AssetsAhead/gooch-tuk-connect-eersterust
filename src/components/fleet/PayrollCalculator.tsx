@@ -13,18 +13,22 @@ import {
   TrendingUp,
   FileText,
   Users,
-  Calendar
+  Calendar,
+  Download,
+  Printer
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
+import { generatePayslipPDF, generateAllPayslips } from "./PayslipGenerator";
 
 interface RevenueRecord {
   id: string;
   vehicle_id: string | null;
   tracking_date: string;
   gross_revenue: number;
+  trips_completed: number;
 }
 
 interface Vehicle {
@@ -114,7 +118,7 @@ export const PayrollCalculator = () => {
 
       const { data, error } = await supabase
         .from("fleet_revenue_tracking")
-        .select("id, vehicle_id, tracking_date, gross_revenue")
+        .select("id, vehicle_id, tracking_date, gross_revenue, trips_completed")
         .gte("tracking_date", start)
         .lte("tracking_date", end)
         .order("tracking_date", { ascending: true });
@@ -161,11 +165,58 @@ export const PayrollCalculator = () => {
     };
   });
 
-  // Per-vehicle breakdown
-  const vehicleBreakdowns = vehicles.map(vehicle => ({
-    vehicle,
-    payroll: calculatePayroll(vehicle.id),
-  })).filter(v => v.payroll.grossRevenue > 0);
+  // Per-vehicle breakdown with days and trips
+  const vehicleBreakdowns = vehicles.map(vehicle => {
+    const vehicleRecords = records.filter(r => r.vehicle_id === vehicle.id);
+    return {
+      vehicle,
+      payroll: calculatePayroll(vehicle.id),
+      daysWorked: vehicleRecords.length,
+      tripsCompleted: vehicleRecords.reduce((sum, r) => sum + (r.trips_completed || 0), 0),
+    };
+  }).filter(v => v.payroll.grossRevenue > 0);
+
+  const selectedMonthLabel = format(new Date(selectedMonth + "-01"), "MMMM yyyy");
+
+  const handleDownloadPayslip = (breakdown: typeof vehicleBreakdowns[0]) => {
+    generatePayslipPDF({
+      employerName: "Poortlink Fleet Services",
+      employerAddress: "Cape Town, South Africa",
+      employeeName: `Driver - ${breakdown.vehicle.registration_number}`,
+      employeeId: breakdown.vehicle.id.slice(0, 8).toUpperCase(),
+      vehicleReg: breakdown.vehicle.registration_number,
+      payPeriod: selectedMonthLabel,
+      payDate: format(new Date(), "dd MMMM yyyy"),
+      grossRevenue: breakdown.payroll.grossRevenue,
+      driverShare: breakdown.payroll.driverShare,
+      ownerShare: breakdown.payroll.ownerShare,
+      uifDeduction: breakdown.payroll.uifDeduction,
+      payeDeduction: breakdown.payroll.payeDeduction,
+      netPay: breakdown.payroll.netDriverPay,
+      daysWorked: breakdown.daysWorked,
+      tripsCompleted: breakdown.tripsCompleted,
+    });
+    toast({
+      title: "Payslip Downloaded",
+      description: `Payslip for ${breakdown.vehicle.registration_number} has been generated.`,
+    });
+  };
+
+  const handleDownloadAllPayslips = () => {
+    if (vehicleBreakdowns.length === 0) {
+      toast({
+        title: "No Payslips",
+        description: "No revenue data available for the selected period.",
+        variant: "destructive",
+      });
+      return;
+    }
+    generateAllPayslips(vehicleBreakdowns, selectedMonthLabel);
+    toast({
+      title: "Generating Payslips",
+      description: `Downloading ${vehicleBreakdowns.length} payslips...`,
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -325,32 +376,52 @@ export const PayrollCalculator = () => {
       {vehicleBreakdowns.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Per-Vehicle Payroll Summary
-            </CardTitle>
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Per-Vehicle Payroll Summary
+              </CardTitle>
+              <Button onClick={handleDownloadAllPayslips} className="gap-2">
+                <Printer className="h-4 w-4" />
+                Download All Payslips
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Vehicle</TableHead>
+                  <TableHead className="text-right">Days</TableHead>
+                  <TableHead className="text-right">Trips</TableHead>
                   <TableHead className="text-right">Gross Revenue</TableHead>
                   <TableHead className="text-right">Driver (60%)</TableHead>
-                  <TableHead className="text-right">UIF</TableHead>
-                  <TableHead className="text-right">PAYE</TableHead>
+                  <TableHead className="text-right">Deductions</TableHead>
                   <TableHead className="text-right">Net Pay</TableHead>
+                  <TableHead className="text-center">Payslip</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {vehicleBreakdowns.map(({ vehicle, payroll }) => (
-                  <TableRow key={vehicle.id}>
-                    <TableCell className="font-medium">{vehicle.registration_number}</TableCell>
-                    <TableCell className="text-right">R{payroll.grossRevenue.toLocaleString()}</TableCell>
-                    <TableCell className="text-right text-blue-600">R{payroll.driverShare.toLocaleString()}</TableCell>
-                    <TableCell className="text-right text-orange-600">-R{payroll.uifDeduction.toFixed(2)}</TableCell>
-                    <TableCell className="text-right text-orange-600">-R{payroll.payeDeduction.toFixed(2)}</TableCell>
-                    <TableCell className="text-right font-bold text-green-600">R{payroll.netDriverPay.toFixed(2)}</TableCell>
+                {vehicleBreakdowns.map((breakdown) => (
+                  <TableRow key={breakdown.vehicle.id}>
+                    <TableCell className="font-medium">{breakdown.vehicle.registration_number}</TableCell>
+                    <TableCell className="text-right">{breakdown.daysWorked}</TableCell>
+                    <TableCell className="text-right">{breakdown.tripsCompleted}</TableCell>
+                    <TableCell className="text-right">R{breakdown.payroll.grossRevenue.toLocaleString()}</TableCell>
+                    <TableCell className="text-right text-blue-600">R{breakdown.payroll.driverShare.toLocaleString()}</TableCell>
+                    <TableCell className="text-right text-orange-600">
+                      -R{(breakdown.payroll.uifDeduction + breakdown.payroll.payeDeduction).toFixed(2)}
+                    </TableCell>
+                    <TableCell className="text-right font-bold text-green-600">R{breakdown.payroll.netDriverPay.toFixed(2)}</TableCell>
+                    <TableCell className="text-center">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDownloadPayslip(breakdown)}
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
