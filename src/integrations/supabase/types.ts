@@ -563,6 +563,59 @@ export type Database = {
           },
         ]
       }
+      fleet_revenue_tracking: {
+        Row: {
+          created_at: string
+          fuel_cost: number
+          gross_revenue: number
+          id: string
+          maintenance_cost: number
+          notes: string | null
+          other_costs: number
+          owner_id: string
+          tracking_date: string
+          trips_completed: number
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          fuel_cost?: number
+          gross_revenue?: number
+          id?: string
+          maintenance_cost?: number
+          notes?: string | null
+          other_costs?: number
+          owner_id: string
+          tracking_date?: string
+          trips_completed?: number
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          fuel_cost?: number
+          gross_revenue?: number
+          id?: string
+          maintenance_cost?: number
+          notes?: string | null
+          other_costs?: number
+          owner_id?: string
+          tracking_date?: string
+          trips_completed?: number
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_revenue_tracking_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       geofence_zones: {
         Row: {
           active: boolean | null
