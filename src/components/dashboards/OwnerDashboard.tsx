@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Car, Settings, User, Shield, TrendingUp } from "lucide-react";
+import { MapPin, Car, Settings, User, Shield, TrendingUp, Calculator } from "lucide-react";
 import { useState } from "react";
 import { PanicButton } from "@/components/PanicButton";
 import { ReputationSystem } from "@/components/ReputationSystem";
@@ -11,6 +11,7 @@ import { SocialProof } from "@/components/SocialProof";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { FleetManagement } from "@/components/fleet/FleetManagement";
 import { PartsInventory } from "@/components/fleet/PartsInventory";
+import { FleetROICalculator } from "@/components/fleet/FleetROICalculator";
 
 export const OwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("fleet");
@@ -29,8 +30,9 @@ export const OwnerDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="fleet">🚗 Fleet</TabsTrigger>
+            <TabsTrigger value="roi">💰 ROI</TabsTrigger>
             <TabsTrigger value="parts">🔧 Parts</TabsTrigger>
             <TabsTrigger value="community">🛡️ Community</TabsTrigger>
             <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
@@ -40,6 +42,11 @@ export const OwnerDashboard = () => {
           {/* Fleet Tab */}
           <TabsContent value="fleet" className="space-y-6">
             <FleetManagement />
+          </TabsContent>
+
+          {/* ROI Calculator Tab */}
+          <TabsContent value="roi" className="space-y-6">
+            <FleetROICalculator />
           </TabsContent>
 
           {/* Parts Tab */}
