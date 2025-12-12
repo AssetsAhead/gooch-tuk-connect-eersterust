@@ -246,20 +246,33 @@ const handler = async (req: Request): Promise<Response> => {
       const existingUser = await findUserByPhone(formattedPhone, tempEmail);
 
       if (existingUser) {
-        console.log('Existing user found:', existingUser.id);
+        console.log('Existing user found:', existingUser.id, 'email:', existingUser.email);
         
-        // Update user's password for this session
-        const { error: updateError } = await supabase.auth.admin.updateUserById(existingUser.id, {
+        // Use existing email or set the temp email if user has no email
+        const userEmail = existingUser.email || tempEmail;
+        
+        // Update user's password AND email (if missing) for this session
+        const updateData: { password: string; email?: string } = {
           password: tempPassword,
-        });
+        };
+        
+        // If user has no email, set it so signInWithPassword works
+        if (!existingUser.email) {
+          console.log('User has no email, setting temp email:', tempEmail);
+          updateData.email = tempEmail;
+        }
+        
+        const { error: updateError } = await supabase.auth.admin.updateUserById(existingUser.id, updateData);
 
         if (updateError) {
-          console.error('Failed to update user password:', updateError);
+          console.error('Failed to update user:', updateError);
           return new Response(
             JSON.stringify({ error: 'Failed to authenticate' }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
+        
+        console.log('User updated successfully, returning email:', userEmail);
 
         return new Response(
           JSON.stringify({ 
@@ -267,7 +280,7 @@ const handler = async (req: Request): Promise<Response> => {
             verified: true,
             userId: existingUser.id,
             isNewUser: false,
-            email: existingUser.email || tempEmail,
+            email: userEmail,
             tempPassword: tempPassword,
           }),
           { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
