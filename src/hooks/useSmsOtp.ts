@@ -96,15 +96,35 @@ export const useSmsOtp = () => {
       if (data?.error) throw new Error(data.error);
 
       if (data?.verified && data?.email && data?.tempPassword) {
+        // Small delay to ensure password update has propagated in Supabase
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         // Sign in using the temporary password created by the edge function
         console.log('Signing in with email:', data.email);
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: data.email,
-          password: data.tempPassword,
-        });
+        
+        // Retry logic for race condition with password update
+        let signInError = null;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const { error } = await supabase.auth.signInWithPassword({
+            email: data.email,
+            password: data.tempPassword,
+          });
+          
+          if (!error) {
+            signInError = null;
+            break;
+          }
+          
+          signInError = error;
+          console.log(`Sign in attempt ${attempt + 1} failed:`, error.message);
+          
+          if (attempt < 2) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        }
 
         if (signInError) {
-          console.error('Sign in error:', signInError);
+          console.error('Sign in error after retries:', signInError);
           toast({
             title: "Authentication Error",
             description: "Verification successful but sign-in failed. Please try again.",
