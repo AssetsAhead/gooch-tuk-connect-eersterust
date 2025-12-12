@@ -9,9 +9,12 @@ interface SmsOtpResult {
   verified?: boolean;
   userId?: string;
   isNewUser?: boolean;
-  devCode?: string;
-  email?: string;
-  tempPassword?: string;
+  session?: {
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+    expires_at: number;
+  };
 }
 
 export const useSmsOtp = () => {
@@ -50,15 +53,6 @@ export const useSmsOtp = () => {
         description: "Check your phone for the verification code",
       });
 
-      // In dev mode, show the code
-      if (data?.devCode) {
-        console.log('DEV: OTP Code is', data.devCode);
-        toast({
-          title: "Dev Mode",
-          description: `Your code is: ${data.devCode}`,
-        });
-      }
-
       return true;
     } catch (error: any) {
       console.error('Send OTP error:', error);
@@ -95,50 +89,25 @@ export const useSmsOtp = () => {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
-      if (data?.verified && data?.email && data?.tempPassword) {
-        // Longer initial delay to ensure password update has fully propagated in Supabase
-        console.log('Waiting for password propagation...');
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Sign in using the temporary password created by the edge function
-        console.log('Signing in with email:', data.email);
-        
-        // Retry logic for race condition with password update - longer delays
-        let signInError = null;
-        for (let attempt = 0; attempt < 4; attempt++) {
-          console.log(`Sign in attempt ${attempt + 1}...`);
-          const { error } = await supabase.auth.signInWithPassword({
-            email: data.email,
-            password: data.tempPassword,
-          });
-          
-          if (!error) {
-            console.log('Sign in successful!');
-            signInError = null;
-            break;
-          }
-          
-          signInError = error;
-          console.log(`Sign in attempt ${attempt + 1} failed:`, error.message);
-          
-          if (attempt < 3) {
-            // Exponential backoff: 1s, 2s, 3s
-            const delay = (attempt + 1) * 1000;
-            console.log(`Waiting ${delay}ms before retry...`);
-            await new Promise(resolve => setTimeout(resolve, delay));
-          }
-        }
+      if (data?.verified && data?.session) {
+        // Set the session directly from the edge function response
+        console.log('Setting session from edge function response');
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
 
-        if (signInError) {
-          console.error('Sign in error after retries:', signInError);
+        if (sessionError) {
+          console.error('Failed to set session:', sessionError);
           toast({
             title: "Authentication Error",
-            description: "Verification successful but sign-in failed. Please try again.",
+            description: "Failed to establish session. Please try again.",
             variant: "destructive",
           });
           return { success: false };
         }
 
+        console.log('Session set successfully!');
         toast({
           title: "Verified!",
           description: data.isNewUser ? "Account created successfully" : "Welcome back!",
