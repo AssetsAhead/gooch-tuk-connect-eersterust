@@ -96,21 +96,24 @@ export const useSmsOtp = () => {
       if (data?.error) throw new Error(data.error);
 
       if (data?.verified && data?.email && data?.tempPassword) {
-        // Small delay to ensure password update has propagated in Supabase
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Longer initial delay to ensure password update has fully propagated in Supabase
+        console.log('Waiting for password propagation...');
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
         // Sign in using the temporary password created by the edge function
         console.log('Signing in with email:', data.email);
         
-        // Retry logic for race condition with password update
+        // Retry logic for race condition with password update - longer delays
         let signInError = null;
-        for (let attempt = 0; attempt < 3; attempt++) {
+        for (let attempt = 0; attempt < 4; attempt++) {
+          console.log(`Sign in attempt ${attempt + 1}...`);
           const { error } = await supabase.auth.signInWithPassword({
             email: data.email,
             password: data.tempPassword,
           });
           
           if (!error) {
+            console.log('Sign in successful!');
             signInError = null;
             break;
           }
@@ -118,8 +121,11 @@ export const useSmsOtp = () => {
           signInError = error;
           console.log(`Sign in attempt ${attempt + 1} failed:`, error.message);
           
-          if (attempt < 2) {
-            await new Promise(resolve => setTimeout(resolve, 500));
+          if (attempt < 3) {
+            // Exponential backoff: 1s, 2s, 3s
+            const delay = (attempt + 1) * 1000;
+            console.log(`Waiting ${delay}ms before retry...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
           }
         }
 
