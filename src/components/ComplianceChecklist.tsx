@@ -6,6 +6,7 @@ import { CheckCircle2, Circle, AlertCircle, Clock, ExternalLink } from "lucide-r
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface RegulatoryBody {
   code: string;
@@ -20,30 +21,113 @@ interface RegistrationStatus {
 }
 
 const regulatoryBodies: RegulatoryBody[] = [
-  { code: "NDT", name: "National Dept of Transport", description: "E-hailing operating license", required: true },
-  { code: "CIPC", name: "CIPC", description: "Legal entity registration", required: true },
-  { code: "PRE", name: "Provincial Regulatory Entity", description: "Regional compliance", required: true },
-  { code: "SANTACO", name: "SANTACO", description: "Taxi industry association", required: true },
-  { code: "SABS", name: "SABS", description: "Payment processing compliance", required: false },
-  { code: "POPIA", name: "Information Regulator", description: "Data protection compliance", required: true },
+  { code: "ndot", name: "National Dept of Transport", description: "E-hailing operating license", required: true },
+  { code: "cipc", name: "CIPC", description: "Legal entity registration", required: true },
+  { code: "pre", name: "Provincial Regulatory Entity", description: "Regional compliance", required: true },
+  { code: "santaco", name: "SANTACO", description: "Taxi industry association", required: true },
+  { code: "popia", name: "Information Regulator", description: "Data protection compliance", required: true },
+];
+
+// Default seed data with realistic initial statuses for PoortLink
+const DEFAULT_REGISTRATIONS = [
+  {
+    organization_code: 'ndot',
+    organization_name: 'National Department of Transport',
+    description: 'E-Hailing Platform Registration under NLTA Act 23 of 2023',
+    status: 'in_progress',
+    deadline: '2026-03-12'
+  },
+  {
+    organization_code: 'cipc',
+    organization_name: 'Companies and Intellectual Property Commission',
+    description: 'Legal entity and trademark registration',
+    status: 'approved'
+  },
+  {
+    organization_code: 'pre',
+    organization_name: 'Provincial Regulatory Entity (Gauteng)',
+    description: 'Provincial transport authority registration',
+    status: 'in_progress'
+  },
+  {
+    organization_code: 'santaco',
+    organization_name: 'South African National Taxi Council',
+    description: 'Taxi industry body coordination',
+    status: 'in_progress'
+  },
+  {
+    organization_code: 'popia',
+    organization_name: 'Information Regulator (POPIA)',
+    description: 'Data protection registration',
+    status: 'in_progress'
+  }
 ];
 
 export const ComplianceChecklist = () => {
+  const { user } = useAuth();
   const [registrations, setRegistrations] = useState<RegistrationStatus[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRegistrations = async () => {
-      const { data } = await supabase
-        .from("regulatory_registrations")
-        .select("organization_code, status");
-      
-      setRegistrations(data || []);
+    if (user) {
+      loadAndSeedRegistrations();
+    } else {
+      // Show defaults for non-authenticated users
+      setRegistrations(DEFAULT_REGISTRATIONS.map(r => ({ 
+        organization_code: r.organization_code, 
+        status: r.status 
+      })));
       setLoading(false);
-    };
+    }
+  }, [user]);
 
-    fetchRegistrations();
-  }, []);
+  const loadAndSeedRegistrations = async () => {
+    if (!user) return;
+    
+    try {
+      // Try to load existing registrations
+      const { data, error } = await supabase
+        .from("regulatory_registrations")
+        .select("organization_code, status")
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+
+      // If no registrations exist, seed them with initial data
+      if (!data || data.length === 0) {
+        const seedData = DEFAULT_REGISTRATIONS.map(reg => ({
+          user_id: user.id,
+          organization_code: reg.organization_code,
+          organization_name: reg.organization_name,
+          description: reg.description,
+          status: reg.status,
+          deadline: reg.deadline || null
+        }));
+
+        const { error: insertError } = await supabase
+          .from('regulatory_registrations')
+          .insert(seedData);
+
+        if (insertError) throw insertError;
+
+        setRegistrations(seedData.map(r => ({ 
+          organization_code: r.organization_code, 
+          status: r.status 
+        })));
+      } else {
+        setRegistrations(data);
+      }
+    } catch (error) {
+      console.error('Error loading registrations:', error);
+      // Fall back to defaults on error
+      setRegistrations(DEFAULT_REGISTRATIONS.map(r => ({ 
+        organization_code: r.organization_code, 
+        status: r.status 
+      })));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusForBody = (code: string) => {
     const reg = registrations.find(r => r.organization_code === code);
@@ -54,6 +138,7 @@ export const ComplianceChecklist = () => {
     switch (status) {
       case "approved":
         return <CheckCircle2 className="h-5 w-5 text-sa-green" />;
+      case "in_progress":
       case "pending":
       case "submitted":
         return <Clock className="h-5 w-5 text-sa-gold" />;
@@ -68,6 +153,8 @@ export const ComplianceChecklist = () => {
     switch (status) {
       case "approved":
         return <Badge className="bg-sa-green/10 text-sa-green border-sa-green/20">Approved</Badge>;
+      case "in_progress":
+        return <Badge className="bg-sa-gold/10 text-sa-gold border-sa-gold/20">In Progress</Badge>;
       case "pending":
         return <Badge className="bg-sa-gold/10 text-sa-gold border-sa-gold/20">Pending</Badge>;
       case "submitted":
@@ -81,6 +168,9 @@ export const ComplianceChecklist = () => {
 
   const completedCount = regulatoryBodies.filter(
     body => getStatusForBody(body.code) === "approved"
+  ).length;
+  const inProgressCount = regulatoryBodies.filter(
+    body => ["in_progress", "submitted", "pending"].includes(getStatusForBody(body.code))
   ).length;
   const totalRequired = regulatoryBodies.filter(b => b.required).length;
   const progressPercent = Math.round((completedCount / regulatoryBodies.length) * 100);
@@ -123,6 +213,7 @@ export const ComplianceChecklist = () => {
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
               {completedCount} of {regulatoryBodies.length} complete
+              {inProgressCount > 0 && ` • ${inProgressCount} in progress`}
             </span>
             <span className="font-medium">{progressPercent}%</span>
           </div>
@@ -145,7 +236,7 @@ export const ComplianceChecklist = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {body.required && status !== "approved" && (
+                  {body.required && status === "not_started" && (
                     <Badge variant="outline" className="text-xs border-destructive/30 text-destructive">
                       Required
                     </Badge>
