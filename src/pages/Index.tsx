@@ -8,6 +8,7 @@ import { PassengerDashboard } from "@/components/dashboards/PassengerDashboard";
 import { MarshallDashboard } from "@/components/dashboards/MarshallDashboard";
 import { PoliceDashboard } from "@/components/dashboards/PoliceDashboard";
 import { AdminDashboard } from "@/components/dashboards/AdminDashboard";
+import { ComplianceChecklist } from "@/components/ComplianceChecklist";
 
 const Index = () => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -186,6 +187,11 @@ const Index = () => {
               onClick={() => navigate(`/auth/${role.id}`)}
             />
           ))}
+        </div>
+
+        {/* Compliance Checklist */}
+        <div className="max-w-md mx-auto mt-12">
+          <ComplianceChecklist />
         </div>
 
         {/* Pricing Information */}
