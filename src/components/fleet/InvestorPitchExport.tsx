@@ -60,11 +60,11 @@ export const InvestorPitchExport = ({ data }: Props) => {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(32);
     doc.setFont("helvetica", "bold");
-    centerText("POORTLINK", 35, 32);
+    centerText("TAXICONNECT", 35, 32);
     
     doc.setFontSize(16);
     doc.setFont("helvetica", "normal");
-    centerText("Electric Fleet Investment Opportunity", 50, 16);
+    centerText("A MobilityOne Platform | Electric Fleet Investment", 50, 16);
     
     doc.setFontSize(12);
     centerText("Investor Pitch Deck", 65, 12);
@@ -109,9 +109,9 @@ export const InvestorPitchExport = ({ data }: Props) => {
     
     doc.setFontSize(11);
     const execSummary = [
-      "PoortLink is pioneering compliant e-hailing services in South Africa's township",
-      "economy using electric vehicles. This investment opportunity focuses on building",
-      "a fleet of 10 electric bikes with employed drivers under SA labour law.",
+      "TaxiConnect (by MobilityOne) is pioneering compliant e-hailing services in",
+      "South Africa's township economy using electric vehicles. MojaRide is our",
+      "public-facing app. This investment focuses on 10 electric bikes with employed drivers.",
       "",
       "Key Differentiators:",
       "• Full regulatory compliance (NDoT, SANTACO, Labour Law)",
@@ -334,11 +334,11 @@ export const InvestorPitchExport = ({ data }: Props) => {
     yPos += 80;
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
-    centerText("PoortLink - Compliance-First E-Hailing", yPos, 10);
-    centerText("Building the future of township mobility", yPos + 12, 10);
+    centerText("TaxiConnect by MobilityOne - Compliance-First E-Hailing", yPos, 10);
+    centerText("MojaRide: Building the future of township mobility", yPos + 12, 10);
     
     // Save the PDF
-    doc.save(`PoortLink_Investor_Pitch_${new Date().toISOString().split("T")[0]}.pdf`);
+    doc.save(`TaxiConnect_Investor_Pitch_${new Date().toISOString().split("T")[0]}.pdf`);
   };
 
   return (

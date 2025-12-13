@@ -1,4 +1,4 @@
-const CACHE_NAME = 'poortlink-v2';
+const CACHE_NAME = 'mojaride-v1';
 const OFFLINE_PAGE = '/offline.html';
 
 // Cache essential files
@@ -87,7 +87,7 @@ self.addEventListener('push', (event) => {
   console.log('Push notification received:', event);
   
   const options = {
-    body: event.data ? event.data.text() : 'New notification from PoortLink',
+    body: event.data ? event.data.text() : 'New notification from MojaRide',
     icon: '/icon-192.png',
     badge: '/icon-192.png',
     vibrate: [200, 100, 200],
@@ -110,7 +110,7 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification('PoortLink', options)
+    self.registration.showNotification('MojaRide', options)
   );
 });
 
@@ -163,7 +163,7 @@ async function syncSassaUploads() {
 
 function openOfflineDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('PoortLinkOffline', 1);
+    const request = indexedDB.open('MojaRideOffline', 1);
     
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);

@@ -25,7 +25,7 @@ const PassengerOnboardingFlow = ({ onComplete }: PassengerOnboardingFlowProps) =
   const steps: OnboardingStep[] = [
     {
       id: "welcome",
-      title: "Welcome to PoortLink!",
+      title: "Welcome to MojaRide!",
       description: "Your journey to safe, reliable transport starts here",
       icon: <CheckCircle className="w-8 h-8 text-sa-green" />,
       completed: false
@@ -78,7 +78,7 @@ const PassengerOnboardingFlow = ({ onComplete }: PassengerOnboardingFlowProps) =
         return (
           <div className="text-center space-y-6">
             <div className="w-20 h-20 bg-sa-green/10 rounded-full flex items-center justify-center mx-auto">
-              <img src="/logo.png" alt="PoortLink" className="w-12 h-12" />
+              <img src="/logo.png" alt="MojaRide" className="w-12 h-12" />
             </div>
             <div>
               <h2 className="text-2xl font-bold mb-2">Welcome to the Future of Transport!</h2>
@@ -317,7 +317,7 @@ const PassengerOnboardingFlow = ({ onComplete }: PassengerOnboardingFlowProps) =
                 onClick={() => {
                   completeStep("notifications");
                   toast({
-                    title: "Welcome to PoortLink!",
+                    title: "Welcome to MojaRide!",
                     description: "Your onboarding is complete. Start booking your first ride!",
                   });
                   setTimeout(() => onComplete(), 1000);
@@ -342,10 +342,10 @@ const PassengerOnboardingFlow = ({ onComplete }: PassengerOnboardingFlowProps) =
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <img src="/logo.png" alt="PoortLink" className="w-8 h-8" />
+              <img src="/logo.png" alt="MojaRide" className="w-8 h-8" />
               <span className="text-xl font-bold">
-                <span className="text-sa-green">Poort</span>
-                <span className="text-sa-gold">Link</span>
+                <span className="text-sa-green">Moja</span>
+                <span className="text-sa-gold">Ride</span>
               </span>
             </div>
             <div className="text-sm text-muted-foreground">

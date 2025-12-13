@@ -32,7 +32,7 @@ interface ContractDetails {
 export const EmploymentContractGenerator = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [details, setDetails] = useState<ContractDetails>({
-    employerName: "PoortLink (Pty) Ltd",
+    employerName: "MobilityOne (Pty) Ltd t/a TaxiConnect",
     employerRegistration: "",
     employerAddress: "",
     employerPhone: "",
@@ -229,7 +229,7 @@ export const EmploymentContractGenerator = () => {
     doc.setFontSize(8);
     doc.setTextColor(128, 128, 128);
     doc.text("This contract template is compliant with the Basic Conditions of Employment Act 75 of 1997.", margin, yPos);
-    doc.text(`Generated: ${format(new Date(), "dd MMMM yyyy")} | PoortLink Employment Contract`, margin, yPos + 4);
+    doc.text(`Generated: ${format(new Date(), "dd MMMM yyyy")} | TaxiConnect Employment Contract`, margin, yPos + 4);
 
     // Save
     const fileName = details.employeeName 

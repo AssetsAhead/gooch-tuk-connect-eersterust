@@ -29,7 +29,7 @@ const PrivacyPolicy = () => {
                 Our Commitment to Your Privacy
               </CardTitle>
               <CardDescription>
-                PoortLink respects your privacy and is committed to protecting your personal information in accordance with the Protection of Personal Information Act (POPIA) of South Africa.
+                MojaRide (a TaxiConnect platform by MobilityOne Pty Ltd) respects your privacy and is committed to protecting your personal information in accordance with the Protection of Personal Information Act (POPIA) of South Africa.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -137,7 +137,7 @@ const PrivacyPolicy = () => {
                 <li>• <strong>Withdraw Consent:</strong> Withdraw consent for data processing where applicable</li>
               </ul>
               <p className="text-sm text-muted-foreground mt-3">
-                To exercise these rights, contact us at: privacy@poortlink.co.za
+                To exercise these rights, contact us at: privacy@taxiconnect.co.za
               </p>
             </CardContent>
           </Card>
@@ -164,8 +164,8 @@ const PrivacyPolicy = () => {
             </CardHeader>
             <CardContent>
               <div className="text-sm text-muted-foreground space-y-2">
-                <p><strong>Information Officer:</strong> PoortLink Privacy Team</p>
-                <p><strong>Email:</strong> privacy@poortlink.co.za</p>
+                <p><strong>Information Officer:</strong> MobilityOne Privacy Team</p>
+                <p><strong>Email:</strong> privacy@taxiconnect.co.za</p>
                 <p><strong>Address:</strong> [Your Business Address]</p>
                 <p><strong>Information Regulator:</strong> You may also contact the Information Regulator of South Africa at inforeg@justice.gov.za</p>
               </div>

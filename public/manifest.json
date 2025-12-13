@@ -1,7 +1,7 @@
 {
-  "name": "PoortLink - Connecting Local Hustle to National Movement",
-  "short_name": "PoortLink",
-  "description": "Digital transport innovation for South African townships",
+  "name": "MojaRide - A TaxiConnect Platform",
+  "short_name": "MojaRide",
+  "description": "Your township transport companion. Safe, reliable rides powered by TaxiConnect.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",

@@ -72,18 +72,48 @@ export const IPDocumentationSystem = () => {
     },
     {
       id: "IP003",
-      title: "Gooch Tuk Brand & Logo",
-      description: "Distinctive brand identity including logo, colors, and naming for the taxi management platform.",
+      title: "MojaRide Brand & Logo",
+      description: "Public-facing brand identity for the MojaRide passenger app, part of the TaxiConnect platform by MobilityOne.",
       type: "trademark",
       category: "Branding",
       priority: "high",
       status: "draft",
       dateCreated: "2024-12-01",
       inventors: ["System Developer"],
-      tags: ["Brand", "Logo", "Identity"],
+      tags: ["Brand", "Logo", "Identity", "MojaRide", "TaxiConnect"],
       technicalDetails: "Unique visual identity with cultural relevance to SA taxi industry",
       marketValue: "Brand protection and licensing opportunities",
       competitiveAdvantage: "First mover advantage in SA taxi tech branding"
+    },
+    {
+      id: "IP004",
+      title: "TaxiConnect Platform",
+      description: "Primary technology platform brand for compliant e-hailing services across South Africa.",
+      type: "trademark",
+      category: "Branding",
+      priority: "high",
+      status: "draft",
+      dateCreated: "2024-12-01",
+      inventors: ["System Developer"],
+      tags: ["Brand", "Platform", "TaxiConnect"],
+      technicalDetails: "B2B and operational platform branding",
+      marketValue: "Platform licensing and white-label opportunities",
+      competitiveAdvantage: "Established platform brand for taxi industry digitization"
+    },
+    {
+      id: "IP005",
+      title: "MobilityOne Corporate Identity",
+      description: "Holding company brand for MobilityOne Pty Ltd, the parent entity of TaxiConnect and MojaRide.",
+      type: "trademark",
+      category: "Corporate",
+      priority: "high",
+      status: "filed",
+      dateCreated: "2024-12-01",
+      inventors: ["System Developer"],
+      tags: ["Corporate", "MobilityOne", "Holding Company"],
+      technicalDetails: "CIPC registration in progress",
+      marketValue: "Corporate structure and investor relations",
+      competitiveAdvantage: "Professional corporate structure for investment"
     }
   ]);
 
