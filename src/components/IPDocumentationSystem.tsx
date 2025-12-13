@@ -114,6 +114,21 @@ export const IPDocumentationSystem = () => {
       technicalDetails: "CIPC registration in progress",
       marketValue: "Corporate structure and investor relations",
       competitiveAdvantage: "Professional corporate structure for investment"
+    },
+    {
+      id: "IP006",
+      title: "PoortLink Local Rollout Brand",
+      description: "Local market rollout brand example for community-specific deployments of the TaxiConnect platform. Demonstrates the white-label capability for municipality or community-level branding.",
+      type: "trademark",
+      category: "Local Rollout",
+      priority: "medium",
+      status: "draft",
+      dateCreated: "2024-12-01",
+      inventors: ["System Developer"],
+      tags: ["Brand", "Local", "PoortLink", "White-label", "Community"],
+      technicalDetails: "Template for localized branding with community-specific identity while maintaining TaxiConnect platform infrastructure",
+      marketValue: "Enables franchise and municipality licensing model",
+      competitiveAdvantage: "Scalable local deployment strategy for community buy-in and ownership"
     }
   ]);
 
