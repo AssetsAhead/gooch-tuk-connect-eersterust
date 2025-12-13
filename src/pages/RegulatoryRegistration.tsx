@@ -73,19 +73,22 @@ interface ReminderItem {
 const DEFAULT_REGISTRATIONS: Omit<RegistrationItem, 'id'>[] = [
   {
     organization_code: 'ndot',
-    organization_name: 'National Department of Transport',
-    description: 'E-Hailing Platform Registration under the National Land Transport Amendment Act 23 of 2023',
+    organization_name: 'National Department of Transport (NPTR)',
+    description: 'E-Hailing Platform License under National Land Transport Amendment Act 23 of 2023 - covers all vehicles registered on your platform',
     status: 'not_started',
     deadline: '2026-03-12',
     website: 'https://www.transport.gov.za',
     icon: <Truck className="h-6 w-6" />,
     requirements: [
       'Company registration documents (CIPC)',
-      'Platform technology specifications',
-      'Driver onboarding procedures',
+      'Platform technology specifications & app demo',
+      'Vehicle registry system for registered vehicles',
+      'Driver onboarding procedures with PDP verification',
       'Safety and compliance policies',
-      'Insurance certificates',
-      'Data protection policy (POPIA compliant)'
+      'Third-party & public liability insurance certificates',
+      'Data protection policy (POPIA compliant)',
+      'Operator-vehicle agreement template',
+      'Proof of operating area (Eersterust to Mamelodi Taxi Rank zone)'
     ]
   },
   {

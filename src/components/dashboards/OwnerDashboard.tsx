@@ -13,6 +13,7 @@ import { FleetManagement } from "@/components/fleet/FleetManagement";
 import { PartsInventory } from "@/components/fleet/PartsInventory";
 import { FleetROICalculator } from "@/components/fleet/FleetROICalculator";
 import { EmploymentContractGenerator } from "@/components/fleet/EmploymentContractGenerator";
+import { VehicleRegistrationAgreement } from "@/components/fleet/VehicleRegistrationAgreement";
 import { PayrollCalculator } from "@/components/fleet/PayrollCalculator";
 import { DriverOnboardingChecklist } from "@/components/fleet/DriverOnboardingChecklist";
 import { DriverDocumentUpload } from "@/components/fleet/DriverDocumentUpload";
@@ -48,7 +49,10 @@ export const OwnerDashboard = () => {
           {/* Fleet Tab */}
           <TabsContent value="fleet" className="space-y-6">
             <FleetManagement />
-            <EmploymentContractGenerator />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <VehicleRegistrationAgreement />
+              <EmploymentContractGenerator />
+            </div>
           </TabsContent>
 
           {/* Drivers Tab */}
