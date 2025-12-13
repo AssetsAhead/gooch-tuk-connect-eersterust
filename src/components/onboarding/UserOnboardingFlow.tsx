@@ -28,7 +28,7 @@ export const UserOnboardingFlow: React.FC = () => {
   const [steps, setSteps] = useState<OnboardingStep[]>([
     {
       id: 'welcome',
-      title: 'Welcome to PoortLink',
+      title: 'Welcome to MojaRide',
       description: 'Learn about our mission to connect communities safely',
       required: true,
       completed: false,
@@ -52,7 +52,7 @@ export const UserOnboardingFlow: React.FC = () => {
     {
       id: 'role_selection',
       title: 'Select Your Role',
-      description: 'Choose how you want to use PoortLink',
+      description: 'Choose how you want to use MojaRide',
       required: true,
       completed: false,
     },
@@ -73,7 +73,7 @@ export const UserOnboardingFlow: React.FC = () => {
     {
       id: 'complete',
       title: 'Setup Complete',
-      description: 'You\'re ready to start using PoortLink!',
+      description: 'You\'re ready to start using MojaRide!',
       required: true,
       completed: false,
     },
@@ -150,7 +150,7 @@ export const UserOnboardingFlow: React.FC = () => {
       await saveProgress(steps.length - 1, { completed: true });
       
       toast({
-        title: "Welcome to PoortLink!",
+        title: "Welcome to MojaRide!",
         description: "Your account setup is complete. You can now access all features.",
       });
     } catch (error) {
@@ -176,10 +176,10 @@ export const UserOnboardingFlow: React.FC = () => {
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
               <Users className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="text-2xl font-bold">Welcome to PoortLink</h2>
+            <h2 className="text-2xl font-bold">Welcome to MojaRide</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
-              PoortLink connects communities through safe, reliable transportation and essential services. 
-              Let's get you set up to start exploring what we have to offer.
+              MojaRide connects communities through safe, reliable transportation and essential services. 
+              Powered by TaxiConnect - South Africa's compliant e-hailing platform.
             </p>
             <div className="grid grid-cols-3 gap-4 mt-6">
               <div className="text-center space-y-2">
@@ -311,10 +311,10 @@ export const UserOnboardingFlow: React.FC = () => {
             </div>
             <h2 className="text-2xl font-bold">Setup Complete!</h2>
             <p className="text-muted-foreground">
-              You're all set! You can now explore PoortLink and start connecting with your community.
+              You're all set! You can now explore MojaRide and start connecting with your community.
             </p>
             <Button onClick={completeOnboarding} disabled={loading} className="mt-4">
-              {loading ? 'Finishing...' : 'Start Using PoortLink'}
+              {loading ? 'Finishing...' : 'Start Using MojaRide'}
             </Button>
           </div>
         );

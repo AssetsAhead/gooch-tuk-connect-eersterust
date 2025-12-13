@@ -226,7 +226,7 @@ export const AuthPage = () => {
                 {role ? `${role.charAt(0).toUpperCase() + role.slice(1)} Login` : "Login"}
               </h1>
               <p className="text-muted-foreground">
-                Enter your phone number to sign in to PoortLink
+                Enter your phone number to sign in to MojaRide
               </p>
             </div>
 

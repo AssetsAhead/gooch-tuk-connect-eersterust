@@ -23,7 +23,7 @@ const Index = () => {
     {
       id: "admin",
       title: "Admin/Association",
-      description: "Eagle Eye oversight of the entire Gooch Tuk Service ecosystem",
+      description: "Eagle Eye oversight of the entire TaxiConnect ecosystem",
       image: "/lovable-uploads/ded37760-8f2e-4bd1-baa1-9dabb3820c41.png",
       color: "primary" as const
     },
@@ -101,7 +101,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground p-5">
-      <h1 className="text-3xl mb-5 text-foreground">PoortLink App Loading Test</h1>
+      <h1 className="text-3xl mb-5 text-foreground">MojaRide App Loading Test</h1>
       <p className="text-lg mb-5 text-muted-foreground">If you can see this text, the React app is working!</p>
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
@@ -109,16 +109,16 @@ const Index = () => {
             <div className="flex items-center justify-center mb-6">
               <img 
                 src="/logo.png" 
-                alt="PoortLink Logo" 
+                alt="MojaRide Logo" 
                 className="w-16 h-16 md:w-20 md:h-20 mr-4"
               />
               <h1 className="text-5xl md:text-6xl font-bold">
-                <span className="text-sa-green">Poort</span>
-                <span className="text-sa-gold">Link</span>
+                <span className="text-sa-green">Moja</span>
+                <span className="text-sa-gold">Ride</span>
               </h1>
             </div>
             <p className="text-xl md:text-2xl text-muted-foreground mb-6">
-              Connecting local hustle to national movement
+              Your Township Transport Companion
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm md:text-base mb-8">
               <div className="bg-sa-green/10 text-sa-green px-4 py-2 rounded-full border border-sa-green/20 shadow-lg">
