@@ -122,21 +122,29 @@ const handler = async (req: Request): Promise<Response> => {
 
       console.log('OTP verified successfully, user:', user.id, 'isNew:', isNewUser);
 
-      // For new users, grant passenger role
-      if (isNewUser) {
-        console.log('New user - granting passenger role');
+      // Always ensure user has at least passenger role (handles new users and returning users without roles)
+      const { data: existingRoles } = await supabase
+        .from('user_roles')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .limit(1);
+
+      if (!existingRoles || existingRoles.length === 0) {
+        console.log('User has no active roles - granting passenger role');
         
-        await supabase.from('user_roles').insert({
+        // Use upsert to avoid duplicate key errors
+        await supabase.from('user_roles').upsert({
           user_id: user.id,
           role: 'passenger',
           is_active: true,
-        });
+        }, { onConflict: 'user_id,role' });
 
-        await supabase.from('portal_access').insert({
+        await supabase.from('portal_access').upsert({
           user_id: user.id,
           portal_type: 'passenger',
           access_granted: true,
-        });
+        }, { onConflict: 'user_id,portal_type' });
       }
 
       return new Response(
