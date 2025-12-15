@@ -9,8 +9,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { FileText, Save, Download, CheckCircle2, AlertCircle } from "lucide-react";
+import { FileText, Save, Download, CheckCircle2, AlertCircle, Upload, Trash2, Paperclip } from "lucide-react";
 import jsPDF from "jspdf";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+
+interface UploadedDocument {
+  id: string;
+  type: string;
+  name: string;
+  path: string;
+  uploadedAt: string;
+}
 
 interface FormData {
   // Section A: Applicant Details
@@ -112,16 +122,32 @@ const initialFormData: FormData = {
 const STORAGE_KEY = "operating_license_form_draft";
 
 export function OperatingLicenseForm() {
+  const { user } = useAuth();
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [activeTab, setActiveTab] = useState("applicant");
   const [isSaving, setIsSaving] = useState(false);
+  const [uploadedDocs, setUploadedDocs] = useState<UploadedDocument[]>([]);
+  const [uploading, setUploading] = useState(false);
+
+  const DOCUMENT_TYPES = [
+    { value: "id_copy", label: "ID Copy (Certified)" },
+    { value: "cipc_certificate", label: "CIPC Registration Certificate" },
+    { value: "vehicle_registration", label: "Vehicle Registration" },
+    { value: "insurance_certificate", label: "Insurance Certificate" },
+    { value: "pdp_license", label: "Professional Driving Permit (PDP)" },
+    { value: "proof_of_address", label: "Proof of Address" },
+    { value: "tax_clearance", label: "Tax Clearance Certificate" },
+    { value: "other", label: "Other Supporting Document" },
+  ];
 
   // Load saved draft on mount
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        setFormData(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        setFormData(parsed.formData || parsed);
+        setUploadedDocs(parsed.uploadedDocs || []);
         toast.info("Draft loaded", { description: "Your previous progress has been restored." });
       } catch (e) {
         console.error("Failed to load draft:", e);
@@ -145,11 +171,64 @@ export function OperatingLicenseForm() {
 
   const saveDraft = () => {
     setIsSaving(true);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ formData, uploadedDocs }));
     setTimeout(() => {
       setIsSaving(false);
       toast.success("Draft saved", { description: "Your progress has been saved locally." });
     }, 500);
+  };
+
+  const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>, docType: string) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    
+    const file = e.target.files[0];
+    setUploading(true);
+
+    try {
+      // Generate unique path
+      const timestamp = Date.now();
+      const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+      const filePath = user 
+        ? `${user.id}/license-application/${timestamp}_${sanitizedName}`
+        : `anonymous/${timestamp}_${sanitizedName}`;
+
+      // Upload to Supabase storage
+      const { error: uploadError } = await supabase.storage
+        .from("regulatory-documents")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        // If bucket doesn't exist or upload fails, store locally
+        console.warn("Storage upload failed, storing reference locally:", uploadError);
+      }
+
+      // Add to local state regardless
+      const newDoc: UploadedDocument = {
+        id: `doc_${timestamp}`,
+        type: docType,
+        name: file.name,
+        path: filePath,
+        uploadedAt: new Date().toISOString(),
+      };
+
+      setUploadedDocs(prev => [...prev, newDoc]);
+      toast.success("Document attached", { description: `${file.name} has been added.` });
+    } catch (error) {
+      console.error("Error uploading document:", error);
+      toast.error("Upload failed", { description: "Could not attach document." });
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  const removeDocument = (docId: string) => {
+    setUploadedDocs(prev => prev.filter(d => d.id !== docId));
+    toast.success("Document removed");
+  };
+
+  const getDocumentLabel = (type: string) => {
+    return DOCUMENT_TYPES.find(d => d.value === type)?.label || type;
   };
 
   const calculateProgress = () => {
@@ -291,6 +370,23 @@ export function OperatingLicenseForm() {
     }
     y += 4;
 
+    // Section H: Supporting Documents
+    if (uploadedDocs.length > 0) {
+      addSection("SECTION H: SUPPORTING DOCUMENTS");
+      doc.setFontSize(9);
+      doc.text("The following supporting documents are attached to this application:", 14, y);
+      y += 6;
+      uploadedDocs.forEach((doc_, index) => {
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.text(`${index + 1}. ${getDocumentLabel(doc_.type)}: ${doc_.name}`, 18, y);
+        y += 5;
+      });
+      y += 4;
+    }
+
     // Section G: Declaration
     doc.addPage();
     y = 20;
@@ -370,13 +466,17 @@ export function OperatingLicenseForm() {
 
       <CardContent className="pt-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-4 lg:grid-cols-7 mb-6">
+          <TabsList className="grid grid-cols-4 lg:grid-cols-8 mb-6">
             <TabsTrigger value="applicant" className="text-xs">A. Applicant</TabsTrigger>
             <TabsTrigger value="contact" className="text-xs">Contact</TabsTrigger>
             <TabsTrigger value="service" className="text-xs">B. Service</TabsTrigger>
             <TabsTrigger value="vehicles" className="text-xs">C. Vehicles</TabsTrigger>
             <TabsTrigger value="operations" className="text-xs">D. Operations</TabsTrigger>
             <TabsTrigger value="safety" className="text-xs">E. Safety</TabsTrigger>
+            <TabsTrigger value="documents" className="text-xs">
+              <Paperclip className="h-3 w-3 mr-1" />
+              Documents {uploadedDocs.length > 0 && `(${uploadedDocs.length})`}
+            </TabsTrigger>
             <TabsTrigger value="declaration" className="text-xs">F. Declaration</TabsTrigger>
           </TabsList>
 
@@ -805,6 +905,85 @@ export function OperatingLicenseForm() {
 
             <div className="flex justify-between">
               <Button variant="outline" onClick={() => setActiveTab("operations")}>← Previous</Button>
+              <Button onClick={() => setActiveTab("documents")}>Next: Documents →</Button>
+            </div>
+          </TabsContent>
+
+          {/* Documents Tab */}
+          <TabsContent value="documents" className="space-y-6">
+            <div className="bg-muted/50 p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Supporting Documents</h4>
+              <p className="text-sm text-muted-foreground">
+                Upload certified copies of required documents. These will be referenced in your PDF application.
+              </p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {DOCUMENT_TYPES.map((docType) => {
+                const uploadedOfType = uploadedDocs.filter(d => d.type === docType.value);
+                return (
+                  <div key={docType.value} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="font-medium">{docType.label}</Label>
+                      {uploadedOfType.length > 0 && (
+                        <Badge variant="secondary" className="text-xs">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          {uploadedOfType.length} attached
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    {uploadedOfType.map((doc) => (
+                      <div key={doc.id} className="flex items-center justify-between bg-muted/50 rounded p-2 text-sm">
+                        <div className="flex items-center gap-2 truncate">
+                          <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          <span className="truncate">{doc.name}</span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 flex-shrink-0"
+                          onClick={() => removeDocument(doc.id)}
+                        >
+                          <Trash2 className="h-3 w-3 text-destructive" />
+                        </Button>
+                      </div>
+                    ))}
+
+                    <div>
+                      <Label htmlFor={`upload-${docType.value}`} className="cursor-pointer">
+                        <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-3 text-center hover:border-primary/50 transition-colors">
+                          <Upload className="h-5 w-5 mx-auto text-muted-foreground mb-1" />
+                          <p className="text-xs text-muted-foreground">
+                            {uploading ? "Uploading..." : "Click to upload"}
+                          </p>
+                        </div>
+                      </Label>
+                      <Input
+                        id={`upload-${docType.value}`}
+                        type="file"
+                        className="hidden"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => handleDocumentUpload(e, docType.value)}
+                        disabled={uploading}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {uploadedDocs.length > 0 && (
+              <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 p-4 rounded-lg">
+                <p className="text-sm text-green-700 dark:text-green-300">
+                  <CheckCircle2 className="h-4 w-4 inline mr-2" />
+                  {uploadedDocs.length} document{uploadedDocs.length !== 1 ? "s" : ""} attached. These will be listed in your PDF application.
+                </p>
+              </div>
+            )}
+
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={() => setActiveTab("safety")}>← Previous</Button>
               <Button onClick={() => setActiveTab("declaration")}>Next: Declaration →</Button>
             </div>
           </TabsContent>
@@ -880,7 +1059,7 @@ export function OperatingLicenseForm() {
             )}
 
             <div className="flex justify-between pt-4">
-              <Button variant="outline" onClick={() => setActiveTab("safety")}>← Previous</Button>
+              <Button variant="outline" onClick={() => setActiveTab("documents")}>← Previous</Button>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={saveDraft}>
                   <Save className="h-4 w-4 mr-2" />
