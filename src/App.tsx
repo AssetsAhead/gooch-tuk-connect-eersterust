@@ -36,6 +36,7 @@ import { RegulatoryRegistration } from "./pages/RegulatoryRegistration";
 import OperatingLicenseApplication from "./pages/OperatingLicenseApplication";
 import CommunityAnnouncements from "./pages/CommunityAnnouncements";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
+import { GlobalHeader } from "./components/GlobalHeader";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
 import { PerformanceProfiler } from "./components/dev/PerformanceProfiler";
 import { StateDebugger } from "./components/dev/StateDebugger";
@@ -62,6 +63,7 @@ const App = () => {
               <EnhancedSecurityProvider>
                 <Toaster />
                 <Sonner />
+                <GlobalHeader />
                 <Routes>
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/register-complete" element={<RegisterComplete />} />
