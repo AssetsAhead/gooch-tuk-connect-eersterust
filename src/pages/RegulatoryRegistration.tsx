@@ -28,9 +28,10 @@ import {
   Bell,
   Trash2,
   Download,
-  History
+  History,
+  ClipboardList
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { format, differenceInDays } from "date-fns";
 
 interface RegistrationItem {
@@ -650,14 +651,24 @@ export const RegulatoryRegistration = () => {
                     <CardDescription>{selectedRegistration.description}</CardDescription>
                   </div>
                 </div>
-                {selectedRegistration.website && (
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={selectedRegistration.website} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Visit Website
-                    </a>
-                  </Button>
-                )}
+                <div className="flex flex-wrap gap-2">
+                  {selectedRegistration.organization_code === 'ndot' && (
+                    <Button size="sm" asChild>
+                      <Link to="/operating-license-application">
+                        <ClipboardList className="h-4 w-4 mr-2" />
+                        Apply for License
+                      </Link>
+                    </Button>
+                  )}
+                  {selectedRegistration.website && (
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={selectedRegistration.website} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Visit Website
+                      </a>
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardHeader>
             <CardContent>
