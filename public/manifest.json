@@ -1,7 +1,7 @@
 {
-  "name": "MojaRide - A TaxiConnect Platform",
-  "short_name": "MojaRide",
-  "description": "Your township transport companion. Safe, reliable rides powered by TaxiConnect.",
+  "name": "PoortLink - A MobilityOne Platform",
+  "short_name": "PoortLink",
+  "description": "Your township transport companion. Safe, reliable rides powered by MobilityOne.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",

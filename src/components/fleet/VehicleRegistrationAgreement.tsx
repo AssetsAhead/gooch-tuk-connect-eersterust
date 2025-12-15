@@ -47,7 +47,7 @@ interface VehicleDetails {
 export const VehicleRegistrationAgreement = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [details, setDetails] = useState<VehicleDetails>({
-    platformName: "MobilityOne (Pty) Ltd t/a MojaRide",
+    platformName: "MobilityOne (Pty) Ltd t/a PoortLink",
     platformLicenseNumber: "",
     platformAddress: "",
     platformContactPerson: "",
@@ -153,7 +153,7 @@ export const VehicleRegistrationAgreement = () => {
     addText("4. AUTHORIZED OPERATING AREA", 12, 'bold');
     addText(`4.1 The Vehicle is authorized to operate within: ${details.operatingArea}`);
     y += 3;
-    addText("4.2 The Vehicle must respond to trip requests dispatched through the MojaRide application within this designated area.");
+    addText("4.2 The Vehicle must respond to trip requests dispatched through the PoortLink application within this designated area.");
     y += 5;
 
     checkNewPage();
@@ -178,7 +178,7 @@ export const VehicleRegistrationAgreement = () => {
     addText("6.3 Only assign drivers who hold valid Professional Driving Permits (PDPs)");
     addText("6.4 Ensure all assigned drivers are registered on the platform");
     addText("6.5 Comply with all platform policies, safety standards, and rating requirements");
-    addText("6.6 Display the MojaRide branding as required by the Operator");
+    addText("6.6 Display the PoortLink branding as required by the Operator");
     addText("6.7 Not operate the Vehicle through any competing e-hailing platform");
     addText("6.8 Report any accidents, incidents, or regulatory matters within 24 hours");
     y += 5;
@@ -233,7 +233,7 @@ export const VehicleRegistrationAgreement = () => {
     addText("11. DATA PROTECTION (POPIA)", 12, 'bold');
     addText("11.1 The Owner consents to the collection, processing, and storage of personal and vehicle data as required for platform operations and regulatory compliance.");
     addText("11.2 Data will be processed in accordance with the Protection of Personal Information Act (POPIA).");
-    addText("11.3 The Operator's privacy policy (available at app.mojaride.co.za/privacy) applies.");
+    addText("11.3 The Operator's privacy policy (available at app.poortlink.co.za/privacy) applies.");
     y += 10;
 
     checkNewPage(60);

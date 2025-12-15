@@ -122,7 +122,7 @@ export class GovernmentAPIGateway {
     // Prepare headers for government communication
     const headers: Record<string, string> = {
       'X-Government-API': 'true',
-      'X-TaxiConnect-Version': '1.0',
+      'X-PoortLink-Version': '1.0',
       'X-RSA-Compliance': 'POPIA-COMPLIANT',
     };
 

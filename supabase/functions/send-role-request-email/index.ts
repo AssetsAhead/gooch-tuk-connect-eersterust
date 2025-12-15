@@ -85,7 +85,7 @@ const handler = async (req: Request): Promise<Response> => {
         <p><strong>Request ID:</strong> ${requestId}</p>
         <p>Please review this request in the admin dashboard.</p>
       `;
-      smsMessage = `TaxiConnect: Your ${requestedRole} role request has been submitted and is under review. Request ID: ${requestId.substring(0, 8)}`;
+      smsMessage = `PoortLink: Your ${requestedRole} role request has been submitted and is under review. Request ID: ${requestId.substring(0, 8)}`;
     } else if (status === 'approved') {
       // Approval notification to user
       subject = `Your ${requestedRole} Role Request Has Been Approved`;
@@ -95,7 +95,7 @@ const handler = async (req: Request): Promise<Response> => {
         ${verificationNotes ? `<p><strong>Admin Notes:</strong> ${verificationNotes}</p>` : ''}
         <p>You can now access ${requestedRole} features in the application.</p>
       `;
-      smsMessage = `TaxiConnect: Great news! Your ${requestedRole} role request has been APPROVED. You can now access ${requestedRole} features.`;
+      smsMessage = `PoortLink: Great news! Your ${requestedRole} role request has been APPROVED. You can now access ${requestedRole} features.`;
     } else if (status === 'rejected') {
       // Rejection notification to user
       subject = `Your ${requestedRole} Role Request Status`;
@@ -105,12 +105,12 @@ const handler = async (req: Request): Promise<Response> => {
         ${verificationNotes ? `<p><strong>Admin Feedback:</strong> ${verificationNotes}</p>` : ''}
         <p>If you have questions, please contact support.</p>
       `;
-      smsMessage = `TaxiConnect: Your ${requestedRole} role request has been reviewed. ${verificationNotes ? 'Check your email for details.' : 'Please contact support for more information.'}`;
+      smsMessage = `PoortLink: Your ${requestedRole} role request has been reviewed. ${verificationNotes ? 'Check your email for details.' : 'Please contact support for more information.'}`;
     }
 
     // Send email notification
     const emailPromise = resend.emails.send({
-      from: "TaxiConnect <onboarding@resend.dev>",
+      from: "PoortLink <onboarding@resend.dev>",
       to: [userEmail],
       subject: subject,
       html: html,

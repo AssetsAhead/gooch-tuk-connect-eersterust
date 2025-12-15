@@ -72,22 +72,22 @@ export const IPDocumentationSystem = () => {
     },
     {
       id: "IP003",
-      title: "MojaRide Brand & Logo",
-      description: "Public-facing brand identity for the MojaRide passenger app, part of the TaxiConnect platform by MobilityOne.",
+      title: "PoortLink Brand & Logo",
+      description: "Local rollout brand identity for the PoortLink passenger app, part of the MobilityOne platform.",
       type: "trademark",
       category: "Branding",
       priority: "high",
       status: "draft",
       dateCreated: "2024-12-01",
       inventors: ["System Developer"],
-      tags: ["Brand", "Logo", "Identity", "MojaRide", "TaxiConnect"],
+      tags: ["Brand", "Logo", "Identity", "PoortLink", "MobilityOne"],
       technicalDetails: "Unique visual identity with cultural relevance to SA taxi industry",
       marketValue: "Brand protection and licensing opportunities",
       competitiveAdvantage: "First mover advantage in SA taxi tech branding"
     },
     {
       id: "IP004",
-      title: "TaxiConnect Platform",
+      title: "MobilityOne Platform",
       description: "Primary technology platform brand for compliant e-hailing services across South Africa.",
       type: "trademark",
       category: "Branding",
@@ -95,7 +95,7 @@ export const IPDocumentationSystem = () => {
       status: "draft",
       dateCreated: "2024-12-01",
       inventors: ["System Developer"],
-      tags: ["Brand", "Platform", "TaxiConnect"],
+      tags: ["Brand", "Platform", "MobilityOne"],
       technicalDetails: "B2B and operational platform branding",
       marketValue: "Platform licensing and white-label opportunities",
       competitiveAdvantage: "Established platform brand for taxi industry digitization"
@@ -103,7 +103,7 @@ export const IPDocumentationSystem = () => {
     {
       id: "IP005",
       title: "MobilityOne Corporate Identity",
-      description: "Holding company brand for MobilityOne Pty Ltd, the parent entity of TaxiConnect and MojaRide.",
+      description: "Holding company brand for MobilityOne Pty Ltd (2025/958631/07), the parent entity of PoortLink.",
       type: "trademark",
       category: "Corporate",
       priority: "high",
@@ -111,7 +111,7 @@ export const IPDocumentationSystem = () => {
       dateCreated: "2024-12-01",
       inventors: ["System Developer"],
       tags: ["Corporate", "MobilityOne", "Holding Company"],
-      technicalDetails: "CIPC registration in progress",
+      technicalDetails: "CIPC registration complete - Enterprise Number 2025/958631/07",
       marketValue: "Corporate structure and investor relations",
       competitiveAdvantage: "Professional corporate structure for investment"
     },
