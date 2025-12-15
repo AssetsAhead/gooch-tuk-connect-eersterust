@@ -18,6 +18,7 @@ import { NotificationCenter } from "@/components/notifications/NotificationCente
 import FleetDataImport from "@/components/admin/FleetDataImport";
 import OwnerRegistration from "@/components/admin/OwnerRegistration";
 import DriverOnboarding from "@/components/admin/DriverOnboarding";
+import { SmsUsageTracker } from "@/components/admin/SmsUsageTracker";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
@@ -168,6 +169,7 @@ export const AdminDashboard = () => {
             <TabsTrigger value="role-requests">Role Requests</TabsTrigger>
             <TabsTrigger value="roles">Role Switch</TabsTrigger>
             <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
+            <TabsTrigger value="sms-usage">📱 SMS Usage</TabsTrigger>
             <TabsTrigger value="sassa">SASSA Review</TabsTrigger>
             <TabsTrigger value="monitoring">Live Monitoring</TabsTrigger>
             <TabsTrigger value="incidents">Incidents</TabsTrigger>
@@ -279,6 +281,10 @@ export const AdminDashboard = () => {
 
           <TabsContent value="analytics" className="space-y-6">
             <AnalyticsDashboard />
+          </TabsContent>
+
+          <TabsContent value="sms-usage" className="space-y-6">
+            <SmsUsageTracker />
           </TabsContent>
 
           <TabsContent value="sassa" className="space-y-6">
