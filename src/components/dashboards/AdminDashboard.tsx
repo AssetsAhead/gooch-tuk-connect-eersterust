@@ -117,7 +117,7 @@ export const AdminDashboard = () => {
             <h1 className="text-3xl font-bold text-primary mb-2">
               Admin Dashboard - {userProfile?.display_name || user?.email}
             </h1>
-            <p className="text-muted-foreground">Complete oversight of the Gooch Tuk Service ecosystem</p>
+            <p className="text-muted-foreground">Complete oversight of the PoortLink ecosystem</p>
           </div>
           <div className="flex items-center gap-2">
             <NotificationCenter />

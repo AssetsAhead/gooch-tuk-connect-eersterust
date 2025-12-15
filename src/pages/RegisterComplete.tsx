@@ -48,7 +48,7 @@ export default function RegisterComplete() {
   const handleRegistrationComplete = () => {
     toast({
       title: "Registration Successful",
-      description: "Welcome to TukTuk Community Network!",
+      description: "Welcome to PoortLink!",
     });
     navigate('/');
   };
