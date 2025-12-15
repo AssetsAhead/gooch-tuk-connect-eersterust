@@ -1,6 +1,31 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+
+// Helper to log WhatsApp usage
+const logWhatsAppUsage = async (
+  userId: string | null,
+  phoneNumber: string,
+  status: 'sent' | 'failed',
+  twilioSid: string | null = null
+) => {
+  try {
+    const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    await adminClient.from('sms_usage_logs').insert({
+      user_id: userId,
+      phone_number: phoneNumber,
+      message_type: 'whatsapp',
+      status,
+      twilio_sid: twilioSid,
+      cost_estimate: status === 'sent' ? 0.005 : 0 // WhatsApp is cheaper than SMS
+    });
+  } catch (error) {
+    console.error('Failed to log WhatsApp usage:', error);
+  }
+};
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -188,6 +213,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('WhatsApp message sent successfully:', responseData.sid);
 
+    // Log successful WhatsApp send
+    await logWhatsAppUsage(user.id, to, 'sent', responseData.sid);
+
     return new Response(JSON.stringify({
       success: true,
       messageSid: responseData.sid,
@@ -203,6 +231,24 @@ const handler = async (req: Request): Promise<Response> => {
 
   } catch (error: any) {
     console.error('Error sending WhatsApp message:', error);
+    
+    // Log failed WhatsApp send (user might not be available if auth failed)
+    try {
+      const authHeader = req.headers.get('authorization');
+      if (authHeader) {
+        const tempClient = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
+          global: { headers: { Authorization: authHeader } }
+        });
+        const { data: { user } } = await tempClient.auth.getUser();
+        if (user) {
+          const body = await req.clone().json().catch(() => ({}));
+          await logWhatsAppUsage(user.id, body.to || 'unknown', 'failed', null);
+        }
+      }
+    } catch (logError) {
+      console.error('Failed to log WhatsApp failure:', logError);
+    }
+    
     return new Response(
       JSON.stringify({ 
         success: false, 
