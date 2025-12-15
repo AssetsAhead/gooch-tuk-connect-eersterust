@@ -117,10 +117,19 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
             id="phone"
             type="tel"
             value={phoneInput}
-            onChange={(e) => setPhoneInput(e.target.value.replace(/\D/g, ''))}
-            placeholder="81 234 5678"
+            onChange={(e) => {
+              let value = e.target.value.replace(/\D/g, '');
+              // Strip leading 27 or 0 since UI already shows +27 prefix
+              if (value.startsWith('27') && value.length > 9) {
+                value = value.substring(2);
+              } else if (value.startsWith('0') && value.length > 9) {
+                value = value.substring(1);
+              }
+              setPhoneInput(value);
+            }}
+            placeholder="82 637 0673"
             className="rounded-l-none"
-            maxLength={10}
+            maxLength={15}
             onKeyDown={(e) => e.key === 'Enter' && handleSendOtp()}
           />
         </div>
