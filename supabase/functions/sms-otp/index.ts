@@ -14,20 +14,45 @@ interface OTPRequest {
 
 // Format phone number to E.164 format for South Africa
 function formatPhoneNumber(phone: string): string {
+  // Remove all non-digit characters
   let cleaned = phone.replace(/\D/g, '');
-  if (cleaned.startsWith('0')) {
-    cleaned = '27' + cleaned.substring(1);
+  
+  // Handle various input formats:
+  // +27826370673 -> 27826370673 (11 digits)
+  // 27826370673 -> 27826370673 (11 digits)  
+  // 0826370673 -> 27826370673 (10 digits with leading 0)
+  // 826370673 -> 27826370673 (9 digits - just the local part)
+  
+  // If starts with 27 and has 11 digits total, it's already in correct format
+  if (cleaned.startsWith('27') && cleaned.length === 11) {
+    return '+' + cleaned;
   }
-  if (!cleaned.startsWith('27')) {
-    cleaned = '27' + cleaned;
+  
+  // If starts with 0 and has 10 digits, replace 0 with 27
+  if (cleaned.startsWith('0') && cleaned.length === 10) {
+    return '+27' + cleaned.substring(1);
   }
-  return '+' + cleaned;
+  
+  // If it's 9 digits (local number without 0 or country code), add +27
+  if (cleaned.length === 9 && !cleaned.startsWith('27')) {
+    return '+27' + cleaned;
+  }
+  
+  // Fallback: just add + if it starts with 27, otherwise add +27
+  if (cleaned.startsWith('27')) {
+    return '+' + cleaned;
+  }
+  return '+27' + cleaned;
 }
 
-// Validate phone number
+// Validate phone number - must be E.164 format with SA country code
 function validatePhoneNumber(phone: string): boolean {
   const formatted = formatPhoneNumber(phone);
-  return /^\+27[0-9]{9}$/.test(formatted);
+  // SA mobile numbers: +27 followed by 9 digits (total 12 chars)
+  // Valid mobile prefixes: 6x, 7x, 8x
+  const isValid = /^\+27[6-8][0-9]{8}$/.test(formatted);
+  console.log(`Phone validation: input="${phone}", formatted="${formatted}", valid=${isValid}`);
+  return isValid;
 }
 
 const handler = async (req: Request): Promise<Response> => {
