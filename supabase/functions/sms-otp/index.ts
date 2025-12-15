@@ -71,11 +71,26 @@ const handler = async (req: Request): Promise<Response> => {
 
       if (otpError) {
         console.error('Supabase OTP send error:', otpError);
+        // Log failed SMS attempt
+        await supabase.from('sms_usage_logs').insert({
+          phone_number: formattedPhone,
+          message_type: 'otp',
+          status: 'failed',
+          cost_estimate: 0,
+        });
         return new Response(
           JSON.stringify({ error: otpError.message || 'Failed to send verification code' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
+
+      // Log successful SMS send (Twilio SMS costs ~R0.50-R0.80 per SMS in SA)
+      await supabase.from('sms_usage_logs').insert({
+        phone_number: formattedPhone,
+        message_type: 'otp',
+        status: 'sent',
+        cost_estimate: 0.75,
+      });
 
       console.log('OTP sent successfully via Supabase to:', formattedPhone);
       return new Response(

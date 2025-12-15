@@ -1722,6 +1722,39 @@ export type Database = {
         }
         Relationships: []
       }
+      sms_usage_logs: {
+        Row: {
+          cost_estimate: number | null
+          created_at: string
+          id: string
+          message_type: string
+          phone_number: string
+          status: string
+          twilio_sid: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cost_estimate?: number | null
+          created_at?: string
+          id?: string
+          message_type?: string
+          phone_number: string
+          status?: string
+          twilio_sid?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cost_estimate?: number | null
+          created_at?: string
+          id?: string
+          message_type?: string
+          phone_number?: string
+          status?: string
+          twilio_sid?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       sms_verification_codes: {
         Row: {
           code: string
