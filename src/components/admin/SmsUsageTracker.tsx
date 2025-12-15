@@ -109,16 +109,30 @@ export const SmsUsageTracker = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
-              Total Sent
+              SMS Sent
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-primary">{stats.totalSent}</div>
+            <div className="text-3xl font-bold text-primary">{stats.byType['otp'] || 0}</div>
+            <p className="text-xs text-muted-foreground">~R0.50 each</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4 text-green-500" />
+              WhatsApp Sent
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-green-600">{stats.byType['whatsapp'] || 0}</div>
+            <p className="text-xs text-muted-foreground">~R0.05 each</p>
           </CardContent>
         </Card>
 
@@ -213,7 +227,9 @@ export const SmsUsageTracker = () => {
                       </td>
                       <td className="py-2 px-2 font-mono">{maskPhone(log.phone_number)}</td>
                       <td className="py-2 px-2">
-                        <Badge variant="outline">{log.message_type}</Badge>
+                        <Badge variant={log.message_type === 'whatsapp' ? 'outline' : 'secondary'}>
+                          {log.message_type === 'whatsapp' ? '💬 WhatsApp' : '📱 SMS'}
+                        </Badge>
                       </td>
                       <td className="py-2 px-2">
                         <Badge variant={log.status === 'sent' ? 'default' : 'destructive'}>
