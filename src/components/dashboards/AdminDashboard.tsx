@@ -19,6 +19,7 @@ import FleetDataImport from "@/components/admin/FleetDataImport";
 import OwnerRegistration from "@/components/admin/OwnerRegistration";
 import DriverOnboarding from "@/components/admin/DriverOnboarding";
 import { SmsUsageTracker } from "@/components/admin/SmsUsageTracker";
+import { RevenueIntelligence } from "@/components/fleet/RevenueIntelligence";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
@@ -167,6 +168,7 @@ export const AdminDashboard = () => {
           <TabsList className="flex flex-wrap gap-1">
             <TabsTrigger value="approvals">Approvals</TabsTrigger>
             <TabsTrigger value="role-requests">Role Requests</TabsTrigger>
+            <TabsTrigger value="revenue">💵 Revenue</TabsTrigger>
             <TabsTrigger value="roles">Role Switch</TabsTrigger>
             <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
             <TabsTrigger value="sms-usage">📱 SMS Usage</TabsTrigger>
@@ -260,6 +262,10 @@ export const AdminDashboard = () => {
 
           <TabsContent value="role-requests" className="space-y-6">
             <RoleRequestsManager />
+          </TabsContent>
+
+          <TabsContent value="revenue" className="space-y-6">
+            <RevenueIntelligence />
           </TabsContent>
 
           <TabsContent value="roles" className="space-y-6">
