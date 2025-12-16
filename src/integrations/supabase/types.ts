@@ -1370,6 +1370,66 @@ export type Database = {
           },
         ]
       }
+      rank_access_fees: {
+        Row: {
+          amount: number
+          created_at: string
+          driver_id: string | null
+          id: string
+          notes: string | null
+          owner_id: string
+          paid_at: string | null
+          payment_status: string
+          receipt_number: string | null
+          updated_at: string
+          vehicle_id: string | null
+          week_starting: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          driver_id?: string | null
+          id?: string
+          notes?: string | null
+          owner_id: string
+          paid_at?: string | null
+          payment_status?: string
+          receipt_number?: string | null
+          updated_at?: string
+          vehicle_id?: string | null
+          week_starting: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          driver_id?: string | null
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          paid_at?: string | null
+          payment_status?: string
+          receipt_number?: string | null
+          updated_at?: string
+          vehicle_id?: string | null
+          week_starting?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rank_access_fees_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "rank_access_fees_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       regulatory_documents: {
         Row: {
           document_type: string | null
@@ -1820,6 +1880,84 @@ export type Database = {
           status?: string | null
         }
         Relationships: []
+      }
+      trip_revenue: {
+        Row: {
+          created_at: string
+          driver_id: string | null
+          driver_share: number | null
+          dropoff_location: string | null
+          fare_amount: number
+          id: string
+          notes: string | null
+          owner_id: string
+          owner_share: number | null
+          payment_method: string
+          pickup_location: string | null
+          platform_fee: number | null
+          rank_access_fee: number | null
+          route_name: string | null
+          trip_date: string
+          trip_time: string | null
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          driver_id?: string | null
+          driver_share?: number | null
+          dropoff_location?: string | null
+          fare_amount?: number
+          id?: string
+          notes?: string | null
+          owner_id: string
+          owner_share?: number | null
+          payment_method?: string
+          pickup_location?: string | null
+          platform_fee?: number | null
+          rank_access_fee?: number | null
+          route_name?: string | null
+          trip_date?: string
+          trip_time?: string | null
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string | null
+          driver_share?: number | null
+          dropoff_location?: string | null
+          fare_amount?: number
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          owner_share?: number | null
+          payment_method?: string
+          pickup_location?: string | null
+          platform_fee?: number | null
+          rank_access_fee?: number | null
+          route_name?: string | null
+          trip_date?: string
+          trip_time?: string | null
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_revenue_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "trip_revenue_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_phone_numbers: {
         Row: {

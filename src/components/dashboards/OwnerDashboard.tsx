@@ -17,6 +17,7 @@ import { VehicleRegistrationAgreement } from "@/components/fleet/VehicleRegistra
 import { PayrollCalculator } from "@/components/fleet/PayrollCalculator";
 import { DriverOnboardingChecklist } from "@/components/fleet/DriverOnboardingChecklist";
 import { DriverDocumentUpload } from "@/components/fleet/DriverDocumentUpload";
+import { RevenueIntelligence } from "@/components/fleet/RevenueIntelligence";
 
 export const OwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("fleet");
@@ -35,10 +36,11 @@ export const OwnerDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 md:grid-cols-8 mb-8">
+          <TabsList className="grid w-full grid-cols-5 md:grid-cols-9 mb-8">
             <TabsTrigger value="fleet">🚗 Fleet</TabsTrigger>
+            <TabsTrigger value="revenue">💵 Revenue</TabsTrigger>
             <TabsTrigger value="drivers">👤 Drivers</TabsTrigger>
-            <TabsTrigger value="payroll">💵 Payroll</TabsTrigger>
+            <TabsTrigger value="payroll">📋 Payroll</TabsTrigger>
             <TabsTrigger value="roi">💰 ROI</TabsTrigger>
             <TabsTrigger value="parts">🔧 Parts</TabsTrigger>
             <TabsTrigger value="community">🛡️ Community</TabsTrigger>
@@ -53,6 +55,11 @@ export const OwnerDashboard = () => {
               <VehicleRegistrationAgreement />
               <EmploymentContractGenerator />
             </div>
+          </TabsContent>
+
+          {/* Revenue Intelligence Tab */}
+          <TabsContent value="revenue" className="space-y-6">
+            <RevenueIntelligence />
           </TabsContent>
 
           {/* Drivers Tab */}
