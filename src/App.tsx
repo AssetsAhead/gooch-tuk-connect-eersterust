@@ -34,6 +34,7 @@ import { SafeMode } from "./pages/SafeMode";
 import { Compliance } from "./pages/Compliance";
 import { RegulatoryRegistration } from "./pages/RegulatoryRegistration";
 import OperatingLicenseApplication from "./pages/OperatingLicenseApplication";
+import Form9A from "./pages/Form9A";
 import CommunityAnnouncements from "./pages/CommunityAnnouncements";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
@@ -119,6 +120,7 @@ const App = () => {
                 <Route path="/compliance" element={<Compliance />} />
                 <Route path="/regulatory-registration" element={<RegulatoryRegistration />} />
                 <Route path="/operating-license-application" element={<OperatingLicenseApplication />} />
+                <Route path="/form-9a" element={<Form9A />} />
                 <Route path="/community-announcements" element={<CommunityAnnouncements />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
