@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { SmartLocationInput } from '@/components/SmartLocationInput';
 import { QuickHailButton } from './QuickHailButton';
 import { LiveDriverMap } from './LiveDriverMap';
+import { RideScheduler } from './RideScheduler';
 import VoiceHailButton from './VoiceHailButton';
 import { SpeechTranslator } from '@/components/translation/SpeechTranslator';
 import {
@@ -19,7 +21,8 @@ import {
   Car,
   Loader2,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  CalendarPlus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -37,7 +40,7 @@ export const SmartHailCard = ({
   onRideCreated,
   discountInfo
 }: SmartHailCardProps) => {
-  const [mode, setMode] = useState<'quick' | 'custom'>('quick');
+  const [mode, setMode] = useState<'quick' | 'custom' | 'schedule'>('quick');
   const [pickup, setPickup] = useState('');
   const [destination, setDestination] = useState('');
   const [selectedDriver, setSelectedDriver] = useState<any>(null);
@@ -267,7 +270,7 @@ export const SmartHailCard = ({
             className="flex-1"
           >
             <Zap className="h-4 w-4 mr-1" />
-            Quick Hail
+            Quick
           </Button>
           <Button
             variant={mode === 'custom' ? 'default' : 'outline'}
@@ -276,7 +279,16 @@ export const SmartHailCard = ({
             className="flex-1"
           >
             <Navigation className="h-4 w-4 mr-1" />
-            Custom Trip
+            Custom
+          </Button>
+          <Button
+            variant={mode === 'schedule' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setMode('schedule')}
+            className="flex-1"
+          >
+            <CalendarPlus className="h-4 w-4 mr-1" />
+            Schedule
           </Button>
         </div>
       </CardHeader>
@@ -445,6 +457,14 @@ export const SmartHailCard = ({
               </div>
             )}
           </>
+        )}
+
+        {mode === 'schedule' && (
+          <RideScheduler
+            userId={userId}
+            onRideScheduled={onRideCreated}
+            discountInfo={discountInfo}
+          />
         )}
       </CardContent>
     </Card>
