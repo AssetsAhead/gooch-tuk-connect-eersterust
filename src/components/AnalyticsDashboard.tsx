@@ -398,14 +398,16 @@ export const AnalyticsDashboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Route Efficiency</CardTitle>
-                <CardDescription>Most efficient routes by time and cost</CardDescription>
+                <CardDescription>Local routes in your operating area (Eersterust & surrounds)</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {[
-                  { route: "Khayelitsha → Cape Town", time: "25 min", cost: "R45", efficiency: 95 },
-                  { route: "Soweto → Sandton", time: "35 min", cost: "R65", efficiency: 88 },
-                  { route: "Mitchell's Plain → CBD", time: "30 min", cost: "R55", efficiency: 92 },
-                  { route: "Gugulethu → Wynberg", time: "20 min", cost: "R40", efficiency: 94 }
+                  { route: "Eersterust → Mamelodi Mall", time: "8 min", cost: "R25", efficiency: 96 },
+                  { route: "Eersterust → Silverton", time: "12 min", cost: "R35", efficiency: 94 },
+                  { route: "Eersterust → Hatfield (Tuks)", time: "18 min", cost: "R50", efficiency: 91 },
+                  { route: "Eersterust → Menlyn Maine", time: "15 min", cost: "R45", efficiency: 93 },
+                  { route: "Mamelodi → Pretoria CBD", time: "22 min", cost: "R55", efficiency: 88 },
+                  { route: "Eersterust → Eastlynne", time: "5 min", cost: "R20", efficiency: 97 }
                 ].map((route, index) => (
                   <div key={index} className="space-y-2">
                     <div className="flex justify-between items-center">
