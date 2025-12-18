@@ -454,6 +454,7 @@ export type Database = {
           id: string
           location: string
           name: string
+          photo_url: string | null
           rating: number | null
           status: string | null
           updated_at: string | null
@@ -465,6 +466,7 @@ export type Database = {
           id?: string
           location: string
           name: string
+          photo_url?: string | null
           rating?: number | null
           status?: string | null
           updated_at?: string | null
@@ -476,6 +478,7 @@ export type Database = {
           id?: string
           location?: string
           name?: string
+          photo_url?: string | null
           rating?: number | null
           status?: string | null
           updated_at?: string | null
@@ -1571,33 +1574,42 @@ export type Database = {
           created_at: string | null
           destination: string
           driver_id: string | null
+          driver_rating: number | null
+          driver_rating_comment: string | null
           id: string
           passenger_id: string | null
           pickup_location: string
           price: number
           ride_type: string
+          scheduled_for: string | null
           status: string | null
         }
         Insert: {
           created_at?: string | null
           destination: string
           driver_id?: string | null
+          driver_rating?: number | null
+          driver_rating_comment?: string | null
           id?: string
           passenger_id?: string | null
           pickup_location: string
           price: number
           ride_type: string
+          scheduled_for?: string | null
           status?: string | null
         }
         Update: {
           created_at?: string | null
           destination?: string
           driver_id?: string | null
+          driver_rating?: number | null
+          driver_rating_comment?: string | null
           id?: string
           passenger_id?: string | null
           pickup_location?: string
           price?: number
           ride_type?: string
+          scheduled_for?: string | null
           status?: string | null
         }
         Relationships: [
@@ -1997,6 +2009,8 @@ export type Database = {
           approved_at: string | null
           approved_by: string | null
           created_at: string
+          criminal_declaration_signed: boolean | null
+          criminal_declaration_signed_at: string | null
           drivers_license_number: string | null
           first_name: string
           id: string
@@ -2011,6 +2025,8 @@ export type Database = {
           approved_at?: string | null
           approved_by?: string | null
           created_at?: string
+          criminal_declaration_signed?: boolean | null
+          criminal_declaration_signed_at?: string | null
           drivers_license_number?: string | null
           first_name: string
           id?: string
@@ -2025,6 +2041,8 @@ export type Database = {
           approved_at?: string | null
           approved_by?: string | null
           created_at?: string
+          criminal_declaration_signed?: boolean | null
+          criminal_declaration_signed_at?: string | null
           drivers_license_number?: string | null
           first_name?: string
           id?: string

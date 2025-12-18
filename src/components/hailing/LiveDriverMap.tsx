@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Car, 
   MapPin, 
@@ -27,6 +28,7 @@ interface Driver {
   distance: string;
   posX?: number;
   posY?: number;
+  photo_url?: string;
 }
 
 interface LiveDriverMapProps {
@@ -49,7 +51,7 @@ export const LiveDriverMap = ({
     try {
       const { data, error } = await supabase
         .from('drivers')
-        .select('id, user_id, name, vehicle, rating, status, location, eta')
+        .select('id, user_id, name, vehicle, rating, status, location, eta, photo_url')
         .eq('status', 'online')
         .limit(8);
 
@@ -71,6 +73,7 @@ export const LiveDriverMap = ({
         distance: `${(Math.random() * 2 + 0.3).toFixed(1)}km`,
         posX: 20 + (index % 3) * 30 + Math.random() * 10,
         posY: 20 + Math.floor(index / 3) * 25 + Math.random() * 10,
+        photo_url: driver.photo_url,
       }));
 
       setDrivers(driversWithPosition);
@@ -233,12 +236,12 @@ export const LiveDriverMap = ({
               )}
             >
               <div className="flex items-center gap-3">
-                <div className={cn(
-                  'w-10 h-10 rounded-full flex items-center justify-center text-white font-bold',
-                  getDriverColor(index)
-                )}>
-                  {driver.name.charAt(0)}
-                </div>
+                <Avatar className={cn('h-10 w-10 border-2', getDriverColor(index).replace('bg-', 'border-'))}>
+                  <AvatarImage src={driver.photo_url} alt={driver.name} />
+                  <AvatarFallback className={cn(getDriverColor(index), 'text-white font-bold')}>
+                    {driver.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-sm">{driver.name}</span>
