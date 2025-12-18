@@ -653,12 +653,20 @@ export const RegulatoryRegistration = () => {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {selectedRegistration.organization_code === 'ndot' && (
-                    <Button size="sm" asChild>
-                      <Link to="/operating-license-application">
-                        <ClipboardList className="h-4 w-4 mr-2" />
-                        Apply for License
-                      </Link>
-                    </Button>
+                    <>
+                      <Button size="sm" asChild>
+                        <Link to="/form-9a">
+                          <FileText className="h-4 w-4 mr-2" />
+                          Form 9A & Checklist
+                        </Link>
+                      </Button>
+                      <Button size="sm" variant="outline" asChild>
+                        <Link to="/operating-license-application">
+                          <ClipboardList className="h-4 w-4 mr-2" />
+                          Form 1B
+                        </Link>
+                      </Button>
+                    </>
                   )}
                   {selectedRegistration.website && (
                     <Button variant="outline" size="sm" asChild>
