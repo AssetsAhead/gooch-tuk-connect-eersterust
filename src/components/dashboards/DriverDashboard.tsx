@@ -28,11 +28,17 @@ import PaymentCollection from "@/components/payments/PaymentCollection";
 import DriverLocationSharing from "@/components/location/DriverLocationSharing";
 import { CameraManagementSystem } from "@/components/camera/CameraManagementSystem";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
+import { DriverPhotoUpload } from "@/components/driver/DriverPhotoUpload";
+import { IncomingRideRequests } from "@/components/driver/IncomingRideRequests";
+import { CriminalDeclarationForm } from "@/components/compliance/CriminalDeclarationForm";
+import { ICASACertificateUpload } from "@/components/compliance/ICASACertificateUpload";
 
 export const DriverDashboard = () => {
   const [shiftStarted, setShiftStarted] = useState(false);
   const [availableRides, setAvailableRides] = useState([]);
   const [user, setUser] = useState(null);
+  const [driverProfile, setDriverProfile] = useState<any>(null);
+  const [userRegistration, setUserRegistration] = useState<any>(null);
   const { toast } = useToast();
   
   const { activeRide, rideUpdates, acceptRide, updateDriverLocation, updateRideStatus } = useRealTimeTracking(
@@ -40,11 +46,29 @@ export const DriverDashboard = () => {
     'driver'
   );
 
-  // Get current user
+  // Get current user and driver profile
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+      
+      if (user) {
+        // Fetch driver profile
+        const { data: driver } = await supabase
+          .from('drivers')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+        setDriverProfile(driver);
+        
+        // Fetch user registration for criminal declaration status
+        const { data: registration } = await supabase
+          .from('user_registrations')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+        setUserRegistration(registration);
+      }
     };
     getUser();
   }, []);
@@ -152,8 +176,9 @@ export const DriverDashboard = () => {
         </div>
 
         <Tabs defaultValue="rides" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-12">
+          <TabsList className="grid w-full grid-cols-13">
             <TabsTrigger value="rides">🚗 Rides</TabsTrigger>
+            <TabsTrigger value="compliance">📋 Compliance</TabsTrigger>
             <TabsTrigger value="cameras">📹 Cameras</TabsTrigger>
             <TabsTrigger value="location">📍 Location</TabsTrigger>
             <TabsTrigger value="realtime">📡 Live</TabsTrigger>
@@ -284,82 +309,23 @@ export const DriverDashboard = () => {
               </Card>
             )}
 
-            {/* Available Rides */}
-            {shiftStarted && !activeRide && (
-              <Card className="mb-8 border-primary/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <MapPin className="mr-2 h-5 w-5" />
-                      🔥 Available Rides
-                    </div>
-                    <Badge className="bg-primary text-white">
-                      {availableRides.length} rides
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {availableRides.map((ride) => (
-                      <div 
-                        key={ride.id} 
-                        className={`flex items-center justify-between p-4 rounded-lg border transition-all hover:scale-102 ${
-                          ride.surge 
-                            ? "bg-gradient-to-r from-warning/10 to-success/10 border-warning/20" 
-                            : "bg-muted/30 border-muted/20"
-                        }`}
-                      >
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <span className="font-medium">{ride.pickup} → {ride.destination}</span>
-                            {ride.surge && (
-                              <Badge className="bg-warning text-white text-xs animate-pulse">
-                                🔥 Surge +50%
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-sm text-muted-foreground">Distance: {ride.distance} • ETA: ~12 min</p>
-                        </div>
-                         <div className="flex items-center space-x-2">
-                           <MapsButton 
-                             destination={ride.destination}
-                             startLocation={ride.pickup}
-                             variant="outline"
-                             size="sm"
-                           />
-                           <div className="text-right">
-                             <div className="font-bold text-success text-lg">{ride.fare}</div>
-                             <div className="text-xs text-muted-foreground">+5 points</div>
-                           </div>
-                           <Button 
-                             size="sm" 
-                             className={`${
-                               ride.surge 
-                                 ? "bg-warning hover:bg-warning/90 animate-pulse" 
-                                 : "bg-primary hover:bg-primary/90"
-                             }`}
-                             onClick={() => handleAcceptRide(ride.id)}
-                           >
-                             Accept Ride
-                           </Button>
-                         </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {availableRides.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No rides available at the moment. Check back soon!
-                    </div>
-                  )}
-                  
-                  <div className="mt-4 p-3 bg-gradient-to-r from-primary/10 to-success/10 rounded-lg">
-                    <div className="flex items-center justify-center space-x-2">
-                      <Trophy className="h-4 w-4 text-warning" />
-                      <span className="font-medium">Daily Challenge:</span>
-                      <span className="text-sm">Complete 5 more rides for +50 bonus points!</span>
-                    </div>
-                  </div>
+            {/* Incoming Ride Requests */}
+            {shiftStarted && !activeRide && driverProfile && (
+              <IncomingRideRequests 
+                driverId={driverProfile.id}
+                onRideAccepted={(ride) => {
+                  toast({
+                    title: "Ride Accepted!",
+                    description: `You accepted a ride to ${ride.destination}`,
+                  });
+                }}
+              />
+            )}
+            
+            {shiftStarted && !activeRide && !driverProfile && (
+              <Card className="mb-8 border-warning/20">
+                <CardContent className="p-6 text-center">
+                  <p className="text-muted-foreground">Please complete your driver profile in the Compliance tab to start accepting rides.</p>
                 </CardContent>
               </Card>
             )}
@@ -445,6 +411,45 @@ export const DriverDashboard = () => {
 
           <TabsContent value="emergency">
             <PanicButton userType="driver" userId="TT001" currentLocation="Denlyn Mall" />
+          </TabsContent>
+
+          <TabsContent value="compliance" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Driver Photo Upload */}
+              {driverProfile && (
+                <DriverPhotoUpload
+                  driverId={driverProfile.id}
+                  driverName={driverProfile.name || 'Driver'}
+                  currentPhotoUrl={driverProfile.photo_url}
+                  onPhotoUpdated={(url) => {
+                    setDriverProfile(prev => ({ ...prev, photo_url: url }));
+                  }}
+                />
+              )}
+              
+              {/* ICASA Certificate Upload */}
+              {user && (
+                <ICASACertificateUpload userId={user.id} />
+              )}
+            </div>
+
+            {/* Criminal Declaration Form */}
+            {user && (
+              <CriminalDeclarationForm
+                userId={user.id}
+                driverName={driverProfile?.name || user.email || 'Driver'}
+                idNumber={userRegistration?.id_number}
+                alreadySigned={userRegistration?.criminal_declaration_signed}
+                signedAt={userRegistration?.criminal_declaration_signed_at}
+                onDeclarationSigned={() => {
+                  setUserRegistration(prev => ({
+                    ...prev,
+                    criminal_declaration_signed: true,
+                    criminal_declaration_signed_at: new Date().toISOString()
+                  }));
+                }}
+              />
+            )}
           </TabsContent>
         </Tabs>
       </div>

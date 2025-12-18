@@ -33,12 +33,15 @@ import { RoleRequestForm } from "@/components/roles/RoleRequestForm";
 import { MyRoleRequests } from "@/components/roles/MyRoleRequests";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { SmartHailCard } from "@/components/hailing/SmartHailCard";
+import { DriverRatingDialog } from "@/components/passenger/DriverRatingDialog";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
   const [destination, setDestination] = useState("");
   const [activeTab, setActiveTab] = useState("booking");
   const [nearbyDrivers, setNearbyDrivers] = useState([]);
+  const [showRatingDialog, setShowRatingDialog] = useState(false);
+  const [completedRide, setCompletedRide] = useState<any>(null);
   
   const { user, userProfile, signOut } = useAuth();
   const { toast } = useToast();
@@ -50,6 +53,14 @@ export const PassengerDashboard = () => {
   
   const { discountInfo, calculateDiscountedPrice, loading: discountLoading } = useSassaDiscount(user?.id);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
+  // Show rating dialog when ride completes
+  useEffect(() => {
+    if (activeRide?.status === 'completed' && !showRatingDialog) {
+      setCompletedRide(activeRide);
+      setShowRatingDialog(true);
+    }
+  }, [activeRide?.status]);
 
   // Fetch nearby drivers
   useEffect(() => {
@@ -566,6 +577,27 @@ export const PassengerDashboard = () => {
           </Button>
         </div>
       </div>
+
+      {/* Driver Rating Dialog */}
+      {completedRide && (
+        <DriverRatingDialog
+          open={showRatingDialog}
+          onOpenChange={setShowRatingDialog}
+          rideId={completedRide.id}
+          driverName={completedRide.driver_name || 'Your Driver'}
+          driverPhotoUrl={completedRide.driver_photo_url}
+          destination={completedRide.destination}
+          fare={completedRide.price}
+          onRatingSubmitted={() => {
+            setShowRatingDialog(false);
+            setCompletedRide(null);
+            toast({
+              title: "Thanks for your feedback!",
+              description: "Your rating helps improve our service.",
+            });
+          }}
+        />
+      )}
     </div>
   );
 };
