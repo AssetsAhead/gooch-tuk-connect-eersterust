@@ -238,3 +238,58 @@ export const validateMessageContent = (content: string): string => {
     .substring(0, 1000) // Limit message length
     .replace(/[<>]/g, ''); // Remove potential HTML tags
 };
+
+// Trip Revenue validation schema
+export const tripRevenueSchema = z.object({
+  fare_amount: z.number()
+    .min(0, "Fare amount cannot be negative")
+    .max(10000, "Fare amount exceeds reasonable limit (R10,000)"),
+  
+  trip_date: z.string()
+    .refine(date => !isNaN(Date.parse(date)), "Invalid date format"),
+  
+  trip_time: z.string()
+    .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format (HH:mm)")
+    .optional()
+    .or(z.literal('')),
+  
+  pickup_location: z.string()
+    .trim()
+    .max(200, "Pickup location must be under 200 characters")
+    .optional()
+    .or(z.literal('')),
+  
+  dropoff_location: z.string()
+    .trim()
+    .max(200, "Dropoff location must be under 200 characters")
+    .optional()
+    .or(z.literal('')),
+  
+  route_name: z.string()
+    .trim()
+    .max(100, "Route name must be under 100 characters")
+    .optional()
+    .or(z.literal('')),
+  
+  notes: z.string()
+    .trim()
+    .max(500, "Notes must be under 500 characters")
+    .optional()
+    .or(z.literal(''))
+});
+
+// Rank Access Fee validation schema
+export const rankAccessFeeSchema = z.object({
+  amount: z.number()
+    .min(0, "Amount cannot be negative")
+    .max(50000, "Amount exceeds reasonable limit (R50,000)"),
+  
+  week_starting: z.string()
+    .refine(date => !isNaN(Date.parse(date)), "Invalid date format"),
+  
+  receipt_number: z.string()
+    .trim()
+    .max(50, "Receipt number must be under 50 characters")
+    .optional()
+    .or(z.literal(''))
+});
