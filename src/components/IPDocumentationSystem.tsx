@@ -16,10 +16,23 @@ import {
   Plus,
   Search,
   Calendar,
-  AlertTriangle
+  AlertTriangle,
+  Share2,
+  MessageCircle,
+  Mail,
+  Printer
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Innovation {
   id: string;
@@ -225,10 +238,236 @@ export const IPDocumentationSystem = () => {
     );
   };
 
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
+  const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
+
   const generateCIPCReport = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("CIPC IP Portfolio Report", pageWidth / 2, 20, { align: "center" });
+    
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text("MobilityOne Pty Ltd (2025/958631/07)", pageWidth / 2, 28, { align: "center" });
+    doc.text(`Generated: ${new Date().toLocaleDateString('en-ZA')}`, pageWidth / 2, 35, { align: "center" });
+    
+    // Summary Section
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("IP Portfolio Summary", 14, 50);
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const patents = innovations.filter(i => i.type === 'patent').length;
+    const trademarks = innovations.filter(i => i.type === 'trademark').length;
+    const ready = innovations.filter(i => i.status === 'documented').length;
+    
+    doc.text(`Total Patents: ${patents}`, 14, 60);
+    doc.text(`Total Trademarks: ${trademarks}`, 14, 67);
+    doc.text(`Ready to File: ${ready}`, 14, 74);
+    
+    // Innovations Table
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("IP Assets", 14, 90);
+    
+    const tableData = innovations.map(i => [
+      i.id,
+      i.title,
+      i.type.toUpperCase(),
+      i.category,
+      i.priority.toUpperCase(),
+      i.status.toUpperCase()
+    ]);
+    
+    autoTable(doc, {
+      startY: 95,
+      head: [['ID', 'Title', 'Type', 'Category', 'Priority', 'Status']],
+      body: tableData,
+      headStyles: { fillColor: [41, 128, 185] },
+      styles: { fontSize: 8 },
+      columnStyles: {
+        1: { cellWidth: 50 }
+      }
+    });
+    
+    // Detailed Descriptions
+    let yPos = (doc as any).lastAutoTable.finalY + 15;
+    
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Detailed IP Descriptions", 14, yPos);
+    yPos += 10;
+    
+    innovations.forEach((innovation, index) => {
+      if (yPos > 250) {
+        doc.addPage();
+        yPos = 20;
+      }
+      
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.text(`${innovation.id}: ${innovation.title}`, 14, yPos);
+      yPos += 6;
+      
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      const descLines = doc.splitTextToSize(innovation.description, pageWidth - 28);
+      doc.text(descLines, 14, yPos);
+      yPos += descLines.length * 4 + 3;
+      
+      if (innovation.technicalDetails) {
+        doc.setFont("helvetica", "italic");
+        const techLines = doc.splitTextToSize(`Technical: ${innovation.technicalDetails}`, pageWidth - 28);
+        doc.text(techLines, 14, yPos);
+        yPos += techLines.length * 4 + 3;
+      }
+      
+      if (innovation.marketValue) {
+        doc.text(`Market Value: ${innovation.marketValue}`, 14, yPos);
+        yPos += 5;
+      }
+      
+      yPos += 5;
+    });
+    
+    // Cost Estimation
+    if (yPos > 230) {
+      doc.addPage();
+      yPos = 20;
+    }
+    
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Estimated Filing Costs", 14, yPos);
+    yPos += 10;
+    
+    autoTable(doc, {
+      startY: yPos,
+      head: [['Item', 'Cost (ZAR)']],
+      body: [
+        ['Patent Applications (2)', 'R1,200'],
+        ['Trademark Registration', 'R890'],
+        ['Professional Fees (Est.)', 'R15,000'],
+        ['Total Estimated', 'R17,090']
+      ],
+      headStyles: { fillColor: [46, 204, 113] },
+      styles: { fontSize: 10 }
+    });
+    
+    // Footer
+    const pageCount = doc.internal.pages.length - 1;
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.text(
+        `Page ${i} of ${pageCount} | CONFIDENTIAL - MobilityOne Pty Ltd`,
+        pageWidth / 2,
+        doc.internal.pageSize.getHeight() - 10,
+        { align: "center" }
+      );
+    }
+    
+    // Generate blob for sharing
+    const blob = doc.output('blob');
+    setPdfBlob(blob);
+    
+    // Generate data URL for preview
+    const dataUrl = doc.output('dataurlstring');
+    setPdfDataUrl(dataUrl);
+    
+    setShowShareDialog(true);
+    
     toast({
       title: "CIPC Report Generated",
-      description: "IP documentation report ready for submission to CIPC.",
+      description: "Your IP documentation report is ready to view, download, or share.",
+    });
+  };
+
+  const downloadPdf = () => {
+    if (pdfBlob) {
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `CIPC_IP_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Download Started",
+        description: "Your PDF report is downloading.",
+      });
+    }
+  };
+
+  const printReport = () => {
+    if (pdfDataUrl) {
+      const printWindow = window.open(pdfDataUrl, '_blank');
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+      }
+    }
+  };
+
+  const shareViaWhatsApp = (phoneNumber?: string) => {
+    const reportSummary = `*CIPC IP Portfolio Report*%0A%0A` +
+      `Company: MobilityOne Pty Ltd%0A` +
+      `CIPC No: 2025/958631/07%0A` +
+      `Date: ${new Date().toLocaleDateString('en-ZA')}%0A%0A` +
+      `*Summary:*%0A` +
+      `• Patents: ${innovations.filter(i => i.type === 'patent').length}%0A` +
+      `• Trademarks: ${innovations.filter(i => i.type === 'trademark').length}%0A` +
+      `• Ready to File: ${innovations.filter(i => i.status === 'documented').length}%0A%0A` +
+      `*Key IP Assets:*%0A` +
+      innovations.slice(0, 5).map(i => `• ${i.title} (${i.type})`).join('%0A') +
+      `%0A%0A` +
+      `*Est. Filing Cost:* R17,090%0A%0A` +
+      `_Full PDF report available on request._`;
+    
+    const whatsappUrl = phoneNumber 
+      ? `https://wa.me/${phoneNumber.replace(/\D/g, '')}?text=${reportSummary}`
+      : `https://wa.me/?text=${reportSummary}`;
+    
+    window.open(whatsappUrl, '_blank');
+    
+    toast({
+      title: "Opening WhatsApp",
+      description: "Share the report summary via WhatsApp.",
+    });
+  };
+
+  const shareViaEmail = () => {
+    const subject = encodeURIComponent(`CIPC IP Portfolio Report - MobilityOne Pty Ltd`);
+    const body = encodeURIComponent(
+      `CIPC IP Portfolio Report\n\n` +
+      `Company: MobilityOne Pty Ltd\n` +
+      `CIPC No: 2025/958631/07\n` +
+      `Date: ${new Date().toLocaleDateString('en-ZA')}\n\n` +
+      `Summary:\n` +
+      `• Patents: ${innovations.filter(i => i.type === 'patent').length}\n` +
+      `• Trademarks: ${innovations.filter(i => i.type === 'trademark').length}\n` +
+      `• Ready to File: ${innovations.filter(i => i.status === 'documented').length}\n\n` +
+      `Key IP Assets:\n` +
+      innovations.slice(0, 5).map(i => `• ${i.title} (${i.type})`).join('\n') +
+      `\n\n` +
+      `Estimated Filing Cost: R17,090\n\n` +
+      `Please find the full PDF report attached.\n\n` +
+      `Regards,\nMobilityOne Pty Ltd`
+    );
+    
+    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+    
+    toast({
+      title: "Opening Email",
+      description: "Compose your email and attach the downloaded PDF.",
     });
   };
 
@@ -591,6 +830,84 @@ export const IPDocumentationSystem = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Share Dialog */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <FileText className="mr-2 h-5 w-5" />
+              CIPC IP Portfolio Report
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* PDF Preview */}
+            {pdfDataUrl && (
+              <div className="border rounded-lg overflow-hidden h-64">
+                <iframe
+                  src={pdfDataUrl}
+                  className="w-full h-full"
+                  title="CIPC Report Preview"
+                />
+              </div>
+            )}
+            
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Button onClick={downloadPdf} className="flex-1">
+                <Download className="mr-2 h-4 w-4" />
+                Download PDF
+              </Button>
+              
+              <Button onClick={printReport} variant="outline" className="flex-1">
+                <Printer className="mr-2 h-4 w-4" />
+                Print
+              </Button>
+              
+              <Button 
+                onClick={() => shareViaWhatsApp()} 
+                className="flex-1 bg-green-600 hover:bg-green-700"
+              >
+                <MessageCircle className="mr-2 h-4 w-4" />
+                WhatsApp
+              </Button>
+              
+              <Button onClick={shareViaEmail} variant="outline" className="flex-1">
+                <Mail className="mr-2 h-4 w-4" />
+                Email
+              </Button>
+            </div>
+            
+            {/* WhatsApp to specific number */}
+            <div className="border-t pt-4">
+              <Label className="text-sm font-medium">Send to specific WhatsApp number:</Label>
+              <div className="flex space-x-2 mt-2">
+                <Input 
+                  placeholder="+27 82 123 4567"
+                  id="whatsapp-number"
+                  className="flex-1"
+                />
+                <Button 
+                  onClick={() => {
+                    const input = document.getElementById('whatsapp-number') as HTMLInputElement;
+                    if (input?.value) {
+                      shareViaWhatsApp(input.value);
+                    }
+                  }}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Send
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Note: The report summary will be sent as a WhatsApp message. For the full PDF, download and attach manually.
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
