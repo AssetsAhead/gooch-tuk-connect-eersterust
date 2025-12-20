@@ -48,6 +48,8 @@ import { useToast } from "@/hooks/use-toast";
 import { format, subDays, startOfWeek, parseISO } from "date-fns";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { z } from "zod";
+import { tripRevenueSchema, rankAccessFeeSchema } from "@/lib/validationSchemas";
 
 interface TripRecord {
   id: string;
@@ -223,31 +225,50 @@ export const RevenueIntelligence = () => {
     if (!user) return;
 
     try {
+      // Validate input with zod schema
+      const validated = tripRevenueSchema.parse({
+        fare_amount: typeof tripForm.fare_amount === 'number' ? tripForm.fare_amount : parseFloat(String(tripForm.fare_amount)) || 0,
+        trip_date: tripForm.trip_date,
+        trip_time: tripForm.trip_time,
+        pickup_location: tripForm.pickup_location,
+        dropoff_location: tripForm.dropoff_location,
+        route_name: tripForm.route_name,
+        notes: tripForm.notes,
+      });
+
       const { error } = await supabase.from("trip_revenue").insert({
         owner_id: user.id,
         vehicle_id: tripForm.vehicle_id || null,
         driver_id: tripForm.driver_id || null,
-        trip_date: tripForm.trip_date,
-        trip_time: tripForm.trip_time || null,
-        pickup_location: tripForm.pickup_location || null,
-        dropoff_location: tripForm.dropoff_location || null,
-        route_name: tripForm.route_name || null,
-        fare_amount: tripForm.fare_amount,
+        trip_date: validated.trip_date,
+        trip_time: validated.trip_time || null,
+        pickup_location: validated.pickup_location || null,
+        dropoff_location: validated.dropoff_location || null,
+        route_name: validated.route_name || null,
+        fare_amount: validated.fare_amount,
         payment_method: tripForm.payment_method,
-        notes: tripForm.notes || null,
+        notes: validated.notes || null,
       });
 
       if (error) throw error;
 
       toast({
         title: "Trip Recorded",
-        description: `R${tripForm.fare_amount} trip logged successfully.`,
+        description: `R${validated.fare_amount} trip logged successfully.`,
       });
 
       setTripDialogOpen(false);
       fetchData();
       resetTripForm();
     } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
       toast({
         title: "Error",
         description: error.message,
@@ -261,27 +282,42 @@ export const RevenueIntelligence = () => {
     if (!user) return;
 
     try {
+      // Validate input with zod schema
+      const validated = rankAccessFeeSchema.parse({
+        amount: typeof feeForm.amount === 'number' ? feeForm.amount : parseFloat(String(feeForm.amount)) || 0,
+        week_starting: feeForm.week_starting,
+        receipt_number: feeForm.receipt_number,
+      });
+
       const { error } = await supabase.from("rank_access_fees").insert({
         owner_id: user.id,
         vehicle_id: feeForm.vehicle_id || null,
-        week_starting: feeForm.week_starting,
-        amount: feeForm.amount,
+        week_starting: validated.week_starting,
+        amount: validated.amount,
         payment_status: feeForm.payment_status,
         paid_at: feeForm.payment_status === 'paid' ? new Date().toISOString() : null,
-        receipt_number: feeForm.receipt_number || null,
+        receipt_number: validated.receipt_number || null,
       });
 
       if (error) throw error;
 
       toast({
         title: "Rank Fee Recorded",
-        description: `R${feeForm.amount} weekly fee logged.`,
+        description: `R${validated.amount} weekly fee logged.`,
       });
 
       setFeeDialogOpen(false);
       fetchData();
       resetFeeForm();
     } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
       toast({
         title: "Error",
         description: error.message,
