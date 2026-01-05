@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { InsuranceCostCalculator } from "@/components/compliance/InsuranceCostCalculator";
 import { 
   ArrowLeft, 
   Building2, 
@@ -882,6 +883,11 @@ export const RegulatoryRegistration = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Insurance Cost Calculator */}
+        <div className="mt-8">
+          <InsuranceCostCalculator />
+        </div>
 
         {/* Important Deadlines Alert */}
         <Card className="mt-8 border-yellow-500/30 bg-yellow-500/5">
