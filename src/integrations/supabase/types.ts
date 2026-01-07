@@ -961,6 +961,63 @@ export type Database = {
         }
         Relationships: []
       }
+      loading_zones: {
+        Row: {
+          address: string | null
+          created_at: string
+          has_marshal: boolean | null
+          id: string
+          is_active: boolean | null
+          latitude: number
+          longitude: number
+          marshal_user_id: string | null
+          municipality: string | null
+          notes: string | null
+          operating_hours: Json | null
+          radius_meters: number
+          updated_at: string
+          ward: string | null
+          zone_name: string
+          zone_type: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          has_marshal?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          latitude: number
+          longitude: number
+          marshal_user_id?: string | null
+          municipality?: string | null
+          notes?: string | null
+          operating_hours?: Json | null
+          radius_meters?: number
+          updated_at?: string
+          ward?: string | null
+          zone_name: string
+          zone_type?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          has_marshal?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          latitude?: number
+          longitude?: number
+          marshal_user_id?: string | null
+          municipality?: string | null
+          notes?: string | null
+          operating_hours?: Json | null
+          radius_meters?: number
+          updated_at?: string
+          ward?: string | null
+          zone_name?: string
+          zone_type?: string
+        }
+        Relationships: []
+      }
       location_logs: {
         Row: {
           accuracy: number | null
@@ -2463,6 +2520,94 @@ export type Database = {
         }
         Relationships: []
       }
+      zone_queue: {
+        Row: {
+          created_at: string
+          departed_at: string | null
+          distance_from_zone: number | null
+          driver_id: string
+          fleet_vehicle_id: string | null
+          id: string
+          is_gps_verified: boolean | null
+          joined_at: string
+          last_location_update: string | null
+          latitude: number | null
+          loading_started_at: string | null
+          longitude: number | null
+          notes: string | null
+          queue_position: number
+          skip_count: number | null
+          status: string
+          updated_at: string
+          vehicle_id: string | null
+          zone_id: string
+        }
+        Insert: {
+          created_at?: string
+          departed_at?: string | null
+          distance_from_zone?: number | null
+          driver_id: string
+          fleet_vehicle_id?: string | null
+          id?: string
+          is_gps_verified?: boolean | null
+          joined_at?: string
+          last_location_update?: string | null
+          latitude?: number | null
+          loading_started_at?: string | null
+          longitude?: number | null
+          notes?: string | null
+          queue_position: number
+          skip_count?: number | null
+          status?: string
+          updated_at?: string
+          vehicle_id?: string | null
+          zone_id: string
+        }
+        Update: {
+          created_at?: string
+          departed_at?: string | null
+          distance_from_zone?: number | null
+          driver_id?: string
+          fleet_vehicle_id?: string | null
+          id?: string
+          is_gps_verified?: boolean | null
+          joined_at?: string
+          last_location_update?: string | null
+          latitude?: number | null
+          loading_started_at?: string | null
+          longitude?: number | null
+          notes?: string | null
+          queue_position?: number
+          skip_count?: number | null
+          status?: string
+          updated_at?: string
+          vehicle_id?: string | null
+          zone_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zone_queue_fleet_vehicle_id_fkey"
+            columns: ["fleet_vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_vehicles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "zone_queue_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "zone_queue_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "loading_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -2485,6 +2630,7 @@ export type Database = {
         }
         Returns: string
       }
+      get_next_queue_position: { Args: { _zone_id: string }; Returns: number }
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
       has_role_text: {
         Args: { p_role_text: string; p_user_id: string }
@@ -2492,6 +2638,10 @@ export type Database = {
       }
       has_valid_admin_session: { Args: never; Returns: boolean }
       is_current_user_admin: { Args: never; Returns: boolean }
+      is_within_zone: {
+        Args: { _lat: number; _lng: number; _zone_id: string }
+        Returns: boolean
+      }
       revoke_admin_session: { Args: never; Returns: boolean }
       safe_role_allowed: { Args: { inp_role: string }; Returns: boolean }
     }
