@@ -811,6 +811,48 @@ export type Database = {
           },
         ]
       }
+      fleet_vehicles: {
+        Row: {
+          created_at: string
+          driver_name: string | null
+          e_number: string
+          id: string
+          notes: string | null
+          owner_name: string
+          province: string | null
+          registration: string
+          status: string | null
+          updated_at: string
+          whatsapp_group_link: string | null
+        }
+        Insert: {
+          created_at?: string
+          driver_name?: string | null
+          e_number: string
+          id?: string
+          notes?: string | null
+          owner_name: string
+          province?: string | null
+          registration: string
+          status?: string | null
+          updated_at?: string
+          whatsapp_group_link?: string | null
+        }
+        Update: {
+          created_at?: string
+          driver_name?: string | null
+          e_number?: string
+          id?: string
+          notes?: string | null
+          owner_name?: string
+          province?: string | null
+          registration?: string
+          status?: string | null
+          updated_at?: string
+          whatsapp_group_link?: string | null
+        }
+        Relationships: []
+      }
       geofence_zones: {
         Row: {
           active: boolean | null
