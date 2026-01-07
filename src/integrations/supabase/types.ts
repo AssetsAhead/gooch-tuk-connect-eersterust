@@ -1161,6 +1161,36 @@ export type Database = {
         }
         Relationships: []
       }
+      owner_group_members: {
+        Row: {
+          created_at: string
+          id: string
+          is_verified: boolean | null
+          name: string | null
+          phone_number: string
+          role: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_verified?: boolean | null
+          name?: string | null
+          phone_number: string
+          role?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_verified?: boolean | null
+          name?: string | null
+          phone_number?: string
+          role?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       panic_alerts: {
         Row: {
           alert_type: string
