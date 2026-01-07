@@ -172,6 +172,51 @@ export type Database = {
         }
         Relationships: []
       }
+      association_executives: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          phone: string | null
+          position: string
+          term_end: string | null
+          term_start: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          phone?: string | null
+          position: string
+          term_end?: string | null
+          term_start?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          position?: string
+          term_end?: string | null
+          term_start?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       camera_captures: {
         Row: {
           ai_analysis: Json | null
@@ -604,6 +649,114 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      file_13_requests: {
+        Row: {
+          claimed_at: string | null
+          created_at: string
+          current_owner_id: string | null
+          driver_name: string
+          driver_nickname: string | null
+          driver_phone: string | null
+          driver_photo_url: string | null
+          id: string
+          notes: string | null
+          posted_at: string
+          posted_by: string | null
+          reason: string | null
+          requesting_owner_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          created_at?: string
+          current_owner_id?: string | null
+          driver_name: string
+          driver_nickname?: string | null
+          driver_phone?: string | null
+          driver_photo_url?: string | null
+          id?: string
+          notes?: string | null
+          posted_at?: string
+          posted_by?: string | null
+          reason?: string | null
+          requesting_owner_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          claimed_at?: string | null
+          created_at?: string
+          current_owner_id?: string | null
+          driver_name?: string
+          driver_nickname?: string | null
+          driver_phone?: string | null
+          driver_photo_url?: string | null
+          id?: string
+          notes?: string | null
+          posted_at?: string
+          posted_by?: string | null
+          reason?: string | null
+          requesting_owner_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      flagged_individuals: {
+        Row: {
+          created_at: string
+          flag_level: string
+          flagged_at: string
+          flagged_by: string | null
+          id: string
+          id_number: string | null
+          is_active: boolean
+          name: string
+          nickname: string | null
+          notes: string | null
+          person_type: string
+          phone: string | null
+          photo_url: string | null
+          reason: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          flag_level?: string
+          flagged_at?: string
+          flagged_by?: string | null
+          id?: string
+          id_number?: string | null
+          is_active?: boolean
+          name: string
+          nickname?: string | null
+          notes?: string | null
+          person_type: string
+          phone?: string | null
+          photo_url?: string | null
+          reason: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          flag_level?: string
+          flagged_at?: string
+          flagged_by?: string | null
+          id?: string
+          id_number?: string | null
+          is_active?: boolean
+          name?: string
+          nickname?: string | null
+          notes?: string | null
+          person_type?: string
+          phone?: string | null
+          photo_url?: string | null
+          reason?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       fleet_revenue_tracking: {
         Row: {
