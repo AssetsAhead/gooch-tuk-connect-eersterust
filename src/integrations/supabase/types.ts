@@ -703,6 +703,69 @@ export type Database = {
         }
         Relationships: []
       }
+      insurance_quotes: {
+        Row: {
+          annual_premium_max: number
+          annual_premium_min: number
+          business_type: string
+          coverage_amount: string
+          created_at: string
+          has_claims_history: boolean
+          id: string
+          include_passenger_liability: boolean
+          is_active: boolean
+          monthly_premium_max: number
+          monthly_premium_min: number
+          notes: string | null
+          quote_date: string
+          risk_level: string
+          updated_at: string
+          user_id: string
+          valid_until: string | null
+          vehicle_count: number
+        }
+        Insert: {
+          annual_premium_max: number
+          annual_premium_min: number
+          business_type: string
+          coverage_amount: string
+          created_at?: string
+          has_claims_history?: boolean
+          id?: string
+          include_passenger_liability?: boolean
+          is_active?: boolean
+          monthly_premium_max: number
+          monthly_premium_min: number
+          notes?: string | null
+          quote_date?: string
+          risk_level: string
+          updated_at?: string
+          user_id: string
+          valid_until?: string | null
+          vehicle_count?: number
+        }
+        Update: {
+          annual_premium_max?: number
+          annual_premium_min?: number
+          business_type?: string
+          coverage_amount?: string
+          created_at?: string
+          has_claims_history?: boolean
+          id?: string
+          include_passenger_liability?: boolean
+          is_active?: boolean
+          monthly_premium_max?: number
+          monthly_premium_min?: number
+          notes?: string | null
+          quote_date?: string
+          risk_level?: string
+          updated_at?: string
+          user_id?: string
+          valid_until?: string | null
+          vehicle_count?: number
+        }
+        Relationships: []
+      }
       location_logs: {
         Row: {
           accuracy: number | null
