@@ -1,5 +1,6 @@
 import { NLTAAComplianceDashboard } from "@/components/compliance/NLTAAComplianceDashboard";
 import { PolicyUpdatesSection } from "@/components/compliance/PolicyUpdatesSection";
+import { InfoRegulatorGuide } from "@/components/compliance/InfoRegulatorGuide";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Building2, FileCheck, ExternalLink } from "lucide-react";
@@ -55,6 +56,7 @@ export const Compliance = () => {
         </Card>
         
         <div className="space-y-8">
+          <InfoRegulatorGuide />
           <PolicyUpdatesSection />
           <NLTAAComplianceDashboard />
         </div>
