@@ -30,7 +30,8 @@ import {
   Trash2,
   Download,
   History,
-  ClipboardList
+  ClipboardList,
+  Receipt
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { format, differenceInDays } from "date-fns";
@@ -153,6 +154,24 @@ const DEFAULT_REGISTRATIONS: Omit<RegistrationItem, 'id'>[] = [
       'Data subject request procedures',
       'Breach notification procedures'
     ]
+  },
+  {
+    organization_code: 'sars',
+    organization_name: 'South African Revenue Service (SARS)',
+    description: 'Income Tax registration for MOBILITY ONE',
+    status: 'approved',
+    registration_number: '9065004328',
+    website: 'https://www.sars.gov.za',
+    icon: <Receipt className="h-6 w-6" />,
+    requirements: [
+      'Company registration (CIPC)',
+      'Director ID documents',
+      'Proof of business address',
+      'Bank account details',
+      'VAT registration (if applicable)',
+      'PAYE registration (if employing staff)',
+      'UIF registration'
+    ]
   }
 ];
 
@@ -163,6 +182,7 @@ const getIconForCode = (code: string) => {
     case 'pre': return <Scale className="h-6 w-6" />;
     case 'santaco': return <Users className="h-6 w-6" />;
     case 'popia': return <Shield className="h-6 w-6" />;
+    case 'sars': return <Receipt className="h-6 w-6" />;
     default: return <FileText className="h-6 w-6" />;
   }
 };
