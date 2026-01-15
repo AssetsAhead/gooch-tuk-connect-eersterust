@@ -86,12 +86,14 @@ const Index = () => {
   if (selectedRole) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="fixed top-4 left-4 z-50">
+        <div className="fixed bottom-4 left-4 md:top-4 md:bottom-auto z-50">
           <button
             onClick={() => setSelectedRole(null)}
-            className="bg-background border border-border rounded-lg px-4 py-2 shadow-lg hover:bg-muted transition-colors"
+            className="bg-primary text-primary-foreground rounded-full px-5 py-3 shadow-xl hover:bg-primary/90 transition-colors font-medium text-sm md:text-base flex items-center gap-2"
           >
-            ← Back to Role Selection
+            <span className="text-lg">←</span>
+            <span className="hidden sm:inline">Back to Roles</span>
+            <span className="sm:hidden">Back</span>
           </button>
         </div>
         {renderDashboard()}
