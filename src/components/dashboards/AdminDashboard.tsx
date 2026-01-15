@@ -169,18 +169,18 @@ export const AdminDashboard = () => {
             <TabsList className="inline-flex w-max min-w-full md:min-w-0 gap-1 p-1">
               <TabsTrigger value="approvals" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Approvals</TabsTrigger>
               <TabsTrigger value="role-requests" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Roles</TabsTrigger>
-              <TabsTrigger value="revenue" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">💵</TabsTrigger>
+              <TabsTrigger value="revenue" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Revenue</TabsTrigger>
               <TabsTrigger value="roles" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Switch</TabsTrigger>
-              <TabsTrigger value="analytics" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">📊</TabsTrigger>
-              <TabsTrigger value="sms-usage" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">📱</TabsTrigger>
+              <TabsTrigger value="analytics" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Analytics</TabsTrigger>
+              <TabsTrigger value="sms-usage" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">SMS</TabsTrigger>
               <TabsTrigger value="sassa" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">SASSA</TabsTrigger>
               <TabsTrigger value="monitoring" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Monitor</TabsTrigger>
               <TabsTrigger value="incidents" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Incidents</TabsTrigger>
               <TabsTrigger value="reports" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Reports</TabsTrigger>
-              <TabsTrigger value="ip-docs" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">🛡️ IP</TabsTrigger>
-              <TabsTrigger value="fleet-import" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">🚛</TabsTrigger>
-              <TabsTrigger value="owner-reg" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">👤</TabsTrigger>
-              <TabsTrigger value="driver-onboard" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">🚗</TabsTrigger>
+              <TabsTrigger value="ip-docs" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">IP</TabsTrigger>
+              <TabsTrigger value="fleet-import" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Fleet</TabsTrigger>
+              <TabsTrigger value="owner-reg" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Owner</TabsTrigger>
+              <TabsTrigger value="driver-onboard" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Driver</TabsTrigger>
             </TabsList>
           </div>
 
