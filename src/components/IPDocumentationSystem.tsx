@@ -611,15 +611,61 @@ export const IPDocumentationSystem = () => {
                   </div>
                 </div>
 
-                <div className="flex space-x-4 pt-4">
-                  <Button onClick={generateCIPCReport} className="flex-1">
-                    <Download className="mr-2 h-4 w-4" />
-                    Generate CIPC Report
-                  </Button>
-                  <Button variant="outline" className="flex-1">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Schedule Filing
-                  </Button>
+                <div className="space-y-3 pt-4">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      onClick={generateCIPCReport} 
+                      className="flex-1"
+                      disabled={reportGeneration.isGenerating}
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      {reportGeneration.isGenerating ? "Generating..." : "Generate CIPC Report"}
+                    </Button>
+                    <Button variant="outline" className="flex-1">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Schedule Filing
+                    </Button>
+                  </div>
+                  
+                  {/* Show action buttons after report is generated */}
+                  {reportGeneration.pdfDataUrl && (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 bg-muted/50 rounded-lg border">
+                      <Button 
+                        size="sm" 
+                        onClick={() => reportGeneration.downloadPdf(`CIPC_IP_Report_${new Date().toISOString().split('T')[0]}.pdf`)}
+                        className="w-full"
+                      >
+                        <Download className="mr-1 h-3 w-3" />
+                        Download
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={reportGeneration.printReport}
+                        className="w-full"
+                      >
+                        <Eye className="mr-1 h-3 w-3" />
+                        View/Print
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => reportGeneration.setShowShareDialog(true)}
+                        className="w-full"
+                      >
+                        <FileText className="mr-1 h-3 w-3" />
+                        Share
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        onClick={() => reportGeneration.shareViaWhatsApp(getReportSummary())}
+                      >
+                        <AlertTriangle className="mr-1 h-3 w-3" />
+                        WhatsApp
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
