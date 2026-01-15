@@ -37,6 +37,7 @@ import OperatingLicenseApplication from "./pages/OperatingLicenseApplication";
 import Form9A from "./pages/Form9A";
 import CommunityAnnouncements from "./pages/CommunityAnnouncements";
 import FleetVehiclesDashboard from "./pages/FleetVehiclesDashboard";
+import InvestorPortal from "./pages/InvestorPortal";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
@@ -124,6 +125,7 @@ const App = () => {
                 <Route path="/form-9a" element={<Form9A />} />
                 <Route path="/community-announcements" element={<CommunityAnnouncements />} />
                 <Route path="/fleet-vehicles" element={<FleetVehiclesDashboard />} />
+                <Route path="/investor" element={<InvestorPortal />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
