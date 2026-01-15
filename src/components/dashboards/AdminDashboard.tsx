@@ -165,22 +165,24 @@ export const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="approvals" className="space-y-8">
-          <TabsList className="flex flex-wrap gap-1">
-            <TabsTrigger value="approvals">Approvals</TabsTrigger>
-            <TabsTrigger value="role-requests">Role Requests</TabsTrigger>
-            <TabsTrigger value="revenue">💵 Revenue</TabsTrigger>
-            <TabsTrigger value="roles">Role Switch</TabsTrigger>
-            <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
-            <TabsTrigger value="sms-usage">📱 SMS Usage</TabsTrigger>
-            <TabsTrigger value="sassa">SASSA Review</TabsTrigger>
-            <TabsTrigger value="monitoring">Live Monitoring</TabsTrigger>
-            <TabsTrigger value="incidents">Incidents</TabsTrigger>
-            <TabsTrigger value="reports">Reports</TabsTrigger>
-            <TabsTrigger value="ip-docs">🛡️ IP Docs</TabsTrigger>
-            <TabsTrigger value="fleet-import">🚛 Fleet</TabsTrigger>
-            <TabsTrigger value="owner-reg">👤 Owners</TabsTrigger>
-            <TabsTrigger value="driver-onboard">🚗 Drivers</TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+            <TabsList className="inline-flex w-max gap-1 md:flex md:flex-wrap md:w-auto">
+              <TabsTrigger value="approvals" className="whitespace-nowrap">Approvals</TabsTrigger>
+              <TabsTrigger value="role-requests" className="whitespace-nowrap">Role Requests</TabsTrigger>
+              <TabsTrigger value="revenue" className="whitespace-nowrap">💵 Revenue</TabsTrigger>
+              <TabsTrigger value="roles" className="whitespace-nowrap">Role Switch</TabsTrigger>
+              <TabsTrigger value="analytics" className="whitespace-nowrap">📊 Analytics</TabsTrigger>
+              <TabsTrigger value="sms-usage" className="whitespace-nowrap">📱 SMS</TabsTrigger>
+              <TabsTrigger value="sassa" className="whitespace-nowrap">SASSA</TabsTrigger>
+              <TabsTrigger value="monitoring" className="whitespace-nowrap">Monitoring</TabsTrigger>
+              <TabsTrigger value="incidents" className="whitespace-nowrap">Incidents</TabsTrigger>
+              <TabsTrigger value="reports" className="whitespace-nowrap">Reports</TabsTrigger>
+              <TabsTrigger value="ip-docs" className="whitespace-nowrap">🛡️ IP Docs</TabsTrigger>
+              <TabsTrigger value="fleet-import" className="whitespace-nowrap">🚛 Fleet</TabsTrigger>
+              <TabsTrigger value="owner-reg" className="whitespace-nowrap">👤 Owners</TabsTrigger>
+              <TabsTrigger value="driver-onboard" className="whitespace-nowrap">🚗 Drivers</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="approvals" className="space-y-6">
             <Card>
