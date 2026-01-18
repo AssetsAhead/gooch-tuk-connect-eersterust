@@ -81,3 +81,6 @@ verify_jwt = false
 
 [functions.translate-speech]
 verify_jwt = false
+
+[functions.alpr-recognize]
+verify_jwt = true
