@@ -323,6 +323,44 @@ export const IPDocumentationSystem = () => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
+          {/* Workflow Guide */}
+          <Card className="border-primary/30 bg-primary/5">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-warning" />
+                IP Registration Workflow
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-success">✅ What This App Does (80%):</p>
+                  <ul className="text-xs text-muted-foreground space-y-1 ml-4">
+                    <li>• Document all innovations with technical details</li>
+                    <li>• Generate CIPC-ready reports (PDF)</li>
+                    <li>• Track filing status and deadlines</li>
+                    <li>• Calculate estimated costs</li>
+                    <li>• Store inventor/creator information</li>
+                    <li>• Prepare trademark descriptions</li>
+                  </ul>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-warning">⚠️ Requires CIPC Expert (20%):</p>
+                  <ul className="text-xs text-muted-foreground space-y-1 ml-4">
+                    <li>• Official filing at <a href="https://www.cipc.co.za" target="_blank" className="text-primary underline">cipc.co.za</a></li>
+                    <li>• Payment of government fees</li>
+                    <li>• Patent examination responses</li>
+                    <li>• Legal objection handling</li>
+                    <li>• Professional IP attorney review</li>
+                  </ul>
+                  <p className="text-xs text-primary mt-2">
+                    📞 CIPC Contact: 086 100 2472
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="border-primary/20">
               <CardContent className="p-4 text-center">
