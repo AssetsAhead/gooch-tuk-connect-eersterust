@@ -407,8 +407,8 @@ export const RoleAuth = () => {
                 <SmsOtpAuth
                   onSuccess={(userId, isNewUser) => {
                     console.log('SMS OTP auth success:', userId, isNewUser);
-                    // Navigate to home after successful auth
-                    navigate('/');
+                    // Send user through role-based redirect after successful auth
+                    navigate('/dashboard', { replace: true });
                   }}
                 />
                 <div className="mt-6 text-center text-xs text-muted-foreground">
