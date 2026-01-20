@@ -3,81 +3,66 @@ import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { useNavigate } from 'react-router-dom';
 
 export const RoleBasedRedirect: React.FC = () => {
-  const { user, loading, isAdmin, getPrimaryRole } = useSecureAuth();
+  const { user, loading, isAdmin, getPrimaryRole, userRoles } = useSecureAuth();
   const navigate = useNavigate();
   const [redirected, setRedirected] = useState(false);
 
   useEffect(() => {
-    console.log('RoleBasedRedirect - Auth state:', { loading, user: !!user });
+    console.log('RoleBasedRedirect - Auth state:', { loading, user: !!user, userRoles, redirected });
     
-    if (!loading && user && !redirected) {
+    // Wait until loading is complete
+    if (loading) {
+      return;
+    }
+    
+    // If no user and not loading, redirect to auth
+    if (!user) {
+      console.log('RoleBasedRedirect - No user, redirecting to auth');
+      if (!redirected) {
+        setRedirected(true);
+        navigate('/auth', { replace: true });
+      }
+      return;
+    }
+    
+    // User exists and loading is complete
+    if (!redirected) {
       // Check if user is admin first (bypasses role check)
       if (isAdmin()) {
         console.log('RoleBasedRedirect - Admin user detected');
-        const currentPath = window.location.pathname;
-        
-        // Only redirect if on root, auth, or dashboard pages
-        if (currentPath === '/' || currentPath === '/auth' || currentPath === '/dashboard') {
-          setRedirected(true);
-          navigate('/admin', { replace: true });
-          return;
-        }
-        
-        // If admin is on a specific role path, allow them to stay there
-        if (currentPath.startsWith('/auth/')) {
-          const rolePath = currentPath.replace('/auth/', '');
-          setRedirected(true);
-          navigate(`/${rolePath}`, { replace: true });
-          return;
-        }
-        
-        // Admin can access any route without further checks
         setRedirected(true);
+        navigate('/admin', { replace: true });
         return;
       }
       
       const role = getPrimaryRole();
       console.log('RoleBasedRedirect - Detected role:', role);
       
-      // All authenticated users get passenger access by default
       setRedirected(true);
       
       // Navigate based on highest assigned role, fallback to passenger
-      const fromAuthFlow = window.location.pathname === '/' || window.location.pathname === '/auth' || window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/auth/');
       switch (role) {
         case 'driver':
-          navigate('/driver', { replace: fromAuthFlow });
+          navigate('/driver', { replace: true });
           break;
         case 'owner':
-          navigate('/owner', { replace: fromAuthFlow });
+          navigate('/owner', { replace: true });
           break;
         case 'marshall':
-          navigate('/marshall', { replace: fromAuthFlow });
+          navigate('/marshall', { replace: true });
           break;
         case 'admin':
-          navigate('/admin', { replace: fromAuthFlow });
+          navigate('/admin', { replace: true });
           break;
         case 'police':
-          navigate('/police', { replace: fromAuthFlow });
+          navigate('/police', { replace: true });
           break;
         default:
           // Default: all users can access passenger portal
-          navigate('/passenger', { replace: fromAuthFlow });
+          navigate('/passenger', { replace: true });
       }
-    } else if (!loading && !user && !redirected) {
-      // No authentication required for public portals
-      const currentPath = window.location.pathname;
-      if (currentPath === '/business-portal' || currentPath === '/community-safety') {
-        console.log('RoleBasedRedirect - Public portal access allowed');
-        setRedirected(true);
-        return;
-      }
-      
-      console.log('RoleBasedRedirect - No user, redirecting to auth');
-      setRedirected(true);
-      navigate('/auth');
     }
-  }, [user, loading, navigate, redirected, isAdmin, getPrimaryRole]);
+  }, [user, loading, navigate, redirected, isAdmin, getPrimaryRole, userRoles]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
