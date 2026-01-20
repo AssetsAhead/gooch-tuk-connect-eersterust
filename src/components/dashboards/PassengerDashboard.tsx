@@ -571,8 +571,13 @@ export const PassengerDashboard = () => {
             </div>
           </TabsContent>
         </Tabs>
-        <div className="fixed bottom-4 right-4 z-50">
-          <Button variant="secondary" onClick={() => setActiveTab('payments')} className="shadow-lg">
+        <div className="fixed bottom-20 right-4 z-40">
+          <Button 
+            variant="secondary" 
+            onClick={() => setActiveTab('payments')} 
+            className="shadow-lg text-sm px-3 py-2"
+            size="sm"
+          >
             SASSA Calendar
           </Button>
         </div>
