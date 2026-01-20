@@ -16,8 +16,9 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
   const { loading, otpSent, phone, sendOtp, verifyOtp, resetOtp } = useSmsOtp();
 
   const handleSendOtp = async () => {
-    // Prepend +27 country code before sending
-    const formattedPhone = `+27${phoneInput.replace(/\D/g, '')}`;
+    // Strip spaces and prepend +27 country code before sending
+    const digitsOnly = phoneInput.replace(/\D/g, '');
+    const formattedPhone = `+27${digitsOnly}`;
     console.log('Sending OTP to formatted phone:', formattedPhone);
     await sendOtp(formattedPhone);
   };
@@ -102,7 +103,8 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!loading && phoneInput.length >= 9) {
+    const digitsOnly = phoneInput.replace(/\D/g, '');
+    if (!loading && digitsOnly.length >= 9) {
       handleSendOtp();
     }
   };
@@ -136,11 +138,17 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
               } else if (value.startsWith('0') && value.length > 9) {
                 value = value.substring(1);
               }
+              // Format with spaces: XX XXX XXXX
+              if (value.length > 2 && value.length <= 5) {
+                value = `${value.slice(0, 2)} ${value.slice(2)}`;
+              } else if (value.length > 5) {
+                value = `${value.slice(0, 2)} ${value.slice(2, 5)} ${value.slice(5, 9)}`;
+              }
               setPhoneInput(value);
             }}
             placeholder="82 637 0673"
             className="rounded-l-none"
-            maxLength={15}
+            maxLength={12}
             autoComplete="tel-national"
           />
         </div>
@@ -151,7 +159,7 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
 
       <Button
         type="submit"
-        disabled={loading || phoneInput.length < 9}
+        disabled={loading || phoneInput.replace(/\D/g, '').length < 9}
         className="w-full touch-manipulation"
       >
         {loading ? 'Sending...' : 'Send Verification Code'}
