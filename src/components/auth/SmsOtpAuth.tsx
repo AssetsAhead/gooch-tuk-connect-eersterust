@@ -138,15 +138,9 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
               } else if (value.startsWith('0') && value.length > 9) {
                 value = value.substring(1);
               }
-              // Format with spaces: XX XXX XXXX
-              if (value.length > 2 && value.length <= 5) {
-                value = `${value.slice(0, 2)} ${value.slice(2)}`;
-              } else if (value.length > 5) {
-                value = `${value.slice(0, 2)} ${value.slice(2, 5)} ${value.slice(5, 9)}`;
-              }
               setPhoneInput(value);
             }}
-            placeholder="82 637 0673"
+            placeholder="826370673"
             className="rounded-l-none"
             maxLength={12}
             autoComplete="tel-national"
