@@ -76,7 +76,7 @@ export const PassengerDashboard = () => {
           id: driver.id,
           driver: driver.name,
           rating: driver.rating || 4.5,
-          distance: `${Math.random() * 2 + 0.1}km`,
+          distance: `${(Math.random() * 2 + 0.1).toFixed(1)}km`,
           eta: `${Math.floor(Math.random() * 10 + 3)} min`,
           fare: `R${Math.floor(Math.random() * 15 + 15)}`
         })));
@@ -156,16 +156,16 @@ export const PassengerDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-9 mb-8">
-            <TabsTrigger value="booking">🚗 Book Ride</TabsTrigger>
-            <TabsTrigger value="realtime">📍 Live</TabsTrigger>
-            <TabsTrigger value="community">🛡️ Community</TabsTrigger>
-            <TabsTrigger value="safety">🚨 Safety</TabsTrigger>
-            <TabsTrigger value="economy">🏪 Economy</TabsTrigger>
-            <TabsTrigger value="assistant">🗣️ Assistant</TabsTrigger>
-            <TabsTrigger value="rewards">⭐ Rewards</TabsTrigger>
-            <TabsTrigger value="payments">💰 Payments</TabsTrigger>
-            <TabsTrigger value="roles">👤 Roles</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto mb-8 gap-1">
+            <TabsTrigger value="booking" className="flex-shrink-0 text-xs sm:text-sm">Book</TabsTrigger>
+            <TabsTrigger value="realtime" className="flex-shrink-0 text-xs sm:text-sm">Live</TabsTrigger>
+            <TabsTrigger value="community" className="flex-shrink-0 text-xs sm:text-sm">Community</TabsTrigger>
+            <TabsTrigger value="safety" className="flex-shrink-0 text-xs sm:text-sm">Safety</TabsTrigger>
+            <TabsTrigger value="economy" className="flex-shrink-0 text-xs sm:text-sm">Economy</TabsTrigger>
+            <TabsTrigger value="assistant" className="flex-shrink-0 text-xs sm:text-sm">Assistant</TabsTrigger>
+            <TabsTrigger value="rewards" className="flex-shrink-0 text-xs sm:text-sm">Rewards</TabsTrigger>
+            <TabsTrigger value="payments" className="flex-shrink-0 text-xs sm:text-sm">Payments</TabsTrigger>
+            <TabsTrigger value="roles" className="flex-shrink-0 text-xs sm:text-sm">Roles</TabsTrigger>
           </TabsList>
 
           {/* Booking Tab */}
@@ -380,10 +380,7 @@ export const PassengerDashboard = () => {
                             {driver.driver.charAt(0)}
                           </div>
                           <div>
-                            <div className="flex items-center space-x-2">
-                              <span className="font-medium">{driver.driver}</span>
-                              <Badge variant="outline" className="text-xs">{driver.id}</Badge>
-                            </div>
+                            <span className="font-medium">{driver.driver}</span>
                             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                               <span>★ {driver.rating}</span>
                               <span>•</span>

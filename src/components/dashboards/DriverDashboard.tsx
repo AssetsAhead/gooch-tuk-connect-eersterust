@@ -91,7 +91,7 @@ export const DriverDashboard = () => {
           pickup: ride.pickup_location,
           destination: ride.destination,
           fare: `R${ride.price}`,
-          distance: `${Math.random() * 3 + 1}km`,
+          distance: `${(Math.random() * 3 + 1).toFixed(1)}km`,
           surge: Math.random() > 0.6
         })));
       }
@@ -176,20 +176,20 @@ export const DriverDashboard = () => {
         </div>
 
         <Tabs defaultValue="rides" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-13">
-            <TabsTrigger value="rides">🚗 Rides</TabsTrigger>
-            <TabsTrigger value="compliance">📋 Compliance</TabsTrigger>
-            <TabsTrigger value="cameras">📹 Cameras</TabsTrigger>
-            <TabsTrigger value="location">📍 Location</TabsTrigger>
-            <TabsTrigger value="realtime">📡 Live</TabsTrigger>
-            <TabsTrigger value="incentives">🎯 Incentives</TabsTrigger>
-            <TabsTrigger value="reputation">🏆 Reputation</TabsTrigger>
-            <TabsTrigger value="safety">🛡️ Safety</TabsTrigger>
-            <TabsTrigger value="economy">🏪 Economy</TabsTrigger>
-            <TabsTrigger value="assistant">🗣️ Assistant</TabsTrigger>
-            <TabsTrigger value="wallet">💰 Wallet</TabsTrigger>
-            <TabsTrigger value="community">👥 Community</TabsTrigger>
-            <TabsTrigger value="emergency">🚨 Emergency</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto gap-1">
+            <TabsTrigger value="rides" className="flex-shrink-0 text-xs sm:text-sm">Rides</TabsTrigger>
+            <TabsTrigger value="compliance" className="flex-shrink-0 text-xs sm:text-sm">Compliance</TabsTrigger>
+            <TabsTrigger value="cameras" className="flex-shrink-0 text-xs sm:text-sm">Cameras</TabsTrigger>
+            <TabsTrigger value="location" className="flex-shrink-0 text-xs sm:text-sm">Location</TabsTrigger>
+            <TabsTrigger value="realtime" className="flex-shrink-0 text-xs sm:text-sm">Live</TabsTrigger>
+            <TabsTrigger value="incentives" className="flex-shrink-0 text-xs sm:text-sm">Incentives</TabsTrigger>
+            <TabsTrigger value="reputation" className="flex-shrink-0 text-xs sm:text-sm">Reputation</TabsTrigger>
+            <TabsTrigger value="safety" className="flex-shrink-0 text-xs sm:text-sm">Safety</TabsTrigger>
+            <TabsTrigger value="economy" className="flex-shrink-0 text-xs sm:text-sm">Economy</TabsTrigger>
+            <TabsTrigger value="assistant" className="flex-shrink-0 text-xs sm:text-sm">Assistant</TabsTrigger>
+            <TabsTrigger value="wallet" className="flex-shrink-0 text-xs sm:text-sm">Wallet</TabsTrigger>
+            <TabsTrigger value="community" className="flex-shrink-0 text-xs sm:text-sm">Community</TabsTrigger>
+            <TabsTrigger value="emergency" className="flex-shrink-0 text-xs sm:text-sm">Emergency</TabsTrigger>
           </TabsList>
 
           <TabsContent value="rides" className="space-y-6">
