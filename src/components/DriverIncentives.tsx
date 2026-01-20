@@ -56,7 +56,7 @@ export const DriverIncentives = () => {
             <div>
               <h3 className="font-semibold text-warning">SANTACO Compliance Focus</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Following recent industry discussions, TaxiConnect emphasizes transparent, 
+                Following recent industry discussions, MojaRide emphasizes transparent, 
                 data-driven operations that support both driver earnings and community harmony.
               </p>
             </div>

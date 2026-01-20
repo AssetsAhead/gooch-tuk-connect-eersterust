@@ -220,7 +220,7 @@ export const EnhancedFinancialInclusion = () => {
                             🔗 Connect API
                           </Button>
                           <Button 
-                            className="flex-1 bg-tuk-blue hover:bg-tuk-blue/90"
+                            className="flex-1 bg-info hover:bg-info/90"
                           >
                             📱 Use USSD
                           </Button>

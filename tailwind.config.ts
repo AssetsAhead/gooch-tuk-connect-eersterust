@@ -18,6 +18,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Heebo', 'system-ui', 'sans-serif'],
+				heebo: ['Heebo', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -52,7 +56,24 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// South African flag colors - Complete palette
+				// MobilityOne Brand Colors
+				'mobility-navy': {
+					DEFAULT: 'hsl(var(--mobility-navy))',
+					light: 'hsl(var(--mobility-navy-light))'
+				},
+				'mobility-orange': {
+					DEFAULT: 'hsl(var(--mobility-orange))',
+					light: 'hsl(var(--mobility-orange-light))'
+				},
+				'mobility-dark': {
+					DEFAULT: 'hsl(var(--mobility-dark))',
+					light: 'hsl(var(--mobility-dark-light))'
+				},
+				'mobility-gray': {
+					DEFAULT: 'hsl(var(--mobility-gray))',
+					light: 'hsl(var(--mobility-gray-light))'
+				},
+				// South African flag colors - Heritage palette
 				'sa-green': {
 					DEFAULT: 'hsl(var(--sa-green))',
 					light: 'hsl(var(--sa-green-light))'
@@ -71,20 +92,6 @@ export default {
 				},
 				'sa-black': 'hsl(var(--sa-black))',
 				'sa-white': 'hsl(var(--sa-white))',
-				
-				// Enhanced TukTuk colors
-				'tuk-orange': {
-					DEFAULT: 'hsl(var(--tuk-orange))',
-					light: 'hsl(var(--tuk-orange-light))'
-				},
-				'tuk-blue': {
-					DEFAULT: 'hsl(var(--tuk-blue))',
-					light: 'hsl(var(--tuk-blue-light))'
-				},
-				'tuk-green': {
-					DEFAULT: 'hsl(var(--tuk-green))',
-					light: 'hsl(var(--tuk-green-light))'
-				},
 				
 				// Functional colors
 				success: 'hsl(var(--success))',
@@ -105,13 +112,13 @@ export default {
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-secondary': 'var(--gradient-secondary)',
-				'gradient-sa-flag': 'var(--gradient-sa-flag)',
+				'gradient-brand': 'var(--gradient-brand)',
 				'gradient-hero': 'var(--gradient-hero)'
 			},
 			boxShadow: {
 				'primary': 'var(--shadow-primary)',
 				'secondary': 'var(--shadow-secondary)',
-				'sa-flag': 'var(--shadow-sa-flag)',
+				'brand': 'var(--shadow-brand)',
 				'colorful': 'var(--shadow-colorful)',
 				'glow': 'var(--shadow-glow)'
 			},

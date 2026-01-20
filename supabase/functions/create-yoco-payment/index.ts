@@ -61,7 +61,7 @@ serve(async (req) => {
           user_email: user.email,
         },
         receipt_email: user.email,
-        description: description || "TukTuk Ride Payment",
+        description: description || "MojaRide Payment",
         // Use secure base URL instead of trusting origin header
         success_url: "https://iiompkhsodkztxllbvkm.supabase.co/payment-success",
         cancel_url: "https://iiompkhsodkztxllbvkm.supabase.co/payment-cancelled",

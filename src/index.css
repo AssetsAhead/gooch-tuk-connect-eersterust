@@ -4,6 +4,11 @@
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
+
+Brand Hierarchy:
+- MojaRide → on-screen user-facing brand
+- MobilityOne → corporate/national brand
+- PoortLink → local deployment (Eesterust)
 */
 
 @layer base {
@@ -17,30 +22,41 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* South African flag colors - Enhanced with 25% more vibrance */
-    --primary: 142 90% 35%; /* SA Green - more vibrant */
+    /* MobilityOne Brand Colors - Primary */
+    --primary: 220 70% 25%; /* Navy Blue */
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 142 90% 50%;
+    --primary-glow: 220 70% 35%;
 
-    --secondary: 47 95% 65%; /* SA Gold - brighter */
-    --secondary-foreground: 0 0% 0%;
+    /* MobilityOne Brand Colors - Secondary (Orange) */
+    --secondary: 24 95% 55%; /* Brand Orange */
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 210 45% 92%; 
     --muted-foreground: 215.4 20% 40%; 
 
-    --accent: 0 90% 55%; /* SA Red - enhanced */
+    --accent: 24 95% 55%; /* Orange accent */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 90% 55%;
+    --destructive: 0 85% 55%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 142 90% 35%;
+    --ring: 220 70% 25%;
 
     --radius: 0.75rem;
 
-    /* South African flag colors - Complete palette */
+    /* MobilityOne Brand Palette */
+    --mobility-navy: 220 70% 25%; /* Primary Navy Blue */
+    --mobility-navy-light: 220 70% 35%;
+    --mobility-orange: 24 95% 55%; /* Primary Orange */
+    --mobility-orange-light: 24 95% 70%;
+    --mobility-dark: 220 70% 15%; /* Dark Navy */
+    --mobility-dark-light: 220 70% 20%;
+    --mobility-gray: 210 15% 60%; /* Light Gray */
+    --mobility-gray-light: 210 15% 85%;
+
+    /* South African flag colors - Complete palette (heritage) */
     --sa-green: 142 90% 35%;
     --sa-green-light: 142 90% 50%;
     --sa-gold: 47 95% 65%;
@@ -51,64 +67,43 @@ All colors MUST be HSL.
     --sa-red-light: 0 90% 70%;
     --sa-black: 0 0% 8%;
     --sa-white: 0 0% 98%;
-
-    /* Enhanced TukTuk colors with SA flag inspiration */
-    --tuk-orange: 24 95% 65%; /* Enhanced orange */
-    --tuk-orange-light: 24 95% 80%;
-    --tuk-blue: 217 90% 55%; /* SA Blue variant */
-    --tuk-blue-light: 217 90% 70%;
-    --tuk-green: 142 90% 35%; /* SA Green variant */
-    --tuk-green-light: 142 90% 50%;
     
-    /* Functional colors with SA theme */
-    --success: 142 90% 35%;
-    --warning: 47 95% 65%;
-    --danger: 0 90% 55%;
-    --info: 217 90% 55%;
+    /* Functional colors */
+    --success: 142 70% 40%;
+    --warning: 47 95% 55%;
+    --danger: 0 85% 55%;
+    --info: 220 70% 50%;
     
-    /* Enhanced gradients with SA flag colors */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--sa-green)), hsl(var(--sa-green-light)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--sa-gold)), hsl(var(--tuk-orange)));
-    --gradient-sa-flag: linear-gradient(135deg, 
-      hsl(var(--sa-green)) 0%, 
-      hsl(var(--sa-gold)) 20%, 
-      hsl(var(--sa-blue)) 40%,
-      hsl(var(--sa-red)) 60%,
-      hsl(var(--sa-black)) 80%,
-      hsl(var(--sa-white)) 100%);
+    /* MojaRide gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--mobility-navy)), hsl(var(--mobility-navy-light)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--mobility-orange)), hsl(var(--mobility-orange-light)));
+    --gradient-brand: linear-gradient(135deg, 
+      hsl(var(--mobility-navy)) 0%, 
+      hsl(var(--mobility-orange)) 100%);
     --gradient-hero: linear-gradient(135deg, 
-      hsl(var(--sa-green)) 0%, 
-      hsl(var(--sa-gold)) 25%, 
-      hsl(var(--sa-blue)) 50%,
-      hsl(var(--sa-red)) 75%,
-      hsl(var(--tuk-orange)) 100%);
+      hsl(var(--mobility-dark)) 0%, 
+      hsl(var(--mobility-navy)) 50%,
+      hsl(var(--mobility-orange)) 100%);
     
-    /* Enhanced shadows with SA flag colors */
-    --shadow-primary: 0 10px 30px -10px hsl(var(--sa-green) / 0.4);
-    --shadow-secondary: 0 10px 30px -10px hsl(var(--sa-gold) / 0.4);
-    --shadow-sa-flag: 0 20px 60px -20px hsl(var(--sa-green) / 0.3), 0 15px 40px -15px hsl(var(--sa-gold) / 0.2);
-    --shadow-colorful: 0 15px 40px -15px hsl(var(--sa-red) / 0.3), 0 10px 25px -10px hsl(var(--sa-blue) / 0.3);
-    --shadow-glow: 0 0 50px hsl(var(--sa-green-light) / 0.5);
+    /* Enhanced shadows */
+    --shadow-primary: 0 10px 30px -10px hsl(var(--mobility-navy) / 0.4);
+    --shadow-secondary: 0 10px 30px -10px hsl(var(--mobility-orange) / 0.4);
+    --shadow-brand: 0 20px 60px -20px hsl(var(--mobility-navy) / 0.3), 0 15px 40px -15px hsl(var(--mobility-orange) / 0.2);
+    --shadow-colorful: 0 15px 40px -15px hsl(var(--mobility-orange) / 0.3), 0 10px 25px -10px hsl(var(--mobility-navy) / 0.3);
+    --shadow-glow: 0 0 50px hsl(var(--mobility-orange) / 0.5);
     
     /* Animation transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --sidebar-primary: 220 70% 25%;
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 220 70% 50%;
   }
 
   .dark {
@@ -121,25 +116,35 @@ All colors MUST be HSL.
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 142 90% 45%;
+    --primary: 220 70% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 142 90% 60%;
+    --primary-glow: 220 70% 55%;
 
-    --secondary: 47 95% 70%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 24 95% 60%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 0 90% 65%;
+    --accent: 24 95% 60%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 90% 65%;
+    --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 142 90% 45%;
+    --ring: 220 70% 45%;
+    
+    /* MobilityOne colors in dark mode */
+    --mobility-navy: 220 70% 45%;
+    --mobility-navy-light: 220 70% 55%;
+    --mobility-orange: 24 95% 60%;
+    --mobility-orange-light: 24 95% 75%;
+    --mobility-dark: 220 70% 25%;
+    --mobility-dark-light: 220 70% 35%;
+    --mobility-gray: 210 15% 70%;
+    --mobility-gray-light: 210 15% 90%;
     
     /* SA colors in dark mode */
     --sa-green: 142 90% 45%;
@@ -150,26 +155,21 @@ All colors MUST be HSL.
     --sa-blue-light: 217 90% 80%;
     --sa-red: 0 90% 65%;
     --sa-red-light: 0 90% 80%;
-    --tuk-orange: 24 95% 70%;
-    --tuk-orange-light: 24 95% 85%;
-    --tuk-blue: 217 90% 65%;
-    --tuk-blue-light: 217 90% 80%;
-    --tuk-green: 142 90% 45%;
-    --tuk-green-light: 142 90% 60%;
     
     /* Functional colors */
-    --success: 142 90% 45%;
-    --warning: 47 95% 70%;
-    --danger: 0 90% 65%;
-    --info: 217 90% 65%;
+    --success: 142 70% 50%;
+    --warning: 47 95% 60%;
+    --danger: 0 85% 60%;
+    --info: 220 70% 60%;
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary: 220 70% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 220 70% 55%;
   }
 }
 
@@ -180,5 +180,6 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Heebo', system-ui, sans-serif;
   }
 }

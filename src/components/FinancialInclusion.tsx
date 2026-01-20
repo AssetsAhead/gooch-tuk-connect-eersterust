@@ -374,7 +374,7 @@ export const FinancialInclusion = () => {
                     <p className="text-sm text-muted-foreground mb-3">
                       Connect with trusted community members who can guarantee your loan
                     </p>
-                    <Button className="w-full bg-tuk-blue hover:bg-tuk-blue/90">
+                    <Button className="w-full bg-info hover:bg-info/90">
                       🔍 Find Guarantors
                     </Button>
                   </div>

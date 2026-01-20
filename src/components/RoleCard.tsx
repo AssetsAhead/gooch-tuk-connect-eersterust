@@ -6,18 +6,17 @@ interface RoleCardProps {
   description: string;
   image: string;
   onClick: () => void;
-  color: "primary" | "secondary" | "tuk-orange" | "tuk-blue" | "success" | "danger" | "warning";
+  color: "primary" | "secondary" | "success" | "danger" | "warning" | "info";
 }
 
 export const RoleCard = ({ title, description, image, onClick, color }: RoleCardProps) => {
   const colorClasses = {
     primary: "border-primary hover:bg-primary/10",
     secondary: "border-secondary hover:bg-secondary/10", 
-    "tuk-orange": "border-tuk-orange hover:bg-tuk-orange/10",
-    "tuk-blue": "border-tuk-blue hover:bg-tuk-blue/10",
     success: "border-success hover:bg-success/10",
     danger: "border-danger hover:bg-danger/10",
-    warning: "border-warning hover:bg-warning/10"
+    warning: "border-warning hover:bg-warning/10",
+    info: "border-info hover:bg-info/10"
   };
 
   return (

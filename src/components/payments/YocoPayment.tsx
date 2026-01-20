@@ -18,7 +18,7 @@ interface YocoPaymentProps {
 export const YocoPayment: React.FC<YocoPaymentProps> = ({
   rideId,
   amount,
-  description = "TukTuk Ride Payment",
+  description = "MojaRide Payment",
   onSuccess,
   onError
 }) => {
