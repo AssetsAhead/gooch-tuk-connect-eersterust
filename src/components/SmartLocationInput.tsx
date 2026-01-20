@@ -1,15 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -93,44 +84,58 @@ export const SmartLocationInput: React.FC<SmartLocationInputProps> = ({
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <div>
-          <Input
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => {
-              onChange(e.target.value);
-              if (!open) setOpen(true);
-            }}
-            onFocus={() => setOpen(true)}
-            onKeyDown={handleKeyDown}
-            aria-autocomplete="list"
-            aria-expanded={open}
-          />
-        </div>
-      </PopoverTrigger>
-      <PopoverContent align="start" className="p-0 z-50 w-full min-w-[18rem]">
-        <Command>
-          <CommandInput placeholder="Search locations..." />
-          <CommandList>
-            <CommandEmpty>No suggestions yet</CommandEmpty>
-            <CommandGroup heading="Suggestions">
-              {mergedSuggestions.map((s) => (
-                <CommandItem key={s} value={s} onSelect={() => handleSelect(s)}>
-                  {s}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
+    <div className="relative">
+      <Input
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+          if (!open) setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => {
+          // Delay closing to allow tap on suggestions
+          setTimeout(() => setOpen(false), 200);
+        }}
+        onKeyDown={handleKeyDown}
+        aria-autocomplete="list"
+        aria-expanded={open}
+        autoComplete="off"
+        inputMode="text"
+        enterKeyHint="done"
+      />
+      {open && mergedSuggestions.length > 0 && (
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-popover border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+          <div className="p-1">
+            {mergedSuggestions.map((s) => (
+              <button
+                key={s}
+                type="button"
+                className="w-full text-left px-3 py-2 text-sm rounded hover:bg-accent focus:bg-accent focus:outline-none"
+                onMouseDown={(e) => {
+                  e.preventDefault(); // Prevent blur before click
+                  handleSelect(s);
+                }}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
           <div className="p-2 border-t text-right">
-            <Button size="sm" variant="ghost" onClick={() => setOpen(false)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setOpen(false);
+              }}
+            >
               Close
             </Button>
           </div>
-        </Command>
-      </PopoverContent>
-    </Popover>
+        </div>
+      )}
+    </div>
   );
 };
 

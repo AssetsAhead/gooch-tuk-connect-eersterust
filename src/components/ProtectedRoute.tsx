@@ -70,9 +70,6 @@ const location = useLocation();
   return (
     <>
       {isDemo ? <DemoModeBanner /> : null}
-      <div className="fixed top-4 left-4 z-50">
-        <Button variant="outline" onClick={() => navigate(-1)}>← Back</Button>
-      </div>
       {children}
     </>
   );
