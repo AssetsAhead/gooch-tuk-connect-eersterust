@@ -134,21 +134,23 @@ export const PassengerDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="min-h-screen bg-background p-4 pt-2">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-primary mb-2">
-              Welcome, {userProfile?.display_name || userProfile?.name || user?.email}
-            </h1>
-            <p className="text-muted-foreground">Safe, affordable transport & community safety</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <NotificationCenter />
-            <Button variant="outline" onClick={signOut}>
-              Sign Out
-            </Button>
+        {/* Header - Mobile optimized layout */}
+        <div className="mb-6 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-3xl font-bold text-primary truncate">
+                Welcome, {userProfile?.display_name || userProfile?.name || user?.email?.split('@')[0]}
+              </h1>
+              <p className="text-sm text-muted-foreground">Safe, affordable transport & community safety</p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <NotificationCenter />
+              <Button variant="outline" size="sm" onClick={signOut}>
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
 
