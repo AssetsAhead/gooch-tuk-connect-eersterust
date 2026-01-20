@@ -16,7 +16,10 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
   const { loading, otpSent, phone, sendOtp, verifyOtp, resetOtp } = useSmsOtp();
 
   const handleSendOtp = async () => {
-    await sendOtp(phoneInput);
+    // Prepend +27 country code before sending
+    const formattedPhone = `+27${phoneInput.replace(/\D/g, '')}`;
+    console.log('Sending OTP to formatted phone:', formattedPhone);
+    await sendOtp(formattedPhone);
   };
 
   const handleVerifyOtp = async () => {
