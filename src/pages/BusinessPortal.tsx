@@ -76,23 +76,23 @@ const BusinessPortal = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Back Button */}
+      {/* Back Button - navigates to dashboard for logged-in users */}
       <div className="fixed top-4 left-4 z-50">
-        <Link to="/">
+        <Link to="/dashboard">
           <Button
             variant="outline"
             className="bg-background/90 backdrop-blur-sm"
-            aria-label="Back to home"
+            aria-label="Back to dashboard"
           >
-            ← Back to Home
+            ← Back to Dashboard
           </Button>
         </Link>
       </div>
-      {/* Quick Home FAB */}
+      {/* Quick Home FAB - navigates to dashboard */}
       <div className="fixed bottom-4 right-4 z-50">
-        <Link to="/">
-          <Button variant="secondary" className="shadow-lg" aria-label="Home">
-            Home
+        <Link to="/dashboard">
+          <Button variant="secondary" className="shadow-lg" aria-label="Dashboard">
+            Dashboard
           </Button>
         </Link>
       </div>
