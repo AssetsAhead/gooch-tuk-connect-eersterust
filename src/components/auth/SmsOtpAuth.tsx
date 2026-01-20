@@ -100,8 +100,15 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
     );
   }
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loading && phoneInput.length >= 9) {
+      handleSendOtp();
+    }
+  };
+
   return (
-    <div className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="text-center mb-4">
         <Phone className="h-10 w-10 mx-auto mb-2 text-primary" />
         <h3 className="font-semibold">Sign in with Phone</h3>
@@ -119,6 +126,7 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
           <Input
             id="phone"
             type="tel"
+            inputMode="numeric"
             value={phoneInput}
             onChange={(e) => {
               let value = e.target.value.replace(/\D/g, '');
@@ -133,7 +141,7 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
             placeholder="82 637 0673"
             className="rounded-l-none"
             maxLength={15}
-            onKeyDown={(e) => e.key === 'Enter' && handleSendOtp()}
+            autoComplete="tel-national"
           />
         </div>
         <p className="text-xs text-muted-foreground mt-1">
@@ -142,13 +150,13 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
       </div>
 
       <Button
-        onClick={handleSendOtp}
+        type="submit"
         disabled={loading || phoneInput.length < 9}
-        className="w-full"
+        className="w-full touch-manipulation"
       >
         {loading ? 'Sending...' : 'Send Verification Code'}
         <ArrowRight className="h-4 w-4 ml-2" />
       </Button>
-    </div>
+    </form>
   );
 };
