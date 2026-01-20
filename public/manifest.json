@@ -1,11 +1,11 @@
 {
-  "name": "PoortLink - A MobilityOne Platform",
-  "short_name": "PoortLink",
-  "description": "Your township transport companion. Safe, reliable rides powered by MobilityOne.",
+  "name": "MojaRide - Connecting Communities",
+  "short_name": "MojaRide",
+  "description": "Connecting Communities with safe, reliable transport. Powered by MobilityOne.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#10b981",
+  "background_color": "#1e3a5f",
+  "theme_color": "#1e3a5f",
   "features": ["push-notifications", "background-sync", "offline-access"],
   "orientation": "portrait-primary",
   "scope": "/",
@@ -37,7 +37,7 @@
     {
       "name": "Request Ride",
       "short_name": "Ride",
-      "description": "Quickly request a taxi ride",
+      "description": "Quickly request a ride",
       "url": "/?action=request-ride",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },

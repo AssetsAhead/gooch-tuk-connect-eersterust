@@ -14,7 +14,7 @@ export const SafeMode = () => {
       backgroundColor: '#ffffff',
       color: '#000000',
       padding: '20px',
-      fontFamily: 'Arial, sans-serif'
+      fontFamily: 'Heebo, Arial, sans-serif'
     }}>
       <div style={{
         maxWidth: '600px',
@@ -29,9 +29,9 @@ export const SafeMode = () => {
           fontWeight: 'bold',
           textAlign: 'center',
           marginBottom: '20px',
-          color: '#2d5a27'
+          color: '#1e3a5f'
         }}>
-          🚖 PoortLink Safe Mode
+          🚖 MojaRide Safe Mode
         </h1>
         
         <p style={{
@@ -40,7 +40,7 @@ export const SafeMode = () => {
           marginBottom: '30px',
           color: '#666666'
         }}>
-          Your TukTuk Community Network is working! This is safe mode with basic styling.
+          Connecting Communities - Your transport network is working! This is safe mode with basic styling.
         </p>
 
         <div style={{
@@ -76,7 +76,7 @@ export const SafeMode = () => {
           <button
             onClick={() => navigate('/auth')}
             style={{
-              backgroundColor: '#2d5a27',
+              backgroundColor: '#1e3a5f',
               color: 'white',
               border: 'none',
               padding: '12px 24px',
@@ -91,8 +91,8 @@ export const SafeMode = () => {
           <button
             onClick={() => navigate('/')}
             style={{
-              backgroundColor: '#ffc107',
-              color: 'black',
+              backgroundColor: '#e67e22',
+              color: 'white',
               border: 'none',
               padding: '12px 24px',
               fontSize: '16px',

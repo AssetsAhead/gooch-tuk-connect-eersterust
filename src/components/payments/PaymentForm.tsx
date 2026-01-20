@@ -26,7 +26,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   const { toast } = useToast();
   const [amount, setAmount] = useState(initialAmount);
   const [paymentType, setPaymentType] = useState<'ride' | 'deposit' | 'subscription'>('ride');
-  const [description, setDescription] = useState('TukTuk Ride Payment');
+  const [description, setDescription] = useState('MojaRide Payment');
   const [showPayment, setShowPayment] = useState(false);
 
   const paymentTypes = [
