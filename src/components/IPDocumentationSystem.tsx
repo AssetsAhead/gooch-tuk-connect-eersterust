@@ -16,7 +16,9 @@ import {
   Plus,
   Calendar,
   AlertTriangle,
+  FileCheck,
 } from "lucide-react";
+import { CIPCFilingChecklist } from "@/components/ip/CIPCFilingChecklist";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useReportGeneration } from "@/hooks/useReportGeneration";
@@ -315,11 +317,15 @@ export const IPDocumentationSystem = () => {
       </Card>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="innovations">Innovations</TabsTrigger>
-          <TabsTrigger value="add-new">Add New</TabsTrigger>
-          <TabsTrigger value="cipc-prep">CIPC Prep</TabsTrigger>
+        <TabsList className="flex w-full overflow-x-auto">
+          <TabsTrigger value="overview" className="flex-1 min-w-fit">Overview</TabsTrigger>
+          <TabsTrigger value="innovations" className="flex-1 min-w-fit">Innovations</TabsTrigger>
+          <TabsTrigger value="add-new" className="flex-1 min-w-fit">Add New</TabsTrigger>
+          <TabsTrigger value="cipc-prep" className="flex-1 min-w-fit">CIPC Prep</TabsTrigger>
+          <TabsTrigger value="file-cipc" className="flex-1 min-w-fit flex items-center gap-1">
+            <FileCheck className="h-3 w-3" />
+            File with CIPC
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -741,6 +747,11 @@ export const IPDocumentationSystem = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* File with CIPC Tab */}
+        <TabsContent value="file-cipc" className="space-y-6">
+          <CIPCFilingChecklist />
         </TabsContent>
       </Tabs>
 
