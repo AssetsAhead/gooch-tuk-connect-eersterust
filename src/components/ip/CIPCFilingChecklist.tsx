@@ -18,10 +18,12 @@ import {
   FileCheck,
   Globe,
   Upload,
-  HelpCircle
+  HelpCircle,
+  PenTool
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { PatentFormWizard } from "./PatentFormWizard";
 
 interface ChecklistItem {
   id: string;
@@ -392,6 +394,28 @@ export const CIPCFilingChecklist = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Interactive Form-Filling Assistant */}
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="wizard" className="border rounded-lg">
+          <AccordionTrigger className="px-4 hover:no-underline">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/20">
+                <PenTool className="h-4 w-4 text-primary" />
+              </div>
+              <div className="text-left">
+                <div className="font-medium">Interactive Form-Filling Assistant</div>
+                <div className="text-xs text-muted-foreground font-normal">
+                  Fill out your forms digitally, then print for CIPC submission
+                </div>
+              </div>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <PatentFormWizard />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       {/* Checklists */}
       <Accordion type="multiple" defaultValue={["patent", "trademark"]} className="space-y-4">
