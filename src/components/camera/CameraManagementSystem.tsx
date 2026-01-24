@@ -25,6 +25,7 @@ import {
 import { toast } from 'sonner';
 import { LiveVideoStreaming } from './LiveVideoStreaming';
 import { EnhancedCameraCapture } from './EnhancedCameraCapture';
+import { VideoFrameExtractor } from './VideoFrameExtractor';
 import { useALPR, PlateResult } from '@/hooks/useALPR';
 
 interface IncidentRecording {
@@ -176,10 +177,14 @@ export const CameraManagementSystem: React.FC<CameraManagementSystemProps> = ({
       </Card>
 
       <Tabs defaultValue="live-stream" className="space-y-6">
-        <TabsList className="grid grid-cols-5 w-full">
+        <TabsList className="grid grid-cols-6 w-full">
           <TabsTrigger value="live-stream" className="flex items-center gap-2">
             <Video className="h-4 w-4" />
-            <span className="hidden sm:inline">Live Stream</span>
+            <span className="hidden sm:inline">Live</span>
+          </TabsTrigger>
+          <TabsTrigger value="video-frames" className="flex items-center gap-2">
+            <ScanLine className="h-4 w-4" />
+            <span className="hidden sm:inline">Video</span>
           </TabsTrigger>
           <TabsTrigger value="alpr" className="flex items-center gap-2">
             <Car className="h-4 w-4" />
@@ -191,7 +196,7 @@ export const CameraManagementSystem: React.FC<CameraManagementSystemProps> = ({
           </TabsTrigger>
           <TabsTrigger value="recordings" className="flex items-center gap-2">
             <Archive className="h-4 w-4" />
-            <span className="hidden sm:inline">Recordings</span>
+            <span className="hidden sm:inline">Rec</span>
           </TabsTrigger>
           <TabsTrigger value="settings" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
@@ -218,6 +223,11 @@ export const CameraManagementSystem: React.FC<CameraManagementSystemProps> = ({
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        {/* Video Frame Extractor Tab */}
+        <TabsContent value="video-frames">
+          <VideoFrameExtractor />
         </TabsContent>
 
         {/* ALPR Tab */}

@@ -20,6 +20,7 @@ import OwnerRegistration from "@/components/admin/OwnerRegistration";
 import DriverOnboarding from "@/components/admin/DriverOnboarding";
 import { SmsUsageTracker } from "@/components/admin/SmsUsageTracker";
 import { RevenueIntelligence } from "@/components/fleet/RevenueIntelligence";
+import { VideoFrameExtractor } from "@/components/camera/VideoFrameExtractor";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
@@ -178,6 +179,7 @@ export const AdminDashboard = () => {
               <TabsTrigger value="incidents" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Incidents</TabsTrigger>
               <TabsTrigger value="reports" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Reports</TabsTrigger>
               <TabsTrigger value="ip-docs" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">IP</TabsTrigger>
+              <TabsTrigger value="video-scan" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Video</TabsTrigger>
               <TabsTrigger value="fleet-import" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Fleet</TabsTrigger>
               <TabsTrigger value="owner-reg" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Owner</TabsTrigger>
               <TabsTrigger value="driver-onboard" className="whitespace-nowrap text-xs px-2 py-1.5 md:text-sm md:px-3">Driver</TabsTrigger>
@@ -488,6 +490,14 @@ export const AdminDashboard = () => {
 
           <TabsContent value="ip-docs" className="space-y-6">
             <IPDocumentationSystem />
+          </TabsContent>
+
+          <TabsContent value="video-scan" className="space-y-6">
+            <Card>
+              <CardContent className="pt-6">
+                <VideoFrameExtractor />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="fleet-import" className="space-y-6">
