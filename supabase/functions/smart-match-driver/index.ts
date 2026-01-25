@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 interface MatchRequest {
-  passengerId: string;
   pickupLocation: string;
   destination: string;
   userLocation?: { latitude: number; longitude: number };
@@ -30,12 +29,42 @@ serve(async (req) => {
   }
 
   try {
-    const { passengerId, pickupLocation, destination, userLocation, preferences } = 
+    // Authenticate user
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: authError } = await supabaseAuth.auth.getClaims(token);
+    
+    if (authError || !claimsData?.claims) {
+      console.error("Auth error:", authError);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const passengerId = claimsData.claims.sub;
+    console.log("Authenticated passenger for smart match:", passengerId);
+
+    const { pickupLocation, destination, userLocation, preferences } = 
       await req.json() as MatchRequest;
 
     console.log("Smart matching request:", { passengerId, pickupLocation, destination });
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    // Use service role for querying drivers
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
