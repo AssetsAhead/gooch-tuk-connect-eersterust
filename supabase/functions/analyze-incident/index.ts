@@ -27,6 +27,36 @@ serve(async (req) => {
   }
 
   try {
+    // Authenticate user
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: authError } = await supabaseAuth.auth.getClaims(token);
+    
+    if (authError || !claimsData?.claims) {
+      console.error("Auth error:", authError);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+    console.log("Authenticated user:", userId);
+
     const { imageUrl, captureId, location } = await req.json();
 
     if (!imageUrl) {
@@ -173,9 +203,8 @@ You MUST respond with valid JSON only, no markdown or explanation. Use this exac
       };
     }
 
-    // If capture ID provided, update the database
+    // If capture ID provided, update the database using service role
     if (captureId) {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
       const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
       const supabase = createClient(supabaseUrl, supabaseKey);
 
