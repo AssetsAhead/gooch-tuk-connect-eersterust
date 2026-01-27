@@ -20,9 +20,14 @@ import {
   Copy,
   ArrowRight,
   ArrowLeft,
-  Printer
+  Printer,
+  Upload,
+  FileDown
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useReportGeneration } from '@/hooks/useReportGeneration';
+import { ReportShareDialog } from '@/components/reports/ReportShareDialog';
+import { getPreFilledFormData, completedPatentApplication } from '@/data/completedPatentApplication';
 
 interface FormData {
   // P1 - Application Form
@@ -89,22 +94,44 @@ interface PatentFormWizardProps {
     claims?: string[];
     abstract?: string;
   };
+  preloadCompletedApplication?: boolean;
 }
 
-export const PatentFormWizard: React.FC<PatentFormWizardProps> = ({ ipReportData }) => {
-  const [formData, setFormData] = useState<FormData>(() => ({
-    ...initialFormData,
-    inventionTitle: ipReportData?.title || '',
-    technicalField: ipReportData?.technicalField || '',
-    abstract: ipReportData?.abstract || '',
-    claims: ipReportData?.claims?.join('\n\n') || ''
-  }));
+export const PatentFormWizard: React.FC<PatentFormWizardProps> = ({ 
+  ipReportData,
+  preloadCompletedApplication = false 
+}) => {
+  const [formData, setFormData] = useState<FormData>(() => {
+    if (preloadCompletedApplication) {
+      return getPreFilledFormData();
+    }
+    return {
+      ...initialFormData,
+      inventionTitle: ipReportData?.title || '',
+      technicalField: ipReportData?.technicalField || '',
+      abstract: ipReportData?.abstract || '',
+      claims: ipReportData?.claims?.join('\n\n') || ''
+    };
+  });
   const [activeForm, setActiveForm] = useState('p1');
-  const [completedForms, setCompletedForms] = useState<string[]>([]);
+  const [completedForms, setCompletedForms] = useState<string[]>(preloadCompletedApplication ? ['p1', 'p3', 'p6', 'p26'] : []);
+  const [isApplicationLoaded, setIsApplicationLoaded] = useState(preloadCompletedApplication);
   const { toast } = useToast();
+  const reportGeneration = useReportGeneration();
 
   const updateField = (field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const loadCompletedApplication = () => {
+    const preFilledData = getPreFilledFormData();
+    setFormData(preFilledData);
+    setCompletedForms(['p1', 'p3', 'p6', 'p26']);
+    setIsApplicationLoaded(true);
+    toast({
+      title: "Application Loaded",
+      description: "Malcolm Johnston's completed patent application has been loaded.",
+    });
   };
 
   const markFormComplete = (formId: string) => {
@@ -127,6 +154,128 @@ export const PatentFormWizard: React.FC<PatentFormWizardProps> = ({ ipReportData
       title: "Copied!",
       description: `${fieldName} copied to clipboard. Paste into official PDF form.`
     });
+  };
+
+  const generateAllFormsPdf = () => {
+    const applicant = completedPatentApplication.applicant;
+    
+    reportGeneration.generatePdfReport({
+      title: "CIPC Provisional Patent Application",
+      subtitle: "Complete Form Package: P1, P3, P6, P26",
+      companyName: `Applicant: ${formData.applicantFullName}`,
+      companyRef: `ID: ${applicant.idNumber}`,
+      headerColor: [41, 128, 185],
+      sections: [
+        // P1 Section
+        {
+          title: "FORM P1 - APPLICATION FOR A PATENT",
+          content: `Full Name of Applicant: ${formData.applicantFullName}
+Address: ${formData.applicantAddress}
+Phone: ${formData.applicantPhone}
+Email: ${formData.applicantEmail}
+
+Title of Invention: ${formData.inventionTitle}
+
+Priority Claim: ${formData.priorityClaim || 'N/A (First filing)'}
+
+Date: ${new Date().toLocaleDateString('en-ZA')}`
+        },
+        // P3 Section
+        {
+          title: "FORM P3 - DECLARATION BY APPLICANT",
+          content: `I, ${formData.inventorName},
+of ${formData.inventorAddress},
+
+hereby declare that:
+${formData.isApplicantInventor 
+  ? '☑ I am the true inventor of the invention described in the accompanying specification.'
+  : '☐ The true inventor has assigned their rights to the applicant.'}
+
+Title of Invention: ${formData.inventionTitle}
+
+Declaration Date: ${formData.declarationDate}
+
+Signature: ________________________`
+        },
+        // P6 Section
+        {
+          title: "FORM P6 - PROVISIONAL SPECIFICATION",
+          content: `TITLE: ${formData.inventionTitle}`
+        },
+        {
+          title: "1. TECHNICAL FIELD",
+          content: formData.technicalField
+        },
+        {
+          title: "2. BACKGROUND ART",
+          content: formData.backgroundArt
+        },
+        {
+          title: "3. PROBLEM TO BE SOLVED",
+          content: formData.problemSolved
+        },
+        {
+          title: "4. TECHNICAL SOLUTION",
+          content: formData.technicalSolution
+        },
+        {
+          title: "5. ADVANTAGES OVER PRIOR ART",
+          content: formData.advantagesOverPrior
+        },
+        {
+          title: "6. BEST MODE OF IMPLEMENTATION",
+          content: formData.bestMode
+        },
+        {
+          title: "7. CLAIMS",
+          content: formData.claims
+        },
+        {
+          title: "8. ABSTRACT",
+          content: formData.abstract
+        },
+        // P26 Section
+        {
+          title: "FORM P26 - INDIGENOUS RESOURCES STATEMENT",
+          content: formData.usesIndigenousResources 
+            ? `Uses Indigenous Biological Resources: YES
+
+Description of Resources Used:
+${formData.indigenousResourceDescription}
+
+Community Consent:
+${formData.communityConsent}
+
+Benefit Sharing Arrangements:
+${formData.benefitSharing}`
+            : `Uses Indigenous Biological Resources: NO
+
+This invention does not utilize any indigenous biological resources, genetic resources, or traditional knowledge.`
+        },
+        {
+          title: "FILING INSTRUCTIONS",
+          list: [
+            "Print this document and sign where indicated",
+            "Prepare R590 filing fee (provisional patent)",
+            "Submit via CIPC e-Services portal: eservices.cipc.co.za",
+            "Or mail to: CIPC, PO Box 429, Pretoria, 0001",
+            "Retain copy for your records",
+            "You have 12 months to file complete patent application"
+          ]
+        }
+      ],
+      footer: `CONFIDENTIAL - Patent Application for ${formData.applicantFullName} | Generated ${new Date().toLocaleDateString('en-ZA')}`
+    });
+  };
+
+  const getReportSummary = () => {
+    return `*CIPC Patent Application*%0A%0A` +
+      `Applicant: ${formData.applicantFullName}%0A` +
+      `Title: ${formData.inventionTitle}%0A` +
+      `Date: ${new Date().toLocaleDateString('en-ZA')}%0A%0A` +
+      `Forms Completed: P1, P3, P6, P26%0A%0A` +
+      `*Abstract:*%0A${formData.abstract.substring(0, 300)}...%0A%0A` +
+      `_Full PDF available for download._`;
   };
 
   const generatePrintableContent = (formId: string) => {
@@ -267,6 +416,52 @@ Date: ${new Date().toLocaleDateString('en-ZA')}
 
   return (
     <div className="space-y-6">
+      {/* Load Application Banner */}
+      {!isApplicationLoaded && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <Upload className="h-6 w-6 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-primary">Completed Application Available</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Malcolm Johnston's AI Incident Detection System patent application is ready to load.
+                  </p>
+                </div>
+              </div>
+              <Button onClick={loadCompletedApplication} className="shrink-0">
+                <Upload className="mr-2 h-4 w-4" />
+                Load Completed Application
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Application Loaded Success */}
+      {isApplicationLoaded && (
+        <Card className="border-success/30 bg-success/5">
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-6 w-6 text-success shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-success">Application Loaded Successfully</h3>
+                  <p className="text-sm text-muted-foreground">
+                    All 4 forms are complete. Download PDF or print individual forms below.
+                  </p>
+                </div>
+              </div>
+              <Button onClick={generateAllFormsPdf} variant="default" className="shrink-0">
+                <FileDown className="mr-2 h-4 w-4" />
+                Download Complete PDF
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Progress Header */}
       <Card>
         <CardHeader className="pb-3">
@@ -295,6 +490,23 @@ Date: ${new Date().toLocaleDateString('en-ZA')}
           </div>
         </CardContent>
       </Card>
+
+      {/* Share Dialog */}
+      <ReportShareDialog
+        open={reportGeneration.showShareDialog}
+        onOpenChange={(open) => !open && reportGeneration.closeShareDialog()}
+        title="CIPC Patent Application"
+        pdfDataUrl={reportGeneration.pdfDataUrl}
+        onDownload={reportGeneration.downloadPdf}
+        onPrint={reportGeneration.printReport}
+        onShareWhatsApp={reportGeneration.shareViaWhatsApp}
+        onShareEmail={reportGeneration.shareViaEmail}
+        onShareSms={reportGeneration.shareViaSms}
+        reportSummary={`CIPC Patent Application for ${formData.inventionTitle} by ${formData.applicantFullName}. Forms: P1, P3, P6, P26 complete.`}
+        emailSubject={`CIPC Patent Application - ${formData.inventionTitle}`}
+        emailBody={`Please find attached the complete provisional patent application for:\n\nTitle: ${formData.inventionTitle}\nApplicant: ${formData.applicantFullName}\n\nForms included: P1, P3, P6, P26`}
+        filename={`CIPC_Patent_${formData.applicantFullName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}`}
+      />
 
       {/* Form Tabs */}
       <Tabs value={activeForm} onValueChange={setActiveForm}>

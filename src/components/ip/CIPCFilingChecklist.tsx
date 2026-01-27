@@ -412,7 +412,7 @@ export const CIPCFilingChecklist = () => {
             </div>
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
-            <PatentFormWizard />
+            <PatentFormWizard preloadCompletedApplication={true} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
