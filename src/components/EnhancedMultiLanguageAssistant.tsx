@@ -192,11 +192,27 @@ export const EnhancedMultiLanguageAssistant = () => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="chat" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="chat">💬 Voice Chat</TabsTrigger>
-            <TabsTrigger value="knowledge">🧠 Local Knowledge</TabsTrigger>
-            <TabsTrigger value="culture">🏛️ Cultural Guide</TabsTrigger>
-            <TabsTrigger value="commands">🗣️ Voice Commands</TabsTrigger>
+          <TabsList className="w-full overflow-x-auto flex justify-start md:grid md:grid-cols-4">
+            <TabsTrigger value="chat" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">💬</span>
+              <span className="hidden sm:inline">Voice Chat</span>
+              <span className="sm:hidden">Chat</span>
+            </TabsTrigger>
+            <TabsTrigger value="knowledge" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">🧠</span>
+              <span className="hidden sm:inline">Local Knowledge</span>
+              <span className="sm:hidden">Knowledge</span>
+            </TabsTrigger>
+            <TabsTrigger value="culture" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">🏛️</span>
+              <span className="hidden sm:inline">Cultural Guide</span>
+              <span className="sm:hidden">Culture</span>
+            </TabsTrigger>
+            <TabsTrigger value="commands" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">🗣️</span>
+              <span className="hidden sm:inline">Voice Commands</span>
+              <span className="sm:hidden">Commands</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="chat" className="space-y-4">

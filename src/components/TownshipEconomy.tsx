@@ -161,11 +161,26 @@ export const TownshipEconomy = () => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="spaza" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="spaza">🏪 Spaza Shops</TabsTrigger>
-            <TabsTrigger value="jobs">💼 Job Board</TabsTrigger>
-            <TabsTrigger value="suppliers">📦 Suppliers</TabsTrigger>
-            <TabsTrigger value="register">📝 Register Business</TabsTrigger>
+          <TabsList className="w-full overflow-x-auto flex justify-start md:grid md:grid-cols-4">
+            <TabsTrigger value="spaza" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">🏪</span>
+              <span className="hidden sm:inline">Spaza Shops</span>
+              <span className="sm:hidden">Shops</span>
+            </TabsTrigger>
+            <TabsTrigger value="jobs" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">💼</span>
+              <span className="hidden sm:inline">Job Board</span>
+              <span className="sm:hidden">Jobs</span>
+            </TabsTrigger>
+            <TabsTrigger value="suppliers" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">📦</span>
+              <span>Suppliers</span>
+            </TabsTrigger>
+            <TabsTrigger value="register" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">📝</span>
+              <span className="hidden sm:inline">Register Business</span>
+              <span className="sm:hidden">Register</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="spaza" className="space-y-4">
