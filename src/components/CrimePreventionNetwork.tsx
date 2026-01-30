@@ -124,11 +124,26 @@ export const CrimePreventionNetwork = () => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="statistics" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="statistics">📊 SAPS Stats</TabsTrigger>
-            <TabsTrigger value="patrols">👮 Patrols</TabsTrigger>
-            <TabsTrigger value="tips">🔍 Anonymous Tips</TabsTrigger>
-            <TabsTrigger value="schedule">⏰ Watch Schedule</TabsTrigger>
+          <TabsList className="w-full overflow-x-auto flex justify-start md:grid md:grid-cols-4">
+            <TabsTrigger value="statistics" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">📊</span>
+              <span className="hidden sm:inline">SAPS Stats</span>
+              <span className="sm:hidden">Stats</span>
+            </TabsTrigger>
+            <TabsTrigger value="patrols" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">👮</span>
+              <span>Patrols</span>
+            </TabsTrigger>
+            <TabsTrigger value="tips" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">🔍</span>
+              <span className="hidden sm:inline">Anonymous Tips</span>
+              <span className="sm:hidden">Tips</span>
+            </TabsTrigger>
+            <TabsTrigger value="schedule" className="whitespace-nowrap flex-shrink-0">
+              <span className="mr-1">⏰</span>
+              <span className="hidden sm:inline">Watch Schedule</span>
+              <span className="sm:hidden">Schedule</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="statistics" className="space-y-4">

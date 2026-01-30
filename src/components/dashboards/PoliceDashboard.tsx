@@ -87,19 +87,30 @@ export const PoliceDashboard = () => {
         </Card>
 
         <Tabs defaultValue="issue-fine" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="issue-fine" className="flex items-center space-x-1">
+          <TabsList className="w-full overflow-x-auto flex justify-start md:grid md:grid-cols-6">
+            <TabsTrigger value="issue-fine" className="flex items-center space-x-1 whitespace-nowrap flex-shrink-0">
               <Smartphone className="h-4 w-4" />
-              <span>Issue Fine</span>
+              <span className="hidden sm:inline">Issue Fine</span>
+              <span className="sm:hidden">Fine</span>
             </TabsTrigger>
-            <TabsTrigger value="manage-fines" className="flex items-center space-x-1">
+            <TabsTrigger value="manage-fines" className="flex items-center space-x-1 whitespace-nowrap flex-shrink-0">
               <FileText className="h-4 w-4" />
-              <span>Manage Fines</span>
+              <span className="hidden sm:inline">Manage Fines</span>
+              <span className="sm:hidden">Manage</span>
             </TabsTrigger>
-            <TabsTrigger value="flagged">Flagged Vehicles</TabsTrigger>
-            <TabsTrigger value="compliance">License Compliance</TabsTrigger>
-            <TabsTrigger value="incidents">Incident Reports</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="flagged" className="whitespace-nowrap flex-shrink-0">
+              <span className="hidden sm:inline">Flagged Vehicles</span>
+              <span className="sm:hidden">Flagged</span>
+            </TabsTrigger>
+            <TabsTrigger value="compliance" className="whitespace-nowrap flex-shrink-0">
+              <span className="hidden sm:inline">License Compliance</span>
+              <span className="sm:hidden">Compliance</span>
+            </TabsTrigger>
+            <TabsTrigger value="incidents" className="whitespace-nowrap flex-shrink-0">
+              <span className="hidden sm:inline">Incident Reports</span>
+              <span className="sm:hidden">Incidents</span>
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="whitespace-nowrap flex-shrink-0">Analytics</TabsTrigger>
           </TabsList>
 
           <TabsContent value="issue-fine" className="space-y-6">
