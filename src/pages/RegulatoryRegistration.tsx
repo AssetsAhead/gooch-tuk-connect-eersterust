@@ -702,11 +702,20 @@ export const RegulatoryRegistration = () => {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="requirements">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="requirements">Requirements</TabsTrigger>
-                  <TabsTrigger value="documents">Documents</TabsTrigger>
-                  <TabsTrigger value="status">Status</TabsTrigger>
-                  <TabsTrigger value="reminders">Reminders</TabsTrigger>
+                <TabsList className="w-full overflow-x-auto flex justify-start md:grid md:grid-cols-4 gap-1">
+                  <TabsTrigger value="requirements" className="whitespace-nowrap text-xs sm:text-sm">
+                    <span className="hidden sm:inline">Requirements</span>
+                    <span className="sm:hidden">Reqs</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="documents" className="whitespace-nowrap text-xs sm:text-sm">
+                    <span className="hidden sm:inline">Documents</span>
+                    <span className="sm:hidden">Docs</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="status" className="whitespace-nowrap text-xs sm:text-sm">Status</TabsTrigger>
+                  <TabsTrigger value="reminders" className="whitespace-nowrap text-xs sm:text-sm">
+                    <span className="hidden sm:inline">Reminders</span>
+                    <span className="sm:hidden">Alerts</span>
+                  </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="requirements" className="space-y-4 mt-4">
