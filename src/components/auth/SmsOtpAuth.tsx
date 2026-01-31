@@ -5,12 +5,14 @@ import { Label } from '@/components/ui/label';
 import { useSmsOtp } from '@/hooks/useSmsOtp';
 import { Phone, ArrowRight, RefreshCw } from 'lucide-react';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { useToast } from '@/hooks/use-toast';
 
 interface SmsOtpAuthProps {
   onSuccess: (userId: string, isNewUser: boolean) => void;
 }
 
 export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
+  const { toast } = useToast();
   const [phoneInput, setPhoneInput] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const { loading, otpSent, phone, sendOtp, verifyOtp, resetOtp } = useSmsOtp();
@@ -104,9 +106,18 @@ export const SmsOtpAuth = ({ onSuccess }: SmsOtpAuthProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const digitsOnly = phoneInput.replace(/\D/g, '');
-    if (!loading && digitsOnly.length >= 9) {
-      handleSendOtp();
+    if (loading) return;
+    
+    if (digitsOnly.length < 9) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid SA mobile number (at least 9 digits)",
+        variant: "destructive",
+      });
+      return;
     }
+    
+    handleSendOtp();
   };
 
   return (
