@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import {
   TrendingUp,
@@ -32,9 +33,11 @@ import {
   Clock,
   Award,
   Scale,
-  Receipt
+  Receipt,
+  FileText
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { InvestorProposalR2M } from "@/components/fleet/InvestorProposalR2M";
 
 const InvestorPortal = () => {
   const { toast } = useToast();
@@ -109,6 +112,24 @@ const InvestorPortal = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Tab Navigation */}
+      <Tabs defaultValue="overview" className="w-full">
+        <div className="bg-muted/30 border-b sticky top-0 z-10">
+          <div className="max-w-6xl mx-auto px-4">
+            <TabsList className="h-14 bg-transparent overflow-x-auto flex justify-start md:justify-center">
+              <TabsTrigger value="overview" className="gap-2">
+                <Target className="h-4 w-4" />
+                <span className="hidden sm:inline">Overview</span>
+              </TabsTrigger>
+              <TabsTrigger value="r2m-proposal" className="gap-2">
+                <FileText className="h-4 w-4" />
+                <span className="hidden sm:inline">R2M Proposal</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
+        </div>
+
+        <TabsContent value="overview" className="mt-0">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10 py-20 px-4">
         <div className="max-w-6xl mx-auto">
@@ -683,6 +704,16 @@ const InvestorPortal = () => {
           </div>
         </div>
       </footer>
+        </TabsContent>
+
+        <TabsContent value="r2m-proposal" className="mt-0">
+          <section className="py-8 px-4">
+            <div className="max-w-6xl mx-auto">
+              <InvestorProposalR2M />
+            </div>
+          </section>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
