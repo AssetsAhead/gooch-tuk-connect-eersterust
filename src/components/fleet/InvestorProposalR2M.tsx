@@ -74,14 +74,45 @@ const INVESTMENT_DATA = {
     { title: "Network Effects", description: "More drivers = more passengers = more drivers", potential: "Exponential growth" },
   ],
 
-  // Additional Revenue Streams
+  // Fintech Partners (eSwatini/SA)
+  fintechPartners: [
+    { name: "Letshego Eswatini", type: "Micro-lender", service: "Driver emergency loans, vehicle financing", website: "letshego.com/eswatini" },
+    { name: "Select Africa", type: "Micro-lender", service: "Flexi Facility Loans (2-year revolving)", website: "selectafrica.net/eswatini" },
+    { name: "e-Mali (Eswatini Mobile)", type: "Mobile lending", service: "Instant micro-loans via USSD/app", website: "eswatinimobile.co.sz" },
+    { name: "Heleza", type: "Women's finance", service: "Female driver/passenger financial products", website: "Grameen Foundation backed" },
+  ],
+
+  // Additional Revenue Streams (Expanded)
   additionalRevenue: [
-    { stream: "Advertising", description: "Wrapped vehicles, in-app ads, screen displays", potential: "R2,000/bike/month" },
-    { stream: "Insurance Referrals", description: "Commission on driver/passenger insurance", potential: "R500/policy" },
-    { stream: "Security Partnerships", description: "Armed response integration, panic button fees", potential: "R50/trip premium" },
-    { stream: "Data Licensing", description: "Route analytics for municipalities, retailers", potential: "R100k+/year" },
-    { stream: "SASSA Integration", description: "Grant verification discount platform", potential: "R5/verification" },
-    { stream: "Airtime & VAS", description: "Top-ups, electricity, betting via app", potential: "5% commission" },
+    // Tier 1: Core transport revenue
+    { stream: "Ride Commission", description: "5% platform fee on every trip", potential: "R9,100/month (10 bikes)", tier: 1 },
+    { stream: "Surge Pricing", description: "Peak hours, events, rain premium (1.5-2x)", potential: "R15,000/month", tier: 1 },
+    
+    // Tier 2: Fleet advertising
+    { stream: "Vehicle Wraps", description: "Full vehicle branding for MTN, Shoprite, etc.", potential: "R3,000/bike/month", tier: 2 },
+    { stream: "In-App Ads", description: "Sponsored banners, promotional notifications", potential: "R1,500/month", tier: 2 },
+    { stream: "Driver Tablet Ads", description: "Video ads on passenger-facing screens", potential: "R2,000/bike/month", tier: 2 },
+    
+    // Tier 3: Financial services (via Fintech partners)
+    { stream: "Micro-Loans Referral", description: "Commission from Letshego/Select Africa referrals", potential: "R200/loan", tier: 3 },
+    { stream: "Airtime & Data", description: "In-app top-ups (MTN integration opportunity)", potential: "5% margin", tier: 3 },
+    { stream: "Electricity Vouchers", description: "Prepaid electricity via app", potential: "3% commission", tier: 3 },
+    { stream: "Grocery Vouchers", description: "Pick n Pay, Shoprite digital vouchers", potential: "2% commission", tier: 3 },
+    { stream: "Driver Savings Club", description: "Group stokvel for vehicle ownership", potential: "R50/driver/month admin", tier: 3 },
+    
+    // Tier 4: Insurance & Security
+    { stream: "Insurance Referrals", description: "Commission on driver/passenger policies", potential: "R500/policy", tier: 4 },
+    { stream: "Security Premium", description: "Armed response, panic button add-on", potential: "R50/trip (premium tier)", tier: 4 },
+    { stream: "Dashcam Evidence", description: "Footage licensing for insurance claims", potential: "R500/incident", tier: 4 },
+    
+    // Tier 5: Data & B2B
+    { stream: "Route Analytics", description: "Movement data for municipalities, retailers", potential: "R100k+/year", tier: 5 },
+    { stream: "Corporate Accounts", description: "Business shuttle contracts", potential: "R20k+/contract/month", tier: 5 },
+    { stream: "Delivery Add-On", description: "Package delivery between passenger trips", potential: "R30/delivery", tier: 5 },
+    
+    // Tier 6: Government/Grant integration
+    { stream: "SASSA Verification", description: "Grant card discount platform (patented)", potential: "R5/verification", tier: 6 },
+    { stream: "Municipality Contracts", description: "Ward transport for elderly, disabled", potential: "R50k+/contract", tier: 6 },
   ],
 
   // Risk Factors (honest)
@@ -328,26 +359,60 @@ export const InvestorProposalR2M = () => {
     doc.text("• Break-even on fleet: Month 18-20", pageWidth / 2, yPos + 22);
     doc.text("• Year 3 Cumulative: R3M+ net profit", pageWidth / 2, yPos + 30);
     
-    // ============ PAGE 4: ADDITIONAL REVENUE ============
+    // ============ PAGE 4: FINTECH PARTNERS & REVENUE ============
     doc.addPage();
     yPos = 20;
     
-    yPos = sectionHeader("ADDITIONAL REVENUE STREAMS", yPos);
+    yPos = sectionHeader("FINTECH PARTNERS (Micro-Loans Outsourced)", yPos);
     
     autoTable(doc, {
       startY: yPos,
-      head: [["Revenue Stream", "Description", "Potential"]],
+      head: [["Partner", "Type", "Service", "Revenue Model"]],
       body: [
-        ["Vehicle Advertising", "Wrapped bikes, in-app ads, screen displays", "R2,000/bike/month"],
-        ["Insurance Referrals", "Commission on driver/passenger policies", "R500/policy sold"],
-        ["Security Partnerships", "Armed response integration, panic premium", "R50/trip premium tier"],
-        ["Data Licensing", "Route analytics for municipalities, retailers", "R100k+/year"],
-        ["SASSA Verification", "Grant card discount platform (patented)", "R5/verification"],
-        ["Airtime & VAS", "Top-ups, electricity, betting via app", "5% commission"],
+        ["Letshego Eswatini", "Micro-lender", "Driver emergency loans, vehicle financing", "R200/referral"],
+        ["Select Africa", "Micro-lender", "Flexi Facility Loans (2-year revolving)", "R200/referral"],
+        ["e-Mali (Eswatini Mobile)", "Mobile lending", "Instant micro-loans via USSD/app", "Commission TBD"],
+        ["Heleza", "Women's finance", "Female driver/passenger products", "Partnership revenue"],
+      ],
+      theme: "striped",
+      headStyles: { fillColor: [34, 197, 94] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9 },
+    });
+    
+    yPos = (doc as any).lastAutoTable.finalY + 10;
+    
+    doc.setFillColor(220, 252, 231);
+    doc.roundedRect(margin, yPos, pageWidth - margin * 2, 20, 3, 3, "F");
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    doc.text("💡 Strategy: We refer customers, partners handle lending risk. Zero capital required.", margin + 10, yPos + 13);
+    
+    yPos += 30;
+    yPos = sectionHeader("REVENUE STREAMS (6 TIERS)", yPos);
+    
+    autoTable(doc, {
+      startY: yPos,
+      head: [["Tier", "Stream", "Description", "Potential"]],
+      body: [
+        ["T1: Core", "Ride Commission", "5% platform fee on every trip", "R9,100/month"],
+        ["T1: Core", "Surge Pricing", "Peak hours, events, rain (1.5-2x)", "R15,000/month"],
+        ["T2: Ads", "Vehicle Wraps", "Full branding for MTN, Shoprite, etc.", "R3,000/bike/mo"],
+        ["T2: Ads", "In-App & Tablet Ads", "Sponsored banners, video ads", "R3,500/month"],
+        ["T3: Fintech", "Micro-Loan Referrals", "Commission from Letshego/Select Africa", "R200/loan"],
+        ["T3: Fintech", "Airtime/Data/Electricity", "In-app top-ups (MTN synergy!)", "3-5% margin"],
+        ["T4: Security", "Insurance Referrals", "Commission on policies sold", "R500/policy"],
+        ["T4: Security", "Premium Panic Button", "Armed response add-on", "R50/trip"],
+        ["T5: B2B", "Route Analytics", "Data for municipalities, retailers", "R100k+/year"],
+        ["T5: B2B", "Corporate Accounts", "Business shuttle contracts", "R20k+/contract"],
+        ["T6: Govt", "SASSA Verification", "Grant discount platform (patented)", "R5/verification"],
+        ["T6: Govt", "Municipality Contracts", "Ward transport for elderly, disabled", "R50k+/contract"],
       ],
       theme: "striped",
       headStyles: { fillColor: [59, 130, 246] },
       margin: { left: margin, right: margin },
+      styles: { fontSize: 8 },
     });
     
     yPos = (doc as any).lastAutoTable.finalY + 15;
@@ -526,43 +591,43 @@ export const InvestorProposalR2M = () => {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-green-500/10 border-green-500/30">
+        <Card className="bg-success/10 border-success/30">
           <CardContent className="pt-4">
-            <div className="flex items-center gap-2 text-green-600 mb-1">
+            <div className="flex items-center gap-2 text-success mb-1">
               <DollarSign className="h-4 w-4" />
               <span className="text-sm font-medium">Investment Ask</span>
             </div>
-            <p className="text-2xl font-bold text-green-700">R2,000,000</p>
+            <p className="text-2xl font-bold text-success">R2,000,000</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-blue-500/10 border-blue-500/30">
+        <Card className="bg-primary/10 border-primary/30">
           <CardContent className="pt-4">
-            <div className="flex items-center gap-2 text-blue-600 mb-1">
+            <div className="flex items-center gap-2 text-primary mb-1">
               <Target className="h-4 w-4" />
               <span className="text-sm font-medium">Equity Offer</span>
             </div>
-            <p className="text-2xl font-bold text-blue-700">25%</p>
+            <p className="text-2xl font-bold text-primary">25%</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-purple-500/10 border-purple-500/30">
+        <Card className="bg-accent/10 border-accent/30">
           <CardContent className="pt-4">
-            <div className="flex items-center gap-2 text-purple-600 mb-1">
+            <div className="flex items-center gap-2 text-accent-foreground mb-1">
               <TrendingUp className="h-4 w-4" />
               <span className="text-sm font-medium">Annual Net (10 bikes)</span>
             </div>
-            <p className="text-2xl font-bold text-purple-700">R1.01M</p>
+            <p className="text-2xl font-bold text-accent-foreground">R1.01M</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-orange-500/10 border-orange-500/30">
+        <Card className="bg-warning/10 border-warning/30">
           <CardContent className="pt-4">
-            <div className="flex items-center gap-2 text-orange-600 mb-1">
+            <div className="flex items-center gap-2 text-warning mb-1">
               <Clock className="h-4 w-4" />
               <span className="text-sm font-medium">Payback</span>
             </div>
-            <p className="text-2xl font-bold text-orange-700">~20 Months</p>
+            <p className="text-2xl font-bold text-warning">~20 Months</p>
           </CardContent>
         </Card>
       </div>
@@ -572,7 +637,7 @@ export const InvestorProposalR2M = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Car className="h-5 w-5 text-green-600" />
+              <Car className="h-5 w-5 text-success" />
               Fleet Hardware
             </CardTitle>
             <CardDescription>R1,333,000 (67%)</CardDescription>
@@ -602,7 +667,7 @@ export const InvestorProposalR2M = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Globe className="h-5 w-5 text-blue-600" />
+              <Globe className="h-5 w-5 text-primary" />
               Platform & Integration
             </CardTitle>
             <CardDescription>R365,000 (18%)</CardDescription>
@@ -632,7 +697,7 @@ export const InvestorProposalR2M = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Users className="h-5 w-5 text-purple-600" />
+              <Users className="h-5 w-5 text-accent-foreground" />
               Operations (12mo)
             </CardTitle>
             <CardDescription>R302,000 (15%)</CardDescription>
@@ -660,40 +725,182 @@ export const InvestorProposalR2M = () => {
         </Card>
       </div>
 
-      {/* Additional Revenue Streams */}
+      {/* Fintech Partners */}
+      <Card className="border-success/30 bg-success/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-success" />
+            Fintech Partners (Micro-Loans Outsourced)
+          </CardTitle>
+          <CardDescription>Strategic partnerships for financial services - we refer, they lend</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-2 gap-4">
+            {INVESTMENT_DATA.fintechPartners.map((partner, idx) => (
+              <div key={idx} className="p-4 bg-background rounded-lg border flex items-start gap-3">
+                <div className="p-2 rounded-full bg-success/10">
+                  <DollarSign className="h-5 w-5 text-success" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-medium">{partner.name}</span>
+                    <Badge variant="outline" className="text-xs">{partner.type}</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{partner.service}</p>
+                  <p className="text-xs text-muted-foreground mt-1 italic">{partner.website}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 p-3 bg-success/10 rounded-lg border border-success/20">
+            <p className="text-sm text-center">
+              <span className="font-medium">💡 Revenue Model:</span> Commission per loan referral (R200+), no lending risk, no capital required
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Additional Revenue Streams - Tiered */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-primary" />
-            Additional Revenue Streams
+            Revenue Streams (6 Tiers)
           </CardTitle>
-          <CardDescription>Beyond ride fees - multiple monetization paths</CardDescription>
+          <CardDescription>Beyond ride fees - diversified monetization paths for maximum ROI</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-3 gap-4">
-            {INVESTMENT_DATA.additionalRevenue.map((item, idx) => (
-              <div key={idx} className="p-4 bg-muted/50 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  {idx === 0 && <Megaphone className="h-5 w-5 text-primary" />}
-                  {idx === 1 && <Shield className="h-5 w-5 text-primary" />}
-                  {idx === 2 && <Lock className="h-5 w-5 text-primary" />}
-                  {idx === 3 && <MapPin className="h-5 w-5 text-primary" />}
-                  {idx === 4 && <Heart className="h-5 w-5 text-primary" />}
-                  {idx === 5 && <Smartphone className="h-5 w-5 text-primary" />}
-                  <span className="font-medium">{item.stream}</span>
+        <CardContent className="space-y-6">
+          {/* Tier 1: Core */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Badge className="bg-primary">Tier 1</Badge>
+              <span className="font-medium">Core Transport</span>
+            </div>
+            <div className="grid md:grid-cols-2 gap-3">
+              {INVESTMENT_DATA.additionalRevenue.filter(r => r.tier === 1).map((item, idx) => (
+                <div key={idx} className="p-3 bg-primary/5 rounded-lg border border-primary/20">
+                  <div className="flex justify-between items-start">
+                    <span className="font-medium text-sm">{item.stream}</span>
+                    <Badge variant="secondary" className="text-xs">{item.potential}</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
                 </div>
-                <p className="text-sm text-muted-foreground mb-2">{item.description}</p>
-                <Badge variant="secondary">{item.potential}</Badge>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Tier 2: Advertising */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Badge className="bg-accent">Tier 2</Badge>
+              <span className="font-medium">Advertising</span>
+              <Megaphone className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="grid md:grid-cols-3 gap-3">
+              {INVESTMENT_DATA.additionalRevenue.filter(r => r.tier === 2).map((item, idx) => (
+                <div key={idx} className="p-3 bg-accent/5 rounded-lg border border-accent/20">
+                  <div className="flex justify-between items-start">
+                    <span className="font-medium text-sm">{item.stream}</span>
+                    <Badge variant="secondary" className="text-xs">{item.potential}</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tier 3: Financial Services */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Badge className="bg-success text-success-foreground">Tier 3</Badge>
+              <span className="font-medium">Financial Services (via Fintech Partners)</span>
+              <Smartphone className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-3">
+              {INVESTMENT_DATA.additionalRevenue.filter(r => r.tier === 3).map((item, idx) => (
+                <div key={idx} className="p-3 bg-success/5 rounded-lg border border-success/20">
+                  <span className="font-medium text-sm block">{item.stream}</span>
+                  <p className="text-xs text-muted-foreground my-1">{item.description}</p>
+                  <Badge variant="outline" className="text-xs">{item.potential}</Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tier 4: Insurance & Security */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Badge className="bg-warning text-warning-foreground">Tier 4</Badge>
+              <span className="font-medium">Insurance & Security</span>
+              <Shield className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="grid md:grid-cols-3 gap-3">
+              {INVESTMENT_DATA.additionalRevenue.filter(r => r.tier === 4).map((item, idx) => (
+                <div key={idx} className="p-3 bg-warning/5 rounded-lg border border-warning/20">
+                  <div className="flex justify-between items-start">
+                    <span className="font-medium text-sm">{item.stream}</span>
+                    <Badge variant="secondary" className="text-xs">{item.potential}</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tier 5: Data & B2B */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Badge className="bg-secondary text-secondary-foreground">Tier 5</Badge>
+              <span className="font-medium">Data & B2B Services</span>
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="grid md:grid-cols-3 gap-3">
+              {INVESTMENT_DATA.additionalRevenue.filter(r => r.tier === 5).map((item, idx) => (
+                <div key={idx} className="p-3 bg-secondary/10 rounded-lg border">
+                  <div className="flex justify-between items-start">
+                    <span className="font-medium text-sm">{item.stream}</span>
+                    <Badge variant="secondary" className="text-xs">{item.potential}</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tier 6: Government */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Badge variant="outline">Tier 6</Badge>
+              <span className="font-medium">Government & Grant Integration</span>
+              <Heart className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="grid md:grid-cols-2 gap-3">
+              {INVESTMENT_DATA.additionalRevenue.filter(r => r.tier === 6).map((item, idx) => (
+                <div key={idx} className="p-3 bg-muted/30 rounded-lg border">
+                  <div className="flex justify-between items-start">
+                    <span className="font-medium text-sm">{item.stream}</span>
+                    <Badge variant="secondary" className="text-xs">{item.potential}</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Revenue Summary */}
+          <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
+            <div className="text-center space-y-1">
+              <p className="text-lg font-bold text-primary">Combined Revenue Potential</p>
+              <p className="text-sm text-muted-foreground">Core transport + 5 additional tiers = <span className="font-medium">40-60% higher ROI</span> vs ride-only model</p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Risk Acknowledgment */}
-      <Card className="border-amber-500/30 bg-amber-50/50">
+      <Card className="border-warning/30 bg-warning/5">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-amber-700">
+          <CardTitle className="flex items-center gap-2 text-warning">
             <AlertTriangle className="h-5 w-5" />
             Honest Risk Assessment
           </CardTitle>
@@ -701,7 +908,7 @@ export const InvestorProposalR2M = () => {
         <CardContent>
           <div className="grid md:grid-cols-2 gap-4">
             {INVESTMENT_DATA.risks.map((risk, idx) => (
-              <div key={idx} className="flex items-start gap-3 p-3 bg-white rounded-lg border">
+              <div key={idx} className="flex items-start gap-3 p-3 bg-background rounded-lg border">
                 <Badge variant={risk.severity === 'low' ? 'default' : 'secondary'} className="mt-1">
                   {risk.severity.toUpperCase()}
                 </Badge>
@@ -716,33 +923,33 @@ export const InvestorProposalR2M = () => {
       </Card>
 
       {/* Strategic Fit */}
-      <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-300">
+      <Card className="bg-gradient-to-r from-warning/10 to-warning/5 border-warning/30">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-yellow-700" />
+            <Building2 className="h-5 w-5 text-warning" />
             MTN Strategic Synergies
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-5 gap-4">
             <div className="text-center p-3">
-              <CheckCircle2 className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+              <CheckCircle2 className="h-8 w-8 text-warning mx-auto mb-2" />
               <p className="text-sm font-medium">MoMo Payments</p>
             </div>
             <div className="text-center p-3">
-              <CheckCircle2 className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+              <CheckCircle2 className="h-8 w-8 text-warning mx-auto mb-2" />
               <p className="text-sm font-medium">Airtime Sales</p>
             </div>
             <div className="text-center p-3">
-              <CheckCircle2 className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+              <CheckCircle2 className="h-8 w-8 text-warning mx-auto mb-2" />
               <p className="text-sm font-medium">IoT Connectivity</p>
             </div>
             <div className="text-center p-3">
-              <CheckCircle2 className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+              <CheckCircle2 className="h-8 w-8 text-warning mx-auto mb-2" />
               <p className="text-sm font-medium">Brand Alignment</p>
             </div>
             <div className="text-center p-3">
-              <CheckCircle2 className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+              <CheckCircle2 className="h-8 w-8 text-warning mx-auto mb-2" />
               <p className="text-sm font-medium">eSwatini Pilot</p>
             </div>
           </div>
