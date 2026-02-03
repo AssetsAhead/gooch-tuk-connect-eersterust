@@ -138,9 +138,9 @@ export const PayrollCalculator = () => {
       : records;
 
     const grossRevenue = filteredRecords.reduce((sum, r) => sum + Number(r.gross_revenue), 0);
-    const driverShare = grossRevenue * 0.6; // 60%
-    const ownerShare = grossRevenue * 0.4; // 40%
-    const uifDeduction = driverShare * 0.01; // 1% UIF
+    const ownerShare = grossRevenue * 0.6; // 60% to owner
+    const driverShare = grossRevenue * 0.4; // 40% to driver
+    const uifDeduction = driverShare * 0.01; // 1% UIF on driver's share
     const payeDeduction = calculatePAYE(driverShare);
     const netDriverPay = driverShare - uifDeduction - payeDeduction;
 
