@@ -7,10 +7,11 @@ import { FileDown, Presentation, TrendingUp, Users, Shield, Zap, Target, Buildin
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-// R2M Investment Proposal Data
+// R2M Investment Proposal Data - GROUNDED IN 10-BIKE POC REALITY
 const INVESTMENT_DATA = {
   totalAsk: 2000000,
   equityOffer: 25, // 25% equity for R2M
+  launchLocation: "Eersterust, Pretoria East",
   
   // Fleet Hardware (10 bikes fully equipped)
   fleetCosts: {
@@ -33,27 +34,46 @@ const INVESTMENT_DATA = {
     platformSubtotal: 365000
   },
 
-  // Operations (12-month runway)
+  // Operations (12-month runway) - REALISTIC COSTS
   operationsCosts: {
     driverTraining: { amount: 50000, description: "10 drivers × R5k training program" },
-    insurance: { amount: 120000, description: "Fleet insurance (12 months)" },
-    marketing: { amount: 80000, description: "Launch campaign, branded uniforms" },
+    insurance: { amount: 180000, description: "Fleet insurance @ R1,500/bike/month (12 months)" },
+    maintenance: { amount: 60000, description: "Maintenance reserve @ R500/bike/month" },
+    marketing: { amount: 60000, description: "Launch campaign, branded uniforms" },
     workingCapital: { amount: 52000, description: "Payroll float, contingency" },
-    opsSubtotal: 302000
+    opsSubtotal: 402000
   },
 
-  // Revenue Projections
+  // Monthly Operating Costs (per bike - for projections)
+  monthlyOpsCosts: {
+    insurance: 1500,
+    maintenance: 500,
+    cellular: 150, // Tracker & data
+    employmentOverhead: 0, // Calculated as % of driver share
+    totalPerBike: 2150,
+  },
+
+  // Revenue Projections - CONSERVATIVE, HONEST NUMBERS
   revenue: {
-    dailyRevenuePerBike: 700,
+    dailyRevenuePerBike: 700, // R15 × ~47 trips
     operatingDays: 26,
     monthlyGrossPerBike: 18200,
-    ownerShare: 0.60,
-    platformFee: 0.05,
-    monthlyNetPerBike: 10920, // After 60% split
-    monthlyPlatformFee: 910, // 5% of gross
+    ownerShare: 0.60, // 60% to owner/investor
+    driverShare: 0.40, // 40% to employed driver
+    platformFee: 0.05, // 5% of gross
+    monthlyOwnerGross: 10920, // 60% of R18,200
+    monthlyDriverWage: 7280, // 40% of R18,200
+    employmentCosts: 522, // ~7.17% on driver wage (UIF, SDL, leave, COIDA)
+    monthlyInsurance: 1500,
+    monthlyMaintenance: 500,
+    monthlyNetPerBike: 8398, // R10,920 - R522 - R1,500 - R500
+    fuelSavingsPerBike: 2600, // R100/day × 26 days (vs petrol)
+    netWithFuelSavings: 10998, // Monthly net including EV savings
     fleetMonthlyGross: 182000,
-    fleetMonthlyNet: 109200,
-    annualFleetNet: 1310400,
+    fleetMonthlyNetOwner: 83980, // 10 bikes × net per bike (before fuel savings)
+    fleetMonthlyNetWithSavings: 109980, // Including fuel savings
+    annualFleetNet: 1007760, // Conservative (without fuel savings counted)
+    annualFleetNetWithSavings: 1319760, // Including fuel savings
   },
 
   // Timeline (realistic with human factors)
@@ -61,17 +81,17 @@ const INVESTMENT_DATA = {
     { phase: "Month 1-2", title: "Setup & Sourcing", activities: "Company registration, import orders, API agreements" },
     { phase: "Month 3-4", title: "Integration Hell", activities: "Payment gateway, SMS provider, maps API negotiations" },
     { phase: "Month 5", title: "Fleet Arrival", activities: "Bikes arrive, equipment installation, testing" },
-    { phase: "Month 6", title: "Soft Launch", activities: "5 bikes operational, driver training, beta users" },
+    { phase: "Month 6", title: "Soft Launch", activities: "5 bikes in Eersterust, driver training, beta users" },
     { phase: "Month 7-8", title: "Full Fleet", activities: "10 bikes live, marketing push, optimize operations" },
-    { phase: "Month 9-12", title: "Scale Prep", activities: "Prove unit economics, prepare Phase 2 expansion" },
+    { phase: "Month 9-12", title: "Prove Model", activities: "Document unit economics, build investor case for Phase 2" },
   ],
 
-  // Growth Potential
+  // Growth Potential - GROUNDED, NOT UTOPIC
   growthFactors: [
-    { title: "Market Size", description: "250,000 minibus taxis in SA, <5% digitized", potential: "R90B annual industry" },
-    { title: "Geographic Expansion", description: "Pretoria → Johannesburg → Cape Town → Durban", potential: "4 major metros" },
-    { title: "Vehicle Types", description: "Tuk Tuks → Minibus Taxis → Delivery Vehicles", potential: "3x market segments" },
-    { title: "Network Effects", description: "More drivers = more passengers = more drivers", potential: "Exponential growth" },
+    { title: "POC → Validation", description: "10 bikes in Eersterust proves unit economics", potential: "12-month data set" },
+    { title: "Phase 2 (Year 2)", description: "Expand to 25-30 bikes in Pretoria East", potential: "3x fleet if POC succeeds" },
+    { title: "Phase 3 (Year 3)", description: "Second location (Mamelodi, Soshanguve)", potential: "Geographic expansion" },
+    { title: "Long-term Vision", description: "Fleet recap program for existing operators", potential: "Franchise model" },
   ],
 
   // Fintech Partners (eSwatini/SA)
@@ -181,17 +201,17 @@ export const InvestorProposalR2M = () => {
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     const summary = [
-      "We're seeking R2M to launch a 10-vehicle electric tuk-tuk fleet in Pretoria East,",
-      "proving the unit economics before national scale. This is a compliance-first,",
-      "tech-enabled approach to dominating the informal transit market.",
+      "We're seeking R2M to launch a 10-vehicle electric tuk-tuk fleet in Eersterust,",
+      "Pretoria East - a focused proof of concept before any expansion. This is a",
+      "compliance-first, tech-enabled approach to the informal transit market.",
       "",
-      "Key Numbers:",
+      "Key Numbers (Conservative, After All Costs):",
       `• Total Investment: R${(INVESTMENT_DATA.totalAsk / 1000000).toFixed(0)}M for 25% equity`,
-      `• Fleet Revenue: R${(INVESTMENT_DATA.revenue.annualFleetNet / 1000).toFixed(0)}k annual net income (10 bikes)`,
-      `• Payback: ~18 months to full capital recovery`,
-      `• Market: R90B taxi industry, <5% digitized`,
+      `• Monthly Net per Bike: R${INVESTMENT_DATA.revenue.monthlyNetPerBike.toLocaleString()} (after insurance, maintenance, employment costs)`,
+      `• Fleet Annual Net: R${(INVESTMENT_DATA.revenue.annualFleetNet / 1000).toFixed(0)}k (10 bikes, conservative)`,
+      `• Payback: ~24 months to capital recovery`,
       "",
-      "This can start from a backyard operation with minimal overhead.",
+      "This starts from a backyard operation. No utopic projections - just proven maths.",
     ];
     
     summary.forEach((line, i) => {
@@ -202,7 +222,7 @@ export const InvestorProposalR2M = () => {
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
     centerText("CONFIDENTIAL - For MTN eSwatini CEO Review", yPos, 10);
-    centerText(`Prepared: ${new Date().toLocaleDateString("en-ZA")}`, yPos + 10, 10);
+    centerText(`Prepared: ${new Date().toLocaleDateString("en-ZA")} | Launch: Eersterust POC`, yPos + 10, 10);
     
     // ============ PAGE 2: USE OF FUNDS ============
     doc.addPage();
@@ -263,23 +283,24 @@ export const InvestorProposalR2M = () => {
     
     yPos = (doc as any).lastAutoTable.finalY + 10;
     
-    // Operations
+    // Operations - Updated with maintenance
     autoTable(doc, {
       startY: yPos,
       head: [["Operations (12-Month Runway)", "Amount", "Notes"]],
       body: [
         ["Driver Training Program", "R50,000", "10 drivers × R5k each"],
-        ["Fleet Insurance", "R120,000", "Comprehensive cover"],
-        ["Marketing Launch", "R80,000", "Branding, uniforms, campaign"],
+        ["Fleet Insurance", "R180,000", "R1,500/bike/month × 12 months"],
+        ["Maintenance Reserve", "R60,000", "R500/bike/month × 12 months"],
+        ["Marketing Launch", "R60,000", "Branding, uniforms, campaign"],
         ["Working Capital", "R52,000", "Payroll float, contingency"],
-        ["OPERATIONS SUBTOTAL", "R302,000", ""],
+        ["OPERATIONS SUBTOTAL", "R402,000", ""],
       ],
       theme: "striped",
       headStyles: { fillColor: [168, 85, 247] },
       margin: { left: margin, right: margin },
       styles: { fontSize: 9 },
       didParseCell: (data) => {
-        if (data.row.index === 4) {
+        if (data.row.index === 5) {
           data.cell.styles.fontStyle = "bold";
           data.cell.styles.fillColor = [243, 232, 255];
         }
@@ -302,41 +323,52 @@ export const InvestorProposalR2M = () => {
     yPos = 20;
     
     doc.setTextColor(0, 0, 0);
-    yPos = sectionHeader("REVENUE MODEL: CONSERVATIVE PROJECTIONS", yPos);
+    yPos = sectionHeader("REVENUE MODEL: HONEST NUMBERS", yPos);
     
     autoTable(doc, {
       startY: yPos,
       head: [["Per Bike Economics", "Daily", "Monthly (26 days)"]],
       body: [
         ["Gross Revenue (R15 × 47 trips)", "R700", "R18,200"],
-        ["Owner Share (60%)", "R420", "R10,920"],
+        ["OWNER Share (60%)", "R420", "R10,920"],
         ["Driver Share (40%)", "R280", "R7,280"],
-        ["Platform Fee (5%)", "R35", "R910"],
-        ["Fuel Savings (Electric)", "+R100", "+R2,600"],
+        ["Less: Employment Costs (7.17%)", "-R20", "-R522"],
+        ["Less: Insurance", "-R58", "-R1,500"],
+        ["Less: Maintenance Reserve", "-R19", "-R500"],
+        ["NET OWNER INCOME", "R323", "R8,398"],
+        ["Add: EV Fuel Savings", "+R100", "+R2,600"],
+        ["EFFECTIVE NET (with savings)", "R423", "R10,998"],
       ],
       theme: "striped",
       headStyles: { fillColor: [34, 197, 94] },
       margin: { left: margin, right: margin },
+      didParseCell: (data) => {
+        if (data.row.index === 6 || data.row.index === 8) {
+          data.cell.styles.fontStyle = "bold";
+          data.cell.styles.fillColor = [220, 252, 231];
+        }
+      },
     });
     
     yPos = (doc as any).lastAutoTable.finalY + 15;
-    yPos = sectionHeader("FLEET PROJECTIONS (10 BIKES)", yPos);
+    yPos = sectionHeader("FLEET PROJECTIONS (10 BIKES - EERSTERUST POC)", yPos);
     
     autoTable(doc, {
       startY: yPos,
       head: [["Metric", "Monthly", "Annual"]],
       body: [
         ["Gross Fleet Revenue", "R182,000", "R2,184,000"],
-        ["Net Owner Income", "R109,200", "R1,310,400"],
-        ["Platform Fees (5%)", "R9,100", "R109,200"],
-        ["Operating Costs", "-R25,000", "-R300,000"],
-        ["NET CASH FLOW", "R84,200", "R1,010,400"],
+        ["Owner Gross (60%)", "R109,200", "R1,310,400"],
+        ["Less: All Operating Costs", "-R25,220", "-R302,640"],
+        ["NET OWNER CASH FLOW", "R83,980", "R1,007,760"],
+        ["Add: Fleet Fuel Savings", "+R26,000", "+R312,000"],
+        ["EFFECTIVE NET (with savings)", "R109,980", "R1,319,760"],
       ],
       theme: "striped",
       headStyles: { fillColor: [34, 197, 94] },
       margin: { left: margin, right: margin },
       didParseCell: (data) => {
-        if (data.row.index === 4) {
+        if (data.row.index === 3 || data.row.index === 5) {
           data.cell.styles.fontStyle = "bold";
           data.cell.styles.fillColor = [220, 252, 231];
         }
@@ -345,19 +377,19 @@ export const InvestorProposalR2M = () => {
     
     yPos = (doc as any).lastAutoTable.finalY + 15;
     
-    // ROI Box
+    // ROI Box - More conservative
     doc.setFillColor(240, 253, 244);
-    doc.roundedRect(margin, yPos, pageWidth - margin * 2, 35, 5, 5, "F");
+    doc.roundedRect(margin, yPos, pageWidth - margin * 2, 40, 5, 5, "F");
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0, 0, 0);
-    doc.text("Investment Returns", margin + 10, yPos + 12);
+    doc.text("Investment Returns (Conservative)", margin + 10, yPos + 12);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text("• Payback Period: ~20 months (conservative)", margin + 10, yPos + 22);
-    doc.text("• Year 1 ROI: 50% (after ramp-up)", margin + 10, yPos + 30);
-    doc.text("• Break-even on fleet: Month 18-20", pageWidth / 2, yPos + 22);
-    doc.text("• Year 3 Cumulative: R3M+ net profit", pageWidth / 2, yPos + 30);
+    doc.text("• Payback Period: 24 months (without fuel savings)", margin + 10, yPos + 24);
+    doc.text("• Payback with EV savings: ~18 months", margin + 10, yPos + 33);
+    doc.text("• Year 1 ROI: 50% (conservative)", pageWidth / 2, yPos + 24);
+    doc.text("• Break-even: Month 20-24", pageWidth / 2, yPos + 33);
     
     // ============ PAGE 4: FINTECH PARTNERS & REVENUE ============
     doc.addPage();
@@ -416,16 +448,16 @@ export const InvestorProposalR2M = () => {
     });
     
     yPos = (doc as any).lastAutoTable.finalY + 15;
-    yPos = sectionHeader("GROWTH POTENTIAL", yPos);
+    yPos = sectionHeader("GROWTH PATH (GROUNDED)", yPos);
     
     autoTable(doc, {
       startY: yPos,
-      head: [["Growth Factor", "Current → Target", "Market Size"]],
+      head: [["Phase", "Timeline", "Target", "Success Criteria"]],
       body: [
-        ["Geographic", "Pretoria East → 4 Metros", "Johannesburg, Cape Town, Durban"],
-        ["Vehicle Types", "10 Tuk Tuks → Mixed Fleet", "Tuk Tuks + Minibus Taxis + Delivery"],
-        ["Market Share", "Proof of Concept → 1%", "R90B industry = R900M at 1%"],
-        ["Network Effects", "Local → National", "More drivers = more passengers = more drivers"],
+        ["POC", "Year 1", "10 bikes in Eersterust", "Prove unit economics, >80% utilization"],
+        ["Validate", "Year 2", "Expand to 25-30 bikes", "Only if POC profitable for 6+ months"],
+        ["Expand", "Year 3", "Second township location", "Mamelodi or Soshanguve based on data"],
+        ["Mature", "Year 4+", "Franchise model for operators", "Long-term vision, not this investment"],
       ],
       theme: "striped",
       headStyles: { fillColor: [168, 85, 247] },
@@ -435,14 +467,15 @@ export const InvestorProposalR2M = () => {
     yPos = (doc as any).lastAutoTable.finalY + 15;
     
     doc.setFillColor(254, 243, 199);
-    doc.roundedRect(margin, yPos, pageWidth - margin * 2, 25, 5, 5, "F");
+    doc.roundedRect(margin, yPos, pageWidth - margin * 2, 30, 5, 5, "F");
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(146, 64, 14);
-    doc.text("Domination Strategy:", margin + 10, yPos + 10);
+    doc.text("Strategy: Prove Before Scale", margin + 10, yPos + 10);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
-    doc.text("Prove unit economics with 10 bikes → Raise Series A (R20M) → Scale to 500 bikes → National expansion", margin + 10, yPos + 19);
+    doc.text("10 bikes → 12 months hard data → Only then discuss expansion. No smoke and mirrors.", margin + 10, yPos + 20);
+    doc.text("Future: Taxi recap program for existing operators (like minibus taxi recap, but for tuk tuks).", margin + 10, yPos + 28);
     
     // ============ PAGE 5: TIMELINE (REALISTIC) ============
     doc.addPage();
@@ -462,9 +495,9 @@ export const InvestorProposalR2M = () => {
         ["Setup", "Month 1-2", "Company registration, import orders, bank accounts", "Customs delays"],
         ["Integration", "Month 3-4", "Payment gateway, SMS, Maps API negotiations", "Vendor delays (2-4 weeks each)"],
         ["Fleet Arrival", "Month 5", "Bikes land, equipment install, testing", "Shipping delays possible"],
-        ["Soft Launch", "Month 6", "5 bikes live, driver training, beta users", "Learning curve"],
+        ["Soft Launch", "Month 6", "5 bikes live in Eersterust, driver training", "Learning curve"],
         ["Full Fleet", "Month 7-8", "10 bikes operational, marketing push", "Demand validation"],
-        ["Optimize", "Month 9-12", "Prove unit economics, prepare Series A", "Operational refinement"],
+        ["Prove", "Month 9-12", "Document unit economics, build hard data", "Operational refinement"],
       ],
       theme: "striped",
       headStyles: { fillColor: [239, 68, 68] },
@@ -577,7 +610,7 @@ export const InvestorProposalR2M = () => {
               <div>
                 <CardTitle className="text-2xl">R2M Investor Proposal</CardTitle>
                 <CardDescription>
-                  MTN eSwatini CEO Pitch • 10 Electric Bikes • 25% Equity
+                  MTN eSwatini CEO Pitch • 10 Electric Bikes • Eersterust POC • 25% Equity
                 </CardDescription>
               </div>
             </div>
@@ -588,6 +621,14 @@ export const InvestorProposalR2M = () => {
           </div>
         </CardHeader>
       </Card>
+
+      {/* Location Badge */}
+      <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg border">
+        <MapPin className="h-5 w-5 text-primary" />
+        <span className="font-medium">Launch Location:</span>
+        <Badge variant="secondary">Eersterust, Pretoria East</Badge>
+        <span className="text-sm text-muted-foreground">• 10 bikes • 10 employed drivers • Proof of Concept</span>
+      </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -615,9 +656,10 @@ export const InvestorProposalR2M = () => {
           <CardContent className="pt-4">
             <div className="flex items-center gap-2 text-accent-foreground mb-1">
               <TrendingUp className="h-4 w-4" />
-              <span className="text-sm font-medium">Annual Net (10 bikes)</span>
+              <span className="text-sm font-medium">Annual Net (after costs)</span>
             </div>
             <p className="text-2xl font-bold text-accent-foreground">R1.01M</p>
+            <p className="text-xs text-muted-foreground">Conservative, 10 bikes</p>
           </CardContent>
         </Card>
 
@@ -627,7 +669,8 @@ export const InvestorProposalR2M = () => {
               <Clock className="h-4 w-4" />
               <span className="text-sm font-medium">Payback</span>
             </div>
-            <p className="text-2xl font-bold text-warning">~20 Months</p>
+            <p className="text-2xl font-bold text-warning">~24 Months</p>
+            <p className="text-xs text-muted-foreground">18mo with EV savings</p>
           </CardContent>
         </Card>
       </div>
@@ -700,7 +743,7 @@ export const InvestorProposalR2M = () => {
               <Users className="h-5 w-5 text-accent-foreground" />
               Operations (12mo)
             </CardTitle>
-            <CardDescription>R302,000 (15%)</CardDescription>
+            <CardDescription>R402,000 (20%)</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between text-sm">
@@ -708,19 +751,23 @@ export const InvestorProposalR2M = () => {
               <span className="font-mono">R50,000</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span>Fleet Insurance</span>
-              <span className="font-mono">R120,000</span>
+              <span>Fleet Insurance (12mo)</span>
+              <span className="font-mono">R180,000</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Maintenance Reserve</span>
+              <span className="font-mono">R60,000</span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Marketing Launch</span>
-              <span className="font-mono">R80,000</span>
+              <span className="font-mono">R60,000</span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Working Capital</span>
               <span className="font-mono">R52,000</span>
             </div>
             <Separator />
-            <Progress value={15} className="h-2" />
+            <Progress value={20} className="h-2" />
           </CardContent>
         </Card>
       </div>
