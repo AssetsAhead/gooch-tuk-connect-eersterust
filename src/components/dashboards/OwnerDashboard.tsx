@@ -18,6 +18,7 @@ import { PayrollCalculator } from "@/components/fleet/PayrollCalculator";
 import { DriverOnboardingChecklist } from "@/components/fleet/DriverOnboardingChecklist";
 import { DriverDocumentUpload } from "@/components/fleet/DriverDocumentUpload";
 import { RevenueIntelligence } from "@/components/fleet/RevenueIntelligence";
+import { SearchCommand } from "@/components/search/SearchCommand";
 
 export const OwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("fleet");
@@ -26,12 +27,15 @@ export const OwnerDashboard = () => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-primary mb-2">Owner Dashboard</h1>
-            <p className="text-muted-foreground">Track your fleet, earnings, and community impact</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-primary mb-2">Owner Dashboard</h1>
+            <p className="text-muted-foreground text-sm">Track your fleet, earnings, and community impact</p>
           </div>
-          <NotificationCenter />
+          <div className="flex items-center gap-2">
+            <SearchCommand role="owner" />
+            <NotificationCenter />
+          </div>
         </div>
 
         {/* Tabs */}

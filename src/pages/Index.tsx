@@ -138,30 +138,35 @@ const Index = () => {
             </div>
             
             {/* Enhanced CTAs */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 max-w-7xl mx-auto">
               <Link to="/auth">
-                <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 px-6 text-lg">
-                  🔐 LOGIN NOW
+                <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 px-4 text-sm md:text-base">
+                  🔐 Login
                 </Button>
               </Link>
               <Link to="/passenger-recruitment">
-                <Button className="w-full bg-sa-gold hover:bg-sa-gold/90 text-black font-bold py-4 px-6 text-lg">
-                  🚀 JOIN PILOT PROGRAM
+                <Button className="w-full bg-sa-gold hover:bg-sa-gold/90 text-black font-bold py-3 px-4 text-sm md:text-base">
+                  🚀 Join Pilot
+                </Button>
+              </Link>
+              <Link to="/investor">
+                <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-bold py-3 px-4 text-sm md:text-base">
+                  💼 Investors
                 </Button>
               </Link>
               <Link to="/business-portal">
-                <Button className="w-full bg-sa-green hover:bg-sa-green-light text-white font-bold py-4 px-6 text-lg">
-                  🏢 Business Portal
+                <Button className="w-full bg-sa-green hover:bg-sa-green-light text-white font-bold py-3 px-4 text-sm md:text-base">
+                  🏢 Business
                 </Button>
               </Link>
               <Link to="/community-safety">
-                <Button className="w-full bg-sa-red hover:bg-sa-red-light text-white font-bold py-4 px-6 text-lg">
-                  🛡️ Safety Portal
+                <Button className="w-full bg-sa-red hover:bg-sa-red-light text-white font-bold py-3 px-4 text-sm md:text-base">
+                  🛡️ Safety
                 </Button>
               </Link>
               <Link to="/community-announcements">
-                <Button className="w-full bg-sa-blue hover:bg-sa-blue-light text-white font-bold py-4 px-6 text-lg">
-                  📢 Announcements
+                <Button className="w-full bg-sa-blue hover:bg-sa-blue-light text-white font-bold py-3 px-4 text-sm md:text-base">
+                  📢 News
                 </Button>
               </Link>
             </div>

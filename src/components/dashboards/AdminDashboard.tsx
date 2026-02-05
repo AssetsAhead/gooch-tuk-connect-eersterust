@@ -21,6 +21,7 @@ import DriverOnboarding from "@/components/admin/DriverOnboarding";
 import { SmsUsageTracker } from "@/components/admin/SmsUsageTracker";
 import { RevenueIntelligence } from "@/components/fleet/RevenueIntelligence";
 import { VideoFrameExtractor } from "@/components/camera/VideoFrameExtractor";
+import { SearchCommand } from "@/components/search/SearchCommand";
 
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
@@ -115,16 +116,17 @@ export const AdminDashboard = () => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-primary mb-2">
-              Admin Dashboard - {userProfile?.display_name || user?.email}
+            <h1 className="text-2xl md:text-3xl font-bold text-primary mb-2">
+              Admin Dashboard
             </h1>
-            <p className="text-muted-foreground">Complete oversight of the PoortLink ecosystem</p>
+            <p className="text-muted-foreground text-sm">Complete oversight of the PoortLink ecosystem</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <SearchCommand role="admin" />
             <NotificationCenter />
-            <Button variant="outline" onClick={signOut}>
+            <Button variant="outline" size="sm" onClick={signOut}>
               Sign Out
             </Button>
           </div>
