@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { InvestorProposalR2M } from "@/components/fleet/InvestorProposalR2M";
+import { HardwareOnlyProposal } from "@/components/fleet/HardwareOnlyProposal";
 
 const InvestorPortal = () => {
   const { toast } = useToast();
@@ -124,6 +125,10 @@ const InvestorPortal = () => {
               <TabsTrigger value="r2m-proposal" className="gap-2">
                 <FileText className="h-4 w-4" />
                 <span className="hidden sm:inline">R2M Proposal</span>
+              </TabsTrigger>
+              <TabsTrigger value="hardware-only" className="gap-2">
+                <Zap className="h-4 w-4" />
+                <span className="hidden sm:inline">Hardware-Only</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -710,6 +715,14 @@ const InvestorPortal = () => {
           <section className="py-8 px-4">
             <div className="max-w-6xl mx-auto">
               <InvestorProposalR2M />
+            </div>
+          </section>
+        </TabsContent>
+
+        <TabsContent value="hardware-only" className="mt-0">
+          <section className="py-8 px-4">
+            <div className="max-w-6xl mx-auto">
+              <HardwareOnlyProposal />
             </div>
           </section>
         </TabsContent>
