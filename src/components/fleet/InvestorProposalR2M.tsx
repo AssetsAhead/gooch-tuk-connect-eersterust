@@ -94,11 +94,11 @@ const INVESTMENT_DATA = {
     { title: "Long-term Vision", description: "Fleet recap program for existing operators", potential: "Franchise model" },
   ],
 
-  // Fintech Partners (eSwatini/SA)
+  // Fintech Partners (SA)
   fintechPartners: [
-    { name: "Letshego Eswatini", type: "Micro-lender", service: "Driver emergency loans, vehicle financing", website: "letshego.com/eswatini" },
-    { name: "Select Africa", type: "Micro-lender", service: "Flexi Facility Loans (2-year revolving)", website: "selectafrica.net/eswatini" },
-    { name: "e-Mali (Eswatini Mobile)", type: "Mobile lending", service: "Instant micro-loans via USSD/app", website: "eswatinimobile.co.sz" },
+    { name: "Letshego SA", type: "Micro-lender", service: "Driver emergency loans, vehicle financing", website: "letshego.com/south-africa" },
+    { name: "Select Africa", type: "Micro-lender", service: "Flexi Facility Loans (2-year revolving)", website: "selectafrica.net" },
+    { name: "Jumo", type: "Digital lending", service: "Instant micro-loans via USSD/app", website: "jumo.world" },
     { name: "Heleza", type: "Women's finance", service: "Female driver/passenger financial products", website: "Grameen Foundation backed" },
   ],
 
@@ -109,13 +109,13 @@ const INVESTMENT_DATA = {
     { stream: "Surge Pricing", description: "Peak hours, events, rain premium (1.5-2x)", potential: "R15,000/month", tier: 1 },
     
     // Tier 2: Fleet advertising
-    { stream: "Vehicle Wraps", description: "Full vehicle branding for MTN, Shoprite, etc.", potential: "R3,000/bike/month", tier: 2 },
+    { stream: "Vehicle Wraps", description: "Full vehicle branding for cellular providers, Shoprite, etc.", potential: "R3,000/bike/month", tier: 2 },
     { stream: "In-App Ads", description: "Sponsored banners, promotional notifications", potential: "R1,500/month", tier: 2 },
     { stream: "Driver Tablet Ads", description: "Video ads on passenger-facing screens", potential: "R2,000/bike/month", tier: 2 },
     
     // Tier 3: Financial services (via Fintech partners)
     { stream: "Micro-Loans Referral", description: "Commission from Letshego/Select Africa referrals", potential: "R200/loan", tier: 3 },
-    { stream: "Airtime & Data", description: "In-app top-ups (MTN integration opportunity)", potential: "5% margin", tier: 3 },
+    { stream: "Airtime & Data", description: "In-app top-ups (all networks via MojaRide)", potential: "5% margin", tier: 3 },
     { stream: "Electricity Vouchers", description: "Prepaid electricity via app", potential: "3% commission", tier: 3 },
     { stream: "Grocery Vouchers", description: "Pick n Pay, Shoprite digital vouchers", potential: "2% commission", tier: 3 },
     { stream: "Driver Savings Club", description: "Group stokvel for vehicle ownership", potential: "R50/driver/month admin", tier: 3 },
@@ -221,7 +221,7 @@ export const InvestorProposalR2M = () => {
     yPos = 210;
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
-    centerText("CONFIDENTIAL - For MTN eSwatini CEO Review", yPos, 10);
+    centerText("CONFIDENTIAL - For Investor Review", yPos, 10);
     centerText(`Prepared: ${new Date().toLocaleDateString("en-ZA")} | Launch: Eersterust POC`, yPos + 10, 10);
     
     // ============ PAGE 2: USE OF FUNDS ============
@@ -401,9 +401,9 @@ export const InvestorProposalR2M = () => {
       startY: yPos,
       head: [["Partner", "Type", "Service", "Revenue Model"]],
       body: [
-        ["Letshego Eswatini", "Micro-lender", "Driver emergency loans, vehicle financing", "R200/referral"],
+        ["Letshego SA", "Micro-lender", "Driver emergency loans, vehicle financing", "R200/referral"],
         ["Select Africa", "Micro-lender", "Flexi Facility Loans (2-year revolving)", "R200/referral"],
-        ["e-Mali (Eswatini Mobile)", "Mobile lending", "Instant micro-loans via USSD/app", "Commission TBD"],
+        ["Jumo", "Digital lending", "Instant micro-loans via USSD/app", "Commission TBD"],
         ["Heleza", "Women's finance", "Female driver/passenger products", "Partnership revenue"],
       ],
       theme: "striped",
@@ -430,10 +430,10 @@ export const InvestorProposalR2M = () => {
       body: [
         ["T1: Core", "Ride Commission", "5% platform fee on every trip", "R9,100/month"],
         ["T1: Core", "Surge Pricing", "Peak hours, events, rain (1.5-2x)", "R15,000/month"],
-        ["T2: Ads", "Vehicle Wraps", "Full branding for MTN, Shoprite, etc.", "R3,000/bike/mo"],
+        ["T2: Ads", "Vehicle Wraps", "Full branding for cellular providers, Shoprite, etc.", "R3,000/bike/mo"],
         ["T2: Ads", "In-App & Tablet Ads", "Sponsored banners, video ads", "R3,500/month"],
         ["T3: Fintech", "Micro-Loan Referrals", "Commission from Letshego/Select Africa", "R200/loan"],
-        ["T3: Fintech", "Airtime/Data/Electricity", "In-app top-ups (MTN synergy!)", "3-5% margin"],
+        ["T3: Fintech", "Airtime/Data/Electricity", "In-app top-ups (all networks)", "3-5% margin"],
         ["T4: Security", "Insurance Referrals", "Commission on policies sold", "R500/policy"],
         ["T4: Security", "Premium Panic Button", "Armed response add-on", "R50/trip"],
         ["T5: B2B", "Route Analytics", "Data for municipalities, retailers", "R100k+/year"],
@@ -551,22 +551,22 @@ export const InvestorProposalR2M = () => {
     
     yPos = (doc as any).lastAutoTable.finalY + 15;
     
-    // Why MTN Strategic Fit
+    // Strategic Partnerships
     doc.setFillColor(255, 251, 235);
     doc.roundedRect(margin, yPos, pageWidth - margin * 2, 50, 5, 5, "F");
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(146, 64, 14);
-    doc.text("Strategic Fit: MTN Synergies", margin + 10, yPos + 12);
+    doc.text("Strategic Fit: Cellular & Fintech Partnerships", margin + 10, yPos + 12);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.setTextColor(0, 0, 0);
     const synergies = [
-      "• MoMo Integration: Seamless mobile money payments for unbanked passengers",
-      "• Airtime/Data Sales: In-app VAS with MTN commission structure",
-      "• IoT Connectivity: Fleet SIM cards for trackers and dashcams",
-      "• Brand Alignment: MTN + mobility = digital transformation story",
-      "• Regional Expansion: eSwatini pilot potential after SA proof of concept",
+      "• Mobile Money: Seamless mobile payments for unbanked passengers (all networks)",
+      "• Airtime/Data Sales: In-app VAS with multi-provider commission structure",
+      "• IoT Connectivity: Fleet SIM cards for trackers and dashcams (best-rate provider)",
+      "• Brand Partnerships: Vehicle wrap advertising for cellular & FMCG brands",
+      "• Charging Infrastructure: Solar-powered depot as community charging hub",
     ];
     synergies.forEach((s, i) => {
       doc.text(s, margin + 10, yPos + 22 + i * 6);
@@ -610,7 +610,7 @@ export const InvestorProposalR2M = () => {
               <div>
                 <CardTitle className="text-2xl">R2M Investor Proposal</CardTitle>
                 <CardDescription>
-                  MTN eSwatini CEO Pitch • 10 Electric Bikes • Eersterust POC • 25% Equity
+                  Investor Pitch • 10 Electric Bikes • Eersterust POC • 25% Equity
                 </CardDescription>
               </div>
             </div>
@@ -969,19 +969,19 @@ export const InvestorProposalR2M = () => {
         </CardContent>
       </Card>
 
-      {/* Strategic Fit */}
+      {/* Strategic Partnerships */}
       <Card className="bg-gradient-to-r from-warning/10 to-warning/5 border-warning/30">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Building2 className="h-5 w-5 text-warning" />
-            MTN Strategic Synergies
+            Strategic Partnerships
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-5 gap-4">
             <div className="text-center p-3">
               <CheckCircle2 className="h-8 w-8 text-warning mx-auto mb-2" />
-              <p className="text-sm font-medium">MoMo Payments</p>
+              <p className="text-sm font-medium">Mobile Payments</p>
             </div>
             <div className="text-center p-3">
               <CheckCircle2 className="h-8 w-8 text-warning mx-auto mb-2" />
@@ -993,11 +993,11 @@ export const InvestorProposalR2M = () => {
             </div>
             <div className="text-center p-3">
               <CheckCircle2 className="h-8 w-8 text-warning mx-auto mb-2" />
-              <p className="text-sm font-medium">Brand Alignment</p>
+              <p className="text-sm font-medium">Brand Advertising</p>
             </div>
             <div className="text-center p-3">
               <CheckCircle2 className="h-8 w-8 text-warning mx-auto mb-2" />
-              <p className="text-sm font-medium">eSwatini Pilot</p>
+              <p className="text-sm font-medium">Charging Hub</p>
             </div>
           </div>
         </CardContent>
