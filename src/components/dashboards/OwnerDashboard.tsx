@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Car, Settings, User, Shield, TrendingUp, Calculator } from "lucide-react";
+import { MapPin, Car, Settings, User, Shield, TrendingUp, Calculator, BatteryCharging } from "lucide-react";
 import { useState } from "react";
 import { PanicButton } from "@/components/PanicButton";
 import { ReputationSystem } from "@/components/ReputationSystem";
@@ -12,6 +12,7 @@ import { NotificationCenter } from "@/components/notifications/NotificationCente
 import { FleetManagement } from "@/components/fleet/FleetManagement";
 import { PartsInventory } from "@/components/fleet/PartsInventory";
 import { FleetROICalculator } from "@/components/fleet/FleetROICalculator";
+import { EVvsPetrolCalculator } from "@/components/fleet/EVvsPetrolCalculator";
 import { EmploymentContractGenerator } from "@/components/fleet/EmploymentContractGenerator";
 import { VehicleRegistrationAgreement } from "@/components/fleet/VehicleRegistrationAgreement";
 import { PayrollCalculator } from "@/components/fleet/PayrollCalculator";
@@ -46,6 +47,7 @@ export const OwnerDashboard = () => {
             <TabsTrigger value="drivers">👤 Drivers</TabsTrigger>
             <TabsTrigger value="payroll">📋 Payroll</TabsTrigger>
             <TabsTrigger value="roi">💰 ROI</TabsTrigger>
+            <TabsTrigger value="ev-savings">⚡ EV Savings</TabsTrigger>
             <TabsTrigger value="parts">🔧 Parts</TabsTrigger>
             <TabsTrigger value="community">🛡️ Community</TabsTrigger>
             <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
@@ -80,6 +82,11 @@ export const OwnerDashboard = () => {
           {/* ROI Calculator Tab */}
           <TabsContent value="roi" className="space-y-6">
             <FleetROICalculator />
+          </TabsContent>
+
+          {/* EV vs Petrol Tab */}
+          <TabsContent value="ev-savings" className="space-y-6">
+            <EVvsPetrolCalculator />
           </TabsContent>
 
           {/* Parts Tab */}
