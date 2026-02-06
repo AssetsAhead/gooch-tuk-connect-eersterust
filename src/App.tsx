@@ -38,6 +38,9 @@ import Form9A from "./pages/Form9A";
 import CommunityAnnouncements from "./pages/CommunityAnnouncements";
 import FleetVehiclesDashboard from "./pages/FleetVehiclesDashboard";
 import InvestorPortal from "./pages/InvestorPortal";
+import InvestorR2MFleet from "./pages/InvestorR2MFleet";
+import InvestorHardwareOnly from "./pages/InvestorHardwareOnly";
+import InvestorScaleFunding from "./pages/InvestorScaleFunding";
 import DOTPresentation from "./pages/DOTPresentation";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
@@ -127,6 +130,9 @@ const App = () => {
                 <Route path="/community-announcements" element={<CommunityAnnouncements />} />
                 <Route path="/fleet-vehicles" element={<FleetVehiclesDashboard />} />
                 <Route path="/investor" element={<InvestorPortal />} />
+                <Route path="/investor/r2m-fleet" element={<InvestorR2MFleet />} />
+                <Route path="/investor/hardware-only" element={<InvestorHardwareOnly />} />
+                <Route path="/investor/scale-funding" element={<InvestorScaleFunding />} />
                 <Route path="/dot-presentation" element={<DOTPresentation />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
