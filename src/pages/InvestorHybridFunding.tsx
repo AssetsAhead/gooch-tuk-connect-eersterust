@@ -20,36 +20,43 @@ const dealTerms = [
   { label: "Equity Stake", value: "5–10%", note: "Negotiable" },
   { label: "Revenue-Share Rate", value: "10% of gross platform revenue" },
   { label: "Target Return", value: "2× (R4,000,000)" },
-  { label: "Payback Timeline", value: "24 months" },
+  { label: "Payback Timeline", value: "30 months", note: "Incl. 6-month deployment" },
   { label: "Revenue-Share Ends", value: "Immediately at 2× target" },
   { label: "Post-Payback", value: "Investor retains equity only" },
 ];
 
 const paybackPhases = [
   {
-    phase: "Phase 1 — Deployment",
-    timeline: "Months 1–3",
+    phase: "Phase 0 — Setup & Deployment",
+    timeline: "Months 1–6",
+    icon: Clock,
+    description: "Platform registration (DOT, ICASA, APIs). Vehicle procurement, shipping (2–3 months from East), and retrofitting. Driver licensing (~6 months), training, and equipping. Server contracts, payment integrations, and user acquisition groundwork. No revenue during this phase.",
+    status: "upcoming" as const,
+  },
+  {
+    phase: "Phase 1 — Soft Launch",
+    timeline: "Months 7–9",
     icon: Zap,
-    description: "Capital deployed into fleet hardware, driver onboarding, and tech platform. Revenue-share begins as first trips are completed.",
+    description: "First vehicles go live. Real-world testing and iteration in Eersterust zone. Early user onboarding and driver performance calibration. Minimal revenue as operations stabilise. Projected: R20K–R40K/month.",
     status: "upcoming" as const,
   },
   {
     phase: "Phase 2 — Ramp-Up",
-    timeline: "Months 4–12",
+    timeline: "Months 10–20",
     icon: TrendingUp,
-    description: "Fleet reaches 20+ active vehicles. Revenue-share payments accelerate as gross platform revenue grows. Projected: R80K–R120K/month returned.",
+    description: "Fleet reaches 10–20 active vehicles. Revenue-share payments accelerate as gross platform revenue grows. User base expands via word-of-mouth and community trust. Projected: R80K–R150K/month returned.",
     status: "upcoming" as const,
   },
   {
     phase: "Phase 3 — Full Payback",
-    timeline: "Months 13–24",
+    timeline: "Months 21–30",
     icon: Target,
-    description: "Cumulative payback reaches R4M (2× target). Revenue-share stops immediately. Investor retains 5–10% equity stake in the company.",
+    description: "Cumulative payback reaches R4M (2× target). Revenue-share stops immediately upon reaching target. Investor retains 5–10% equity stake in the company.",
     status: "upcoming" as const,
   },
   {
     phase: "Phase 4 — Equity Upside",
-    timeline: "Month 25+",
+    timeline: "Month 31+",
     icon: Unlock,
     description: "No further cash obligations. Investor holds equity that grows with company valuation. Potential exit via secondary sale, buyback, or future funding round.",
     status: "upcoming" as const,
@@ -97,14 +104,15 @@ const complianceItems = [
 ];
 
 const projectedPayback = [
-  { month: "Month 3", cumulative: "R180K", progress: 5 },
-  { month: "Month 6", cumulative: "R540K", progress: 14 },
-  { month: "Month 9", cumulative: "R1.08M", progress: 27 },
-  { month: "Month 12", cumulative: "R1.8M", progress: 45 },
-  { month: "Month 15", cumulative: "R2.5M", progress: 63 },
-  { month: "Month 18", cumulative: "R3.2M", progress: 80 },
-  { month: "Month 21", cumulative: "R3.7M", progress: 93 },
-  { month: "Month 24", cumulative: "R4.0M", progress: 100 },
+  { month: "Month 6", cumulative: "R0", progress: 0, label: "Deployment complete" },
+  { month: "Month 9", cumulative: "R90K", progress: 2, label: "Soft launch" },
+  { month: "Month 12", cumulative: "R360K", progress: 9 },
+  { month: "Month 15", cumulative: "R810K", progress: 20 },
+  { month: "Month 18", cumulative: "R1.4M", progress: 35 },
+  { month: "Month 21", cumulative: "R2.1M", progress: 53 },
+  { month: "Month 24", cumulative: "R2.9M", progress: 73 },
+  { month: "Month 27", cumulative: "R3.5M", progress: 88 },
+  { month: "Month 30", cumulative: "R4.0M", progress: 100 },
 ];
 
 const InvestorHybridFunding = () => {
@@ -196,7 +204,7 @@ const InvestorHybridFunding = () => {
                     <div key={i}>
                       <div className="flex justify-between mb-1">
                         <span className="text-sm">{item.month}</span>
-                        <span className="text-sm font-bold">{item.cumulative}</span>
+                        <span className="text-sm font-bold">{item.cumulative}{("label" in item && item.label) ? ` — ${item.label}` : ""}</span>
                       </div>
                       <Progress value={item.progress} className="h-2" />
                     </div>
