@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight, Zap, FileText, Wrench, TrendingUp, Target,
-  CheckCircle2, Car, Users, DollarSign, Smartphone, Globe, Shield
+  CheckCircle2, Car, Users, DollarSign, Smartphone, Globe, Shield, Repeat
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -70,6 +70,27 @@ const proposals = [
     ],
     description:
       "Seed funding to scale from pilot to 50+ active vehicles across multiple areas, achieving positive unit economics and market dominance.",
+  },
+  {
+    title: "R2M Hybrid Funding",
+    subtitle: "Revenue-Share + Equity — Best of Both",
+    ask: "R2,000,000",
+    equity: "5–10%",
+    roi: "2× cash return",
+    payback: "~24 months",
+    color: "text-violet-600",
+    bgColor: "bg-violet-50/50 border-violet-200",
+    badgeColor: "bg-violet-600",
+    icon: Repeat,
+    href: "/investor/hybrid-funding",
+    highlights: [
+      "10% gross revenue-share until 2× return",
+      "Retain 5–10% equity after payback",
+      "Cash returns from month 1",
+      "Revenue-share stops at R4M",
+    ],
+    description:
+      "Get your money back first, then keep growing. 10% of gross platform revenue until R4M is returned, plus a permanent equity stake.",
   },
 ];
 
@@ -201,17 +222,18 @@ const InvestorPortal = () => {
                     <th className="text-center py-3 px-4 text-emerald-600">R2M Fleet</th>
                     <th className="text-center py-3 px-4 text-orange-600">R450K Hardware</th>
                     <th className="text-center py-3 px-4 text-blue-600">R1M Scale</th>
+                    <th className="text-center py-3 px-4 text-violet-600">R2M Hybrid</th>
                   </tr>
                 </thead>
                 <tbody>
                   {[
-                    ["Investment Ask", "R2,000,000", "R450,000", "R1,000,000"],
-                    ["Equity Offered", "25%", "15%", "20%"],
-                    ["Vehicle Ownership", "Yes (10 EVs)", "No", "Partial (E-bikes)"],
-                    ["Revenue Model", "60/40 commission", "SaaS + ads", "Platform fees"],
-                    ["Risk Level", "Medium-High", "Low-Medium", "Medium"],
-                    ["Payback Period", "~24 months", "~14 months", "~18 months"],
-                    ["Vehicles Covered", "10 (new)", "10 (existing)", "50+ (mixed)"],
+                    ["Investment Ask", "R2,000,000", "R450,000", "R1,000,000", "R2,000,000"],
+                    ["Equity Offered", "25%", "15%", "20%", "5–10%"],
+                    ["Vehicle Ownership", "Yes (10 EVs)", "No", "Partial (E-bikes)", "Flexible"],
+                    ["Revenue Model", "60/40 commission", "SaaS + ads", "Platform fees", "10% rev-share + equity"],
+                    ["Risk Level", "Medium-High", "Low-Medium", "Medium", "Medium-Low"],
+                    ["Payback Period", "~24 months", "~14 months", "~18 months", "~24 months"],
+                    ["Vehicles Covered", "10 (new)", "10 (existing)", "50+ (mixed)", "Flexible"],
                   ].map(([label, ...values], i) => (
                     <tr key={i} className="border-b last:border-0">
                       <td className="py-3 px-4 font-medium">{label}</td>
