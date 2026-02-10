@@ -26,6 +26,7 @@ import { LiveActivityFeed } from "@/components/realtime/LiveActivityFeed";
 import { PushNotificationManager } from "@/components/realtime/PushNotificationManager";
 import PaymentCollection from "@/components/payments/PaymentCollection";
 import DriverLocationSharing from "@/components/location/DriverLocationSharing";
+import { WhatsAppLocationShare } from "@/components/location/WhatsAppLocationShare";
 import { CameraManagementSystem } from "@/components/camera/CameraManagementSystem";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { DriverPhotoUpload } from "@/components/driver/DriverPhotoUpload";
@@ -340,6 +341,9 @@ export const DriverDashboard = () => {
               userId={user?.id || ''}
               onShiftStart={() => setShiftStarted(true)}
               onShiftEnd={() => setShiftStarted(false)}
+            />
+            <WhatsAppLocationShare
+              message="🚗 MojaRide Driver — here is my current location:"
             />
           </TabsContent>
 

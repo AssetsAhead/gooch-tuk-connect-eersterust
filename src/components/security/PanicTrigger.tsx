@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { AlertTriangle, MapPin } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
+import { WhatsAppLocationShare } from '@/components/location/WhatsAppLocationShare';
 
 export const PanicTrigger = () => {
   const [isActive, setIsActive] = useState(false);
@@ -97,14 +98,20 @@ export const PanicTrigger = () => {
           <span className="font-semibold">EMERGENCY ACTIVE</span>
         </div>
         <p className="text-sm mb-3">Emergency services notified</p>
-        <Button 
-          onClick={deactivatePanic}
-          variant="outline"
-          size="sm"
-          className="w-full bg-background text-foreground hover:bg-muted"
-        >
-          Cancel Alert
-        </Button>
+        <div className="space-y-2">
+          <WhatsAppLocationShare
+            variant="compact"
+            message="🚨 EMERGENCY — I need help! Here is my location:"
+          />
+          <Button 
+            onClick={deactivatePanic}
+            variant="outline"
+            size="sm"
+            className="w-full bg-background text-foreground hover:bg-muted"
+          >
+            Cancel Alert
+          </Button>
+        </div>
       </div>
     );
   }

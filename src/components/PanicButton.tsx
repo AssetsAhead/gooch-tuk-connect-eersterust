@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Shield, MapPin, Users } from "lucide-react";
+import { AlertTriangle, Shield, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { WhatsAppLocationShare } from "@/components/location/WhatsAppLocationShare";
 
 interface PanicButtonProps {
   userType: "driver" | "passenger";
@@ -87,10 +88,10 @@ export const PanicButton = ({ userType, userId, currentLocation }: PanicButtonPr
                 <Shield className="h-4 w-4 mr-2" />
                 I'm Safe - Cancel Alert
               </Button>
-              <Button variant="outline" className="border-primary text-primary">
-                <MapPin className="h-4 w-4 mr-2" />
-                Share Live Location
-              </Button>
+              <WhatsAppLocationShare
+                variant="emergency"
+                message="🚨 EMERGENCY — I need help! Here is my location:"
+              />
             </div>
           </div>
         </CardContent>

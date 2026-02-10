@@ -34,6 +34,7 @@ import { MyRoleRequests } from "@/components/roles/MyRoleRequests";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { SmartHailCard } from "@/components/hailing/SmartHailCard";
 import { DriverRatingDialog } from "@/components/passenger/DriverRatingDialog";
+import { WhatsAppLocationShare } from "@/components/location/WhatsAppLocationShare";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
@@ -183,6 +184,11 @@ export const PassengerDashboard = () => {
                 isVerified: discountInfo.isVerified,
                 discountPercentage: discountInfo.discountPercentage
               }}
+            />
+
+            <WhatsAppLocationShare
+              message="📍 I'm here — pick me up! MojaRide passenger location:"
+              className="w-full"
             />
 
             {/* Active Ride Tracking */}
