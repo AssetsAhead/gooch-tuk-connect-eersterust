@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { WhatsAppLocationShare } from '@/components/location/WhatsAppLocationShare';
 
 interface Driver {
   id: string;
@@ -276,6 +277,12 @@ export const LiveDriverMap = ({
               </div>
             </div>
           ))}
+        </div>
+        <div className="p-3 border-t">
+          <WhatsAppLocationShare
+            variant="compact"
+            message="📍 I'm waiting for a ride here — MojaRide passenger location:"
+          />
         </div>
       </CardContent>
     </Card>
