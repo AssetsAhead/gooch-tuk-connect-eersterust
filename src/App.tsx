@@ -43,6 +43,7 @@ import InvestorHardwareOnly from "./pages/InvestorHardwareOnly";
 import InvestorScaleFunding from "./pages/InvestorScaleFunding";
 import InvestorHybridFunding from "./pages/InvestorHybridFunding";
 import DOTPresentation from "./pages/DOTPresentation";
+import CostBreakdown from "./pages/CostBreakdown";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
@@ -136,6 +137,7 @@ const App = () => {
                 <Route path="/investor/scale-funding" element={<InvestorScaleFunding />} />
                 <Route path="/investor/hybrid-funding" element={<InvestorHybridFunding />} />
                 <Route path="/dot-presentation" element={<DOTPresentation />} />
+                <Route path="/cost-breakdown" element={<CostBreakdown />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
