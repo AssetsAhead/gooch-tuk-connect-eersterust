@@ -81,8 +81,11 @@ export const PushNotificationManager = ({ userId, userType }: PushNotificationMa
       console.log('Service Worker registered:', registration);
       
       // Check if already subscribed
-      const existingSubscription = await registration.pushManager.getSubscription();
-      setSubscriptionStatus(existingSubscription ? 'subscribed' : 'unsubscribed');
+      const pushManager = (registration as any).pushManager;
+      if (pushManager) {
+        const existingSubscription = await pushManager.getSubscription();
+        setSubscriptionStatus(existingSubscription ? 'subscribed' : 'unsubscribed');
+      }
     } catch (error) {
       console.error('Service Worker registration failed:', error);
     }
@@ -119,7 +122,12 @@ export const PushNotificationManager = ({ userId, userType }: PushNotificationMa
 
     try {
       // For demo purposes, using a dummy VAPID key
-      const subscription = await swRegistration.pushManager.subscribe({
+      const pushManager = (swRegistration as any).pushManager;
+      if (!pushManager) {
+        toast.error("Push API not supported in this browser");
+        return;
+      }
+      const subscription = await pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: 'BEl62iUYgUivxIkv69yViEuiBIa40HI0sVgHbc62Y4z-5q1P9LNbYpfb4X-J4n46NxZX0KzpjpGN6wJ6fI_KS_c'
       });
