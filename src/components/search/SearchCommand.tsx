@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FileText, Users, Car, CreditCard, Settings, Home, Shield, MapPin, Building, BarChart } from "lucide-react";
+import { Search, FileText, Users, Car, CreditCard, Shield, Home, MapPin, Building, BarChart, Zap, Globe, Heart, Briefcase, Scale, DollarSign, Bell, Lock } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -14,169 +14,130 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { ALL_SEARCHABLE_ITEMS, SearchableItem } from "./searchRoutes";
 
 type UserRole = 'admin' | 'owner' | 'driver' | 'passenger' | 'marshall' | 'police';
-
-interface SearchResult {
-  id: string;
-  title: string;
-  subtitle?: string;
-  type: 'page' | 'user' | 'vehicle' | 'transaction';
-  icon: React.ReactNode;
-  action: () => void;
-}
 
 interface SearchCommandProps {
   role: UserRole;
 }
 
-// Route definitions per role
-const getRoutesForRole = (role: UserRole, navigate: ReturnType<typeof useNavigate>): SearchResult[] => {
-  const commonRoutes: SearchResult[] = [
-    { id: 'dashboard', title: 'Dashboard', subtitle: 'Your main dashboard', type: 'page', icon: <Home className="h-4 w-4" />, action: () => navigate('/dashboard') },
-  ];
-
-  const roleRoutes: Record<UserRole, SearchResult[]> = {
-    admin: [
-      { id: 'approvals', title: 'Pending Approvals', subtitle: 'Review driver and owner applications', type: 'page', icon: <Users className="h-4 w-4" />, action: () => navigate('/admin') },
-      { id: 'role-requests', title: 'Role Requests', subtitle: 'Manage role upgrade requests', type: 'page', icon: <Shield className="h-4 w-4" />, action: () => navigate('/admin') },
-      { id: 'analytics', title: 'Analytics Dashboard', subtitle: 'Platform metrics and insights', type: 'page', icon: <BarChart className="h-4 w-4" />, action: () => navigate('/admin') },
-      { id: 'sassa', title: 'SASSA Verifications', subtitle: 'Review grant card verifications', type: 'page', icon: <Shield className="h-4 w-4" />, action: () => navigate('/admin/sassa-verifications') },
-      { id: 'fleet-import', title: 'Fleet Data Import', subtitle: 'Bulk import vehicle data', type: 'page', icon: <Car className="h-4 w-4" />, action: () => navigate('/admin') },
-      { id: 'fleet-vehicles', title: 'Fleet Vehicles Dashboard', subtitle: 'Manage all fleet vehicles', type: 'page', icon: <Car className="h-4 w-4" />, action: () => navigate('/fleet-vehicles') },
-      { id: 'investor', title: 'Investor Portal', subtitle: 'R2M Proposal and pitch materials', type: 'page', icon: <Building className="h-4 w-4" />, action: () => navigate('/investor') },
-      { id: 'compliance', title: 'Compliance Hub', subtitle: 'Regulatory requirements', type: 'page', icon: <FileText className="h-4 w-4" />, action: () => navigate('/compliance') },
-      { id: 'community-safety', title: 'Community Safety Portal', subtitle: 'Safety network and alerts', type: 'page', icon: <Shield className="h-4 w-4" />, action: () => navigate('/community-safety') },
-      { id: 'business-portal', title: 'Business Portal', subtitle: 'Business services hub', type: 'page', icon: <Building className="h-4 w-4" />, action: () => navigate('/business-portal') },
-    ],
-    owner: [
-      { id: 'fleet', title: 'Fleet Management', subtitle: 'Manage your vehicles', type: 'page', icon: <Car className="h-4 w-4" />, action: () => navigate('/owner') },
-      { id: 'drivers', title: 'My Drivers', subtitle: 'Driver assignments and performance', type: 'page', icon: <Users className="h-4 w-4" />, action: () => navigate('/owner') },
-      { id: 'revenue', title: 'Revenue Tracking', subtitle: 'Earnings and payouts', type: 'page', icon: <CreditCard className="h-4 w-4" />, action: () => navigate('/owner') },
-      { id: 'compliance', title: 'Compliance', subtitle: 'Vehicle documentation', type: 'page', icon: <FileText className="h-4 w-4" />, action: () => navigate('/compliance') },
-    ],
-    driver: [
-      { id: 'rides', title: 'My Rides', subtitle: 'Active and completed trips', type: 'page', icon: <MapPin className="h-4 w-4" />, action: () => navigate('/driver') },
-      { id: 'earnings', title: 'Earnings', subtitle: 'Daily and weekly income', type: 'page', icon: <CreditCard className="h-4 w-4" />, action: () => navigate('/driver') },
-      { id: 'queue', title: 'Queue Status', subtitle: 'Rank queue position', type: 'page', icon: <Users className="h-4 w-4" />, action: () => navigate('/driver') },
-    ],
-    passenger: [
-      { id: 'book', title: 'Book a Ride', subtitle: 'Request a new trip', type: 'page', icon: <Car className="h-4 w-4" />, action: () => navigate('/passenger') },
-      { id: 'history', title: 'Ride History', subtitle: 'Past trips', type: 'page', icon: <FileText className="h-4 w-4" />, action: () => navigate('/passenger') },
-      { id: 'sassa', title: 'SASSA Discount', subtitle: 'Verify grant for discounts', type: 'page', icon: <Shield className="h-4 w-4" />, action: () => navigate('/passenger') },
-    ],
-    marshall: [
-      { id: 'queue', title: 'Queue Management', subtitle: 'Manage rank queue', type: 'page', icon: <Users className="h-4 w-4" />, action: () => navigate('/marshall') },
-      { id: 'vehicles', title: 'Vehicle Log', subtitle: 'Track departures', type: 'page', icon: <Car className="h-4 w-4" />, action: () => navigate('/marshall') },
-      { id: 'incidents', title: 'Incident Reports', subtitle: 'Log and track issues', type: 'page', icon: <Shield className="h-4 w-4" />, action: () => navigate('/marshall') },
-    ],
-    police: [
-      { id: 'flagged', title: 'Flagged Vehicles', subtitle: 'Vehicles under review', type: 'page', icon: <Car className="h-4 w-4" />, action: () => navigate('/police') },
-      { id: 'incidents', title: 'Active Incidents', subtitle: 'Current investigations', type: 'page', icon: <Shield className="h-4 w-4" />, action: () => navigate('/police') },
-      { id: 'fines', title: 'Fine Management', subtitle: 'Issue and track fines', type: 'page', icon: <FileText className="h-4 w-4" />, action: () => navigate('/police') },
-    ],
-  };
-
-  return [...commonRoutes, ...(roleRoutes[role] || [])];
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  'Navigation': <Home className="h-4 w-4" />,
+  'Dashboards': <BarChart className="h-4 w-4" />,
+  'SASSA & Social Grants': <Heart className="h-4 w-4" />,
+  'Business': <Briefcase className="h-4 w-4" />,
+  'Community': <Shield className="h-4 w-4" />,
+  'Growth': <Users className="h-4 w-4" />,
+  'Compliance': <Scale className="h-4 w-4" />,
+  'Fleet': <Car className="h-4 w-4" />,
+  'Investor': <Building className="h-4 w-4" />,
+  'Finance': <DollarSign className="h-4 w-4" />,
+  'Payments': <CreditCard className="h-4 w-4" />,
+  'Account': <Lock className="h-4 w-4" />,
+  'Legal': <FileText className="h-4 w-4" />,
+  'Safety': <Shield className="h-4 w-4" />,
+  'Features': <Zap className="h-4 w-4" />,
 };
+
+function scoreMatch(item: SearchableItem, query: string): number {
+  const q = query.toLowerCase();
+  let score = 0;
+  if (item.title.toLowerCase().includes(q)) score += 10;
+  if (item.title.toLowerCase().startsWith(q)) score += 5;
+  if (item.subtitle.toLowerCase().includes(q)) score += 6;
+  if (item.path.toLowerCase().includes(q)) score += 8; // path match is strong
+  if (item.category.toLowerCase().includes(q)) score += 3;
+  for (const kw of item.keywords) {
+    if (kw.includes(q)) score += 4;
+    if (kw.startsWith(q)) score += 2;
+  }
+  return score;
+}
 
 export const SearchCommand = ({ role }: SearchCommandProps) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [dataResults, setDataResults] = useState<SearchResult[]>([]);
+  const [dataResults, setDataResults] = useState<{ id: string; title: string; subtitle: string; type: string; action: () => void }[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  const routes = getRoutesForRole(role, navigate);
 
   // Keyboard shortcut
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+        setOpen((o) => !o);
       }
     };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  // Filter routes based on query
-  useEffect(() => {
-    if (!query) {
-      setResults(routes);
-      return;
-    }
-    const filtered = routes.filter(
-      (r) =>
-        r.title.toLowerCase().includes(query.toLowerCase()) ||
-        r.subtitle?.toLowerCase().includes(query.toLowerCase())
-    );
-    setResults(filtered);
-  }, [query, routes]);
+  // Filter & rank items based on query
+  const filteredItems = useMemo(() => {
+    if (!query) return ALL_SEARCHABLE_ITEMS;
+    return ALL_SEARCHABLE_ITEMS
+      .map((item) => ({ item, score: scoreMatch(item, query) }))
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ item }) => item);
+  }, [query]);
 
-  // Search data (users, vehicles, etc.) for admin/owner roles
+  // Group by category
+  const grouped = useMemo(() => {
+    const groups: Record<string, SearchableItem[]> = {};
+    for (const item of filteredItems) {
+      if (!groups[item.category]) groups[item.category] = [];
+      groups[item.category].push(item);
+    }
+    return groups;
+  }, [filteredItems]);
+
+  // Search data (users, vehicles) for admin/owner roles
   const searchData = useCallback(async (searchQuery: string) => {
-    if (!searchQuery || searchQuery.length < 2) {
+    if (!searchQuery || searchQuery.length < 2 || !['admin', 'owner'].includes(role)) {
       setDataResults([]);
       return;
     }
-
-    if (!['admin', 'owner'].includes(role)) {
-      return;
-    }
-
     setLoading(true);
     try {
-      const dataItems: SearchResult[] = [];
+      const items: typeof dataResults = [];
 
-      // Search users (admin only)
       if (role === 'admin') {
         const { data: users } = await supabase
           .from('profiles')
           .select('user_id, display_name')
           .ilike('display_name', `%${searchQuery}%`)
           .limit(5);
-
         users?.forEach((u) => {
-          dataItems.push({
+          items.push({
             id: `user-${u.user_id}`,
             title: u.display_name || 'Unknown User',
             subtitle: 'User profile',
             type: 'user',
-            icon: <Users className="h-4 w-4" />,
-            action: () => {
-              setOpen(false);
-              // Could navigate to user profile in future
-            },
+            action: () => setOpen(false),
           });
         });
       }
 
-      // Search vehicles (admin and owner)
       const { data: vehicles } = await supabase
         .from('fleet_vehicles')
         .select('id, registration, e_number, owner_name, driver_name')
         .or(`registration.ilike.%${searchQuery}%,e_number.ilike.%${searchQuery}%,owner_name.ilike.%${searchQuery}%`)
         .limit(5);
-
       vehicles?.forEach((v) => {
-        dataItems.push({
+        items.push({
           id: `vehicle-${v.id}`,
           title: `${v.registration} (${v.e_number})`,
           subtitle: `Owner: ${v.owner_name}${v.driver_name ? ` • Driver: ${v.driver_name}` : ''}`,
           type: 'vehicle',
-          icon: <Car className="h-4 w-4" />,
-          action: () => {
-            setOpen(false);
-            navigate('/fleet-vehicles');
-          },
+          action: () => { setOpen(false); navigate('/fleet-vehicles'); },
         });
       });
 
-      setDataResults(dataItems);
+      setDataResults(items);
     } catch (error) {
       console.error('Search error:', error);
     } finally {
@@ -186,9 +147,7 @@ export const SearchCommand = ({ role }: SearchCommandProps) => {
 
   // Debounced data search
   useEffect(() => {
-    const timer = setTimeout(() => {
-      searchData(query);
-    }, 300);
+    const timer = setTimeout(() => searchData(query), 300);
     return () => clearTimeout(timer);
   }, [query, searchData]);
 
@@ -209,44 +168,43 @@ export const SearchCommand = ({ role }: SearchCommandProps) => {
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput
-          placeholder="Search pages, users, vehicles..."
+          placeholder="Search pages, features, routes, vehicles..."
           value={query}
           onValueChange={setQuery}
         />
-        <CommandList>
+        <CommandList className="max-h-[420px]">
           <CommandEmpty>
             {loading ? "Searching..." : "No results found."}
           </CommandEmpty>
 
-          {results.length > 0 && (
-            <CommandGroup heading="Pages">
-              {results.map((result) => (
+          {Object.entries(grouped).map(([category, items]) => (
+            <CommandGroup key={category} heading={category}>
+              {items.map((item) => (
                 <CommandItem
-                  key={result.id}
+                  key={item.id}
+                  value={`${item.title} ${item.subtitle} ${item.keywords.join(' ')}`}
                   onSelect={() => {
-                    result.action();
+                    navigate(item.path);
                     setOpen(false);
                   }}
                 >
-                  {result.icon}
+                  {CATEGORY_ICONS[item.category] || <Globe className="h-4 w-4" />}
                   <div className="ml-2 flex-1">
-                    <div className="font-medium">{result.title}</div>
-                    {result.subtitle && (
-                      <div className="text-xs text-muted-foreground">{result.subtitle}</div>
-                    )}
+                    <div className="font-medium">{item.title}</div>
+                    <div className="text-xs text-muted-foreground">{item.subtitle}</div>
                   </div>
-                  <Badge variant="outline" className="ml-2 text-xs">
-                    {result.type}
+                  <Badge variant="outline" className="ml-2 text-xs shrink-0">
+                    {item.path}
                   </Badge>
                 </CommandItem>
               ))}
             </CommandGroup>
-          )}
+          ))}
 
           {dataResults.length > 0 && (
             <>
               <CommandSeparator />
-              <CommandGroup heading="Data">
+              <CommandGroup heading="Database Results">
                 {dataResults.map((result) => (
                   <CommandItem
                     key={result.id}
@@ -255,12 +213,10 @@ export const SearchCommand = ({ role }: SearchCommandProps) => {
                       setOpen(false);
                     }}
                   >
-                    {result.icon}
+                    {result.type === 'user' ? <Users className="h-4 w-4" /> : <Car className="h-4 w-4" />}
                     <div className="ml-2 flex-1">
                       <div className="font-medium">{result.title}</div>
-                      {result.subtitle && (
-                        <div className="text-xs text-muted-foreground">{result.subtitle}</div>
-                      )}
+                      <div className="text-xs text-muted-foreground">{result.subtitle}</div>
                     </div>
                     <Badge variant="secondary" className="ml-2 text-xs">
                       {result.type}
