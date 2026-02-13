@@ -413,6 +413,90 @@ export type Database = {
           },
         ]
       }
+      dot_compliance_reports: {
+        Row: {
+          average_response_time_minutes: number | null
+          compliance_score: number | null
+          created_at: string
+          generated_by: string | null
+          id: string
+          infringement_breakdown: Json | null
+          major_count: number | null
+          minor_count: number | null
+          moderate_count: number | null
+          recommendations: string[] | null
+          repeat_offender_count: number | null
+          report_data: Json | null
+          report_period_end: string
+          report_period_start: string
+          report_type: string
+          serious_count: number | null
+          status: string
+          submitted_at: string | null
+          submitted_to: string | null
+          summary: string | null
+          total_drivers_monitored: number | null
+          total_incidents: number | null
+          total_infringements: number | null
+          total_vehicles_monitored: number | null
+          updated_at: string
+        }
+        Insert: {
+          average_response_time_minutes?: number | null
+          compliance_score?: number | null
+          created_at?: string
+          generated_by?: string | null
+          id?: string
+          infringement_breakdown?: Json | null
+          major_count?: number | null
+          minor_count?: number | null
+          moderate_count?: number | null
+          recommendations?: string[] | null
+          repeat_offender_count?: number | null
+          report_data?: Json | null
+          report_period_end: string
+          report_period_start: string
+          report_type?: string
+          serious_count?: number | null
+          status?: string
+          submitted_at?: string | null
+          submitted_to?: string | null
+          summary?: string | null
+          total_drivers_monitored?: number | null
+          total_incidents?: number | null
+          total_infringements?: number | null
+          total_vehicles_monitored?: number | null
+          updated_at?: string
+        }
+        Update: {
+          average_response_time_minutes?: number | null
+          compliance_score?: number | null
+          created_at?: string
+          generated_by?: string | null
+          id?: string
+          infringement_breakdown?: Json | null
+          major_count?: number | null
+          minor_count?: number | null
+          moderate_count?: number | null
+          recommendations?: string[] | null
+          repeat_offender_count?: number | null
+          report_data?: Json | null
+          report_period_end?: string
+          report_period_start?: string
+          report_type?: string
+          serious_count?: number | null
+          status?: string
+          submitted_at?: string | null
+          submitted_to?: string | null
+          summary?: string | null
+          total_drivers_monitored?: number | null
+          total_incidents?: number | null
+          total_infringements?: number | null
+          total_vehicles_monitored?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       driver_documents: {
         Row: {
           document_type: string
@@ -1970,6 +2054,122 @@ export type Database = {
             columns: ["passenger_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      road_infringements: {
+        Row: {
+          ai_incident_id: string | null
+          capture_id: string | null
+          confidence_score: number | null
+          created_at: string
+          demerit_points: number | null
+          description: string | null
+          detected_by: string
+          driver_id: string | null
+          evidence_urls: string[] | null
+          fine_amount: number | null
+          id: string
+          infringement_code: string | null
+          infringement_type: string
+          insurance_claim_ref: string | null
+          insurance_notified: boolean | null
+          license_plate: string | null
+          location: Json | null
+          occurred_at: string
+          reputation_impact: number | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          severity: string
+          status: string
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          ai_incident_id?: string | null
+          capture_id?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          demerit_points?: number | null
+          description?: string | null
+          detected_by?: string
+          driver_id?: string | null
+          evidence_urls?: string[] | null
+          fine_amount?: number | null
+          id?: string
+          infringement_code?: string | null
+          infringement_type: string
+          insurance_claim_ref?: string | null
+          insurance_notified?: boolean | null
+          license_plate?: string | null
+          location?: Json | null
+          occurred_at?: string
+          reputation_impact?: number | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          ai_incident_id?: string | null
+          capture_id?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          demerit_points?: number | null
+          description?: string | null
+          detected_by?: string
+          driver_id?: string | null
+          evidence_urls?: string[] | null
+          fine_amount?: number | null
+          id?: string
+          infringement_code?: string | null
+          infringement_type?: string
+          insurance_claim_ref?: string | null
+          insurance_notified?: boolean | null
+          license_plate?: string | null
+          location?: Json | null
+          occurred_at?: string
+          reputation_impact?: number | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "road_infringements_ai_incident_id_fkey"
+            columns: ["ai_incident_id"]
+            isOneToOne: false
+            referencedRelation: "ai_incidents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "road_infringements_capture_id_fkey"
+            columns: ["capture_id"]
+            isOneToOne: false
+            referencedRelation: "camera_captures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "road_infringements_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "road_infringements_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
             referencedColumns: ["id"]
           },
         ]
