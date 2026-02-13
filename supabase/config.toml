@@ -84,3 +84,6 @@ verify_jwt = false
 
 [functions.alpr-recognize]
 verify_jwt = true
+
+[functions.generate-dot-report]
+verify_jwt = true

@@ -18,8 +18,33 @@ interface IncidentAnalysis {
     traffic_violations: string[];
     safety_concerns: string[];
     recommended_actions: string[];
+    infringements: InfringementDetail[];
   };
 }
+
+interface InfringementDetail {
+  type: string; // speeding, red_light, illegal_parking, overloading, unroadworthy, no_license, reckless_driving
+  severity: "minor" | "moderate" | "serious" | "major";
+  description: string;
+  demerit_points: number;
+  estimated_fine: number;
+  license_plate?: string;
+}
+
+// AARTO demerit points mapping for SA traffic violations
+const AARTO_DEMERITS: Record<string, { points: number; fine: number; severity: string }> = {
+  speeding: { points: 1, fine: 500, severity: "minor" },
+  red_light: { points: 4, fine: 2000, severity: "serious" },
+  illegal_parking: { points: 1, fine: 300, severity: "minor" },
+  overloading: { points: 3, fine: 1500, severity: "moderate" },
+  unroadworthy: { points: 3, fine: 2500, severity: "serious" },
+  no_license: { points: 6, fine: 5000, severity: "major" },
+  reckless_driving: { points: 6, fine: 5000, severity: "major" },
+  no_seatbelt: { points: 1, fine: 500, severity: "minor" },
+  cellphone_use: { points: 1, fine: 750, severity: "minor" },
+  illegal_overtaking: { points: 4, fine: 2000, severity: "serious" },
+  stop_sign: { points: 2, fine: 1000, severity: "moderate" },
+};
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -27,7 +52,6 @@ serve(async (req) => {
   }
 
   try {
-    // Authenticate user
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
       return new Response(
@@ -75,9 +99,8 @@ serve(async (req) => {
       );
     }
 
-    console.log("Analyzing image for incidents:", imageUrl.substring(0, 100));
+    console.log("Analyzing image for incidents and infringements:", imageUrl.substring(0, 100));
 
-    // Call Lovable AI with vision capabilities
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -89,19 +112,22 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are an AI security incident detection system for a township transport safety network in South Africa. 
+            content: `You are an AI security and traffic enforcement system for a township transport safety network in South Africa. 
 Analyze images from cameras and dashcams to detect:
 - Vehicle accidents or collisions
-- Traffic violations (speeding signs, illegal parking, red light violations)
+- Traffic violations (speeding signs, illegal parking, red light violations, overloading)
+- Unroadworthy vehicles (bald tyres, broken lights, missing mirrors)
 - Suspicious activities (break-ins, theft, vandalism)
 - Safety hazards (road obstructions, fires, floods)
-- License plates (for vehicle tracking)
+- License plates (for vehicle tracking and infringement linking)
 - Crowd disturbances or fights
+- Seatbelt/cellphone violations
+- Illegal overtaking or stop sign violations
 
 You MUST respond with valid JSON only, no markdown or explanation. Use this exact structure:
 {
   "incident_detected": boolean,
-  "incident_type": string or null (e.g., "accident", "traffic_violation", "suspicious_activity", "safety_hazard", "crowd_disturbance", null),
+  "incident_type": string or null,
   "severity": "low" | "medium" | "high" | "critical",
   "confidence_score": number between 0 and 1,
   "description": "Brief description of what you see",
@@ -110,27 +136,38 @@ You MUST respond with valid JSON only, no markdown or explanation. Use this exac
     "license_plates": ["any visible license plates"],
     "traffic_violations": ["any traffic violations observed"],
     "safety_concerns": ["any safety concerns"],
-    "recommended_actions": ["suggested responses"]
+    "recommended_actions": ["suggested responses"],
+    "infringements": [
+      {
+        "type": "speeding|red_light|illegal_parking|overloading|unroadworthy|no_license|reckless_driving|no_seatbelt|cellphone_use|illegal_overtaking|stop_sign",
+        "severity": "minor|moderate|serious|major",
+        "description": "specific description of the violation",
+        "demerit_points": number (AARTO points),
+        "estimated_fine": number (in Rands),
+        "license_plate": "plate if visible, null otherwise"
+      }
+    ]
   }
-}`
+}
+
+For the infringements array, include every distinct violation you can identify. If no infringements are detected, return an empty array.
+Use South African AARTO (Administrative Adjudication of Road Traffic Offences) demerit point values.`
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: "Analyze this image for security incidents, traffic violations, or safety concerns. Respond with JSON only."
+                text: "Analyze this image for security incidents, traffic violations, infringements, and safety concerns. Detect all visible license plates. Respond with JSON only."
               },
               {
                 type: "image_url",
-                image_url: {
-                  url: imageUrl
-                }
+                image_url: { url: imageUrl }
               }
             ]
           }
         ],
-        max_tokens: 1000
+        max_tokens: 1500
       }),
     });
 
@@ -170,23 +207,19 @@ You MUST respond with valid JSON only, no markdown or explanation. Use this exac
 
     console.log("AI raw response:", aiContent);
 
-    // Parse AI response (handle potential markdown wrapping)
     let analysis: IncidentAnalysis;
     try {
       let jsonStr = aiContent.trim();
-      // Remove markdown code blocks if present
-      if (jsonStr.startsWith("```json")) {
-        jsonStr = jsonStr.slice(7);
-      } else if (jsonStr.startsWith("```")) {
-        jsonStr = jsonStr.slice(3);
-      }
-      if (jsonStr.endsWith("```")) {
-        jsonStr = jsonStr.slice(0, -3);
-      }
+      if (jsonStr.startsWith("```json")) jsonStr = jsonStr.slice(7);
+      else if (jsonStr.startsWith("```")) jsonStr = jsonStr.slice(3);
+      if (jsonStr.endsWith("```")) jsonStr = jsonStr.slice(0, -3);
       analysis = JSON.parse(jsonStr.trim());
+      // Ensure infringements array exists
+      if (!analysis.details.infringements) {
+        analysis.details.infringements = [];
+      }
     } catch (parseError) {
       console.error("Failed to parse AI response:", parseError);
-      // Return a safe default if parsing fails
       analysis = {
         incident_detected: false,
         incident_type: null,
@@ -198,17 +231,18 @@ You MUST respond with valid JSON only, no markdown or explanation. Use this exac
           license_plates: [],
           traffic_violations: [],
           safety_concerns: [],
-          recommended_actions: []
+          recommended_actions: [],
+          infringements: []
         }
       };
     }
 
-    // If capture ID provided, update the database using service role
-    if (captureId) {
-      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-      const supabase = createClient(supabaseUrl, supabaseKey);
+    // Use service role for DB writes
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-      // Update camera_captures with analysis
+    // Update camera_captures if captureId provided
+    if (captureId) {
       const { error: updateError } = await supabase
         .from("camera_captures")
         .update({
@@ -221,11 +255,9 @@ You MUST respond with valid JSON only, no markdown or explanation. Use this exac
         })
         .eq("id", captureId);
 
-      if (updateError) {
-        console.error("Error updating capture:", updateError);
-      }
+      if (updateError) console.error("Error updating capture:", updateError);
 
-      // If incident detected with high confidence, create ai_incidents record
+      // Create ai_incidents record for high-confidence incidents
       if (analysis.incident_detected && analysis.confidence_score >= 0.7) {
         const { error: incidentError } = await supabase
           .from("ai_incidents")
@@ -240,15 +272,97 @@ You MUST respond with valid JSON only, no markdown or explanation. Use this exac
             metadata: {
               confidence_score: analysis.confidence_score,
               objects_detected: analysis.details.objects_detected,
-              recommended_actions: analysis.details.recommended_actions
+              recommended_actions: analysis.details.recommended_actions,
+              infringement_count: analysis.details.infringements.length
             }
           });
 
-        if (incidentError) {
-          console.error("Error creating incident:", incidentError);
-        } else {
-          console.log("AI incident created for capture:", captureId);
+        if (incidentError) console.error("Error creating incident:", incidentError);
+        else console.log("AI incident created for capture:", captureId);
+      }
+    }
+
+    // Process infringements - create road_infringements records
+    const infringementResults = [];
+    for (const infringement of analysis.details.infringements) {
+      // Look up AARTO data or use AI-provided values
+      const aartoData = AARTO_DEMERITS[infringement.type] || {
+        points: infringement.demerit_points || 1,
+        fine: infringement.estimated_fine || 500,
+        severity: infringement.severity || "minor"
+      };
+
+      // Try to match license plate to a driver
+      let driverId = null;
+      let vehicleId = null;
+      const plate = infringement.license_plate || (analysis.details.license_plates.length > 0 ? analysis.details.license_plates[0] : null);
+      
+      if (plate) {
+        // Check vehicles table for plate match
+        const { data: vehicleMatch } = await supabase
+          .from("vehicles")
+          .select("id")
+          .ilike("registration_number", plate)
+          .maybeSingle();
+        
+        if (vehicleMatch) {
+          vehicleId = vehicleMatch.id;
         }
+
+        // Also check fleet_vehicles
+        const { data: fleetMatch } = await supabase
+          .from("fleet_vehicles")
+          .select("id, driver_name")
+          .ilike("registration", plate)
+          .maybeSingle();
+
+        if (fleetMatch) {
+          console.log("Matched infringement to fleet vehicle:", plate);
+        }
+      }
+
+      // Reputation impact scales with severity
+      const reputationImpact = {
+        minor: 2,
+        moderate: 5,
+        serious: 10,
+        major: 20
+      }[aartoData.severity] || 2;
+
+      const { data: infringementRecord, error: infringementError } = await supabase
+        .from("road_infringements")
+        .insert({
+          driver_id: driverId,
+          vehicle_id: vehicleId,
+          capture_id: captureId || null,
+          infringement_type: infringement.type,
+          severity: aartoData.severity,
+          description: infringement.description,
+          location: location || null,
+          evidence_urls: imageUrl ? [imageUrl] : [],
+          license_plate: plate,
+          detected_by: "ai",
+          confidence_score: analysis.confidence_score,
+          status: analysis.confidence_score >= 0.85 ? "confirmed" : "pending",
+          demerit_points: aartoData.points,
+          reputation_impact: reputationImpact,
+          fine_amount: aartoData.fine,
+          occurred_at: new Date().toISOString()
+        })
+        .select("id")
+        .single();
+
+      if (infringementError) {
+        console.error("Error creating infringement:", infringementError);
+      } else {
+        infringementResults.push({
+          id: infringementRecord.id,
+          type: infringement.type,
+          severity: aartoData.severity,
+          demerit_points: aartoData.points,
+          fine: aartoData.fine
+        });
+        console.log("Infringement recorded:", infringement.type, plate);
       }
     }
 
@@ -256,11 +370,16 @@ You MUST respond with valid JSON only, no markdown or explanation. Use this exac
       incident_detected: analysis.incident_detected,
       type: analysis.incident_type,
       severity: analysis.severity,
-      confidence: analysis.confidence_score
+      confidence: analysis.confidence_score,
+      infringements_recorded: infringementResults.length
     });
 
     return new Response(
-      JSON.stringify({ success: true, analysis }),
+      JSON.stringify({ 
+        success: true, 
+        analysis,
+        infringements: infringementResults
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
