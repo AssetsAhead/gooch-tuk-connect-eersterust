@@ -59,8 +59,33 @@ serve(async (req) => {
     const passengerId = claimsData.claims.sub;
     console.log("Authenticated passenger for smart match:", passengerId);
 
-    const { pickupLocation, destination, userLocation, preferences } = 
-      await req.json() as MatchRequest;
+    const rawBody = await req.json();
+
+    // Input validation
+    const pickupLocation = typeof rawBody.pickupLocation === 'string' ? rawBody.pickupLocation.trim().slice(0, 200) : '';
+    const destination = typeof rawBody.destination === 'string' ? rawBody.destination.trim().slice(0, 200) : '';
+    
+    if (!pickupLocation || !destination) {
+      return new Response(
+        JSON.stringify({ error: "pickupLocation and destination are required (max 200 chars)" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userLocation = rawBody.userLocation && 
+      typeof rawBody.userLocation.latitude === 'number' && 
+      typeof rawBody.userLocation.longitude === 'number' &&
+      rawBody.userLocation.latitude >= -90 && rawBody.userLocation.latitude <= 90 &&
+      rawBody.userLocation.longitude >= -180 && rawBody.userLocation.longitude <= 180
+      ? { latitude: rawBody.userLocation.latitude, longitude: rawBody.userLocation.longitude }
+      : undefined;
+
+    const preferences = rawBody.preferences ? {
+      prioritizeRating: rawBody.preferences.prioritizeRating === true,
+      prioritizeETA: rawBody.preferences.prioritizeETA === true,
+      maxWaitTime: typeof rawBody.preferences.maxWaitTime === 'number' 
+        ? Math.min(Math.max(rawBody.preferences.maxWaitTime, 1), 120) : undefined,
+    } : undefined;
 
     console.log("Smart matching request:", { passengerId, pickupLocation, destination });
 

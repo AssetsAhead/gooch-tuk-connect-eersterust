@@ -36,11 +36,29 @@ serve(async (req) => {
     }
 
     const userId = claimsData.claims.sub;
-    const { reportType, periodStart, periodEnd } = await req.json();
+    const rawBody = await req.json();
 
-    if (!periodStart || !periodEnd) {
+    // Input validation
+    const dateRegex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?Z?)?$/;
+    const periodStart = typeof rawBody.periodStart === 'string' ? rawBody.periodStart.trim() : '';
+    const periodEnd = typeof rawBody.periodEnd === 'string' ? rawBody.periodEnd.trim() : '';
+    const reportType = typeof rawBody.reportType === 'string' && ['monthly', 'quarterly', 'annual'].includes(rawBody.reportType) 
+      ? rawBody.reportType : 'monthly';
+
+    if (!periodStart || !periodEnd || !dateRegex.test(periodStart) || !dateRegex.test(periodEnd)) {
       return new Response(
-        JSON.stringify({ error: "Period start and end dates are required" }),
+        JSON.stringify({ error: "Valid periodStart and periodEnd dates are required (YYYY-MM-DD or ISO format)" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Prevent absurdly large date ranges (max 1 year)
+    const startDate = new Date(periodStart);
+    const endDate = new Date(periodEnd);
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || endDate < startDate || 
+        (endDate.getTime() - startDate.getTime()) > 366 * 24 * 60 * 60 * 1000) {
+      return new Response(
+        JSON.stringify({ error: "Invalid date range. End must be after start and span max 1 year." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
