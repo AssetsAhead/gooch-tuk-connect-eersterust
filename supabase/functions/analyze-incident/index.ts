@@ -81,14 +81,35 @@ serve(async (req) => {
     const userId = claimsData.claims.sub;
     console.log("Authenticated user:", userId);
 
-    const { imageUrl, captureId, location } = await req.json();
+    const rawBody = await req.json();
 
-    if (!imageUrl) {
+    // Input validation
+    const imageUrl = typeof rawBody.imageUrl === 'string' ? rawBody.imageUrl.trim() : '';
+    if (!imageUrl || imageUrl.length > 2000) {
       return new Response(
-        JSON.stringify({ error: "Image URL is required" }),
+        JSON.stringify({ error: "Valid imageUrl is required (max 2000 chars)" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Validate URL format to prevent SSRF
+    try {
+      const parsedUrl = new URL(imageUrl);
+      if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+        throw new Error('Invalid protocol');
+      }
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "imageUrl must be a valid HTTP(S) URL" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const captureId = typeof rawBody.captureId === 'string' && rawBody.captureId.length <= 36 
+      ? rawBody.captureId : undefined;
+    
+    const location = rawBody.location && typeof rawBody.location === 'object' 
+      ? rawBody.location : undefined;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
