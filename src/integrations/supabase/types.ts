@@ -510,7 +510,9 @@ export type Database = {
           is_verified: boolean | null
           latitude: number | null
           longitude: number | null
-          photo_path: string
+          photo_path: string | null
+          pin_code: string | null
+          verification_method: string
           verification_result: Json | null
         }
         Insert: {
@@ -525,7 +527,9 @@ export type Database = {
           is_verified?: boolean | null
           latitude?: number | null
           longitude?: number | null
-          photo_path: string
+          photo_path?: string | null
+          pin_code?: string | null
+          verification_method?: string
           verification_result?: Json | null
         }
         Update: {
@@ -540,7 +544,9 @@ export type Database = {
           is_verified?: boolean | null
           latitude?: number | null
           longitude?: number | null
-          photo_path?: string
+          photo_path?: string | null
+          pin_code?: string | null
+          verification_method?: string
           verification_result?: Json | null
         }
         Relationships: []
@@ -586,6 +592,7 @@ export type Database = {
       }
       driver_face_registrations: {
         Row: {
+          clocking_pin: string | null
           driver_id: string
           id: string
           is_active: boolean | null
@@ -594,6 +601,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          clocking_pin?: string | null
           driver_id: string
           id?: string
           is_active?: boolean | null
@@ -602,6 +610,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          clocking_pin?: string | null
           driver_id?: string
           id?: string
           is_active?: boolean | null
