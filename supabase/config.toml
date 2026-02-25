@@ -87,3 +87,6 @@ verify_jwt = true
 
 [functions.generate-dot-report]
 verify_jwt = true
+
+[functions.verify-face]
+verify_jwt = false

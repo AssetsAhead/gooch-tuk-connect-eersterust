@@ -33,6 +33,7 @@ import { DriverPhotoUpload } from "@/components/driver/DriverPhotoUpload";
 import { IncomingRideRequests } from "@/components/driver/IncomingRideRequests";
 import { CriminalDeclarationForm } from "@/components/compliance/CriminalDeclarationForm";
 import { ICASACertificateUpload } from "@/components/compliance/ICASACertificateUpload";
+import FacialClockingSystem from "@/components/clocking/FacialClockingSystem";
 
 export const DriverDashboard = () => {
   const [shiftStarted, setShiftStarted] = useState(false);
@@ -178,6 +179,7 @@ export const DriverDashboard = () => {
 
         <Tabs defaultValue="rides" className="space-y-6">
           <TabsList className="flex w-full overflow-x-auto gap-1">
+            <TabsTrigger value="clocking" className="flex-shrink-0 text-xs sm:text-sm">Clocking</TabsTrigger>
             <TabsTrigger value="rides" className="flex-shrink-0 text-xs sm:text-sm">Rides</TabsTrigger>
             <TabsTrigger value="compliance" className="flex-shrink-0 text-xs sm:text-sm">Compliance</TabsTrigger>
             <TabsTrigger value="cameras" className="flex-shrink-0 text-xs sm:text-sm">Cameras</TabsTrigger>
@@ -192,6 +194,10 @@ export const DriverDashboard = () => {
             <TabsTrigger value="community" className="flex-shrink-0 text-xs sm:text-sm">Community</TabsTrigger>
             <TabsTrigger value="emergency" className="flex-shrink-0 text-xs sm:text-sm">Emergency</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="clocking" className="space-y-6">
+            <FacialClockingSystem />
+          </TabsContent>
 
           <TabsContent value="rides" className="space-y-6">
 

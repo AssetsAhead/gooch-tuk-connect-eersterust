@@ -497,6 +497,54 @@ export type Database = {
         }
         Relationships: []
       }
+      driver_clockings: {
+        Row: {
+          clocked_at: string | null
+          clocking_type: string
+          confidence_score: number | null
+          created_at: string | null
+          driver_id: string
+          flag_reason: string | null
+          id: string
+          is_flagged: boolean | null
+          is_verified: boolean | null
+          latitude: number | null
+          longitude: number | null
+          photo_path: string
+          verification_result: Json | null
+        }
+        Insert: {
+          clocked_at?: string | null
+          clocking_type: string
+          confidence_score?: number | null
+          created_at?: string | null
+          driver_id: string
+          flag_reason?: string | null
+          id?: string
+          is_flagged?: boolean | null
+          is_verified?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          photo_path: string
+          verification_result?: Json | null
+        }
+        Update: {
+          clocked_at?: string | null
+          clocking_type?: string
+          confidence_score?: number | null
+          created_at?: string | null
+          driver_id?: string
+          flag_reason?: string | null
+          id?: string
+          is_flagged?: boolean | null
+          is_verified?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          photo_path?: string
+          verification_result?: Json | null
+        }
+        Relationships: []
+      }
       driver_documents: {
         Row: {
           document_type: string
@@ -533,6 +581,33 @@ export type Database = {
           notes?: string | null
           updated_at?: string
           uploaded_at?: string
+        }
+        Relationships: []
+      }
+      driver_face_registrations: {
+        Row: {
+          driver_id: string
+          id: string
+          is_active: boolean | null
+          photo_path: string
+          registered_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          driver_id: string
+          id?: string
+          is_active?: boolean | null
+          photo_path: string
+          registered_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          driver_id?: string
+          id?: string
+          is_active?: boolean | null
+          photo_path?: string
+          registered_at?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
