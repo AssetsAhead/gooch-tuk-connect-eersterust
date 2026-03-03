@@ -66,6 +66,7 @@ export const OwnerDashboard = () => {
 
           {/* Revenue Intelligence Tab */}
           <TabsContent value="revenue" className="space-y-6">
+            <RevenueLeakageCalculator />
             <RevenueIntelligence />
           </TabsContent>
 
