@@ -124,10 +124,47 @@ const InvestorPortal = () => {
         </div>
       </section>
 
-      {/* Market Stats */}
-      <section className="py-12 px-4 bg-muted/30">
+      {/* At a Glance — Executive Summary */}
+      <section className="py-12 px-4 bg-muted/30 border-b">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="text-center mb-8">
+            <Badge variant="outline" className="mb-3">
+              <Target className="h-3 w-3 mr-1" /> Executive Summary
+            </Badge>
+            <h2 className="text-3xl font-bold mb-2">At a Glance</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Everything you need to know about MOBILITY ONE in 60 seconds.
+            </p>
+          </div>
+
+          {/* The Problem / The Solution */}
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <Card className="border-destructive/30 bg-destructive/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="text-destructive">✗</span> The Problem
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm">
+                <p>South Africa's R90B taxi industry moves <strong>15 million people daily</strong> — yet operates with zero digital infrastructure.</p>
+                <p>No GPS tracking, no digital payments, no safety compliance tools, no data. Passengers have no visibility. Owners have no oversight. Government has no integration point.</p>
+              </CardContent>
+            </Card>
+            <Card className="border-primary/30 bg-primary/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="text-primary">✓</span> Our Solution
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm">
+                <p><strong>MOBILITY ONE</strong> is the operating system for minibus taxis — a single platform connecting passengers, drivers, owners, marshals, and government.</p>
+                <p>Real-time tracking, biometric clocking, digital payments, safety compliance, and DOT-ready regulatory reporting. All from one app.</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Key Numbers */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {marketStats.map((stat, i) => (
               <Card key={i} className="text-center">
                 <CardContent className="pt-6">
@@ -137,6 +174,55 @@ const InvestorPortal = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+
+          {/* Revenue Model & Status */}
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-primary" /> Revenue Model
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm space-y-1.5">
+                <p className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" /> Ride commissions (60/40 split)</p>
+                <p className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" /> Vehicle wrap & in-app advertising</p>
+                <p className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" /> Fintech referrals (airtime, loans)</p>
+                <p className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" /> Security & insurance services</p>
+                <p className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" /> B2B data & route analytics</p>
+                <p className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" /> Government contracts (SASSA, DOT)</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-primary" /> Current Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm space-y-1.5">
+                <p className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0" /> CIPC & SARS registered</p>
+                <p className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0" /> Full platform built & live</p>
+                <p className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0" /> POPIA compliant</p>
+                <p className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0" /> DOT presentation ready</p>
+                <p className="flex items-center gap-2"><Zap className="h-3.5 w-3.5 text-amber-500 shrink-0" /> Pilot area: Eersterust, Tshwane</p>
+                <p className="flex items-center gap-2"><Zap className="h-3.5 w-3.5 text-amber-500 shrink-0" /> Seeking seed investment</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-primary" /> Why Now?
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm space-y-1.5">
+                <p className="flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5 text-primary shrink-0" /> No competitor owns this space</p>
+                <p className="flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5 text-primary shrink-0" /> DOT actively seeking tech partners</p>
+                <p className="flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5 text-primary shrink-0" /> EV transition wave starting</p>
+                <p className="flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5 text-primary shrink-0" /> Post-COVID demand for safety</p>
+                <p className="flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5 text-primary shrink-0" /> Rising smartphone adoption</p>
+                <p className="flex items-center gap-2"><ArrowRight className="h-3.5 w-3.5 text-primary shrink-0" /> First-mover advantage is critical</p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
