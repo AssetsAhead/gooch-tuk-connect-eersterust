@@ -424,6 +424,60 @@ const InvestorPortal = () => {
         </div>
       </section>
 
+      {/* International Expansion */}
+      <section className="py-12 px-4 bg-gradient-to-r from-blue-600/5 via-background to-amber-500/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <Badge variant="outline" className="mb-3">
+              <Globe className="h-3 w-3 mr-1" /> International Expansion
+            </Badge>
+            <h2 className="text-2xl font-bold mb-2">Cross-Border Growth</h2>
+          </div>
+          <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-950/20 hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/40">
+                  <Globe className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Moving eSwatini — Valley Hopper</CardTitle>
+                  <CardDescription>Mid-tier shuttle & on-demand transport for the Ezulwini–Manzini corridor</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                TukConnect's first international market. A branded shuttle service targeting the "missing middle" — 
+                business travelers, expats, and semi-tourists in eSwatini's tourism spine. Same platform, localized for SZL & Siswati.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <div className="p-3 bg-background/60 rounded-lg text-center">
+                  <p className="text-sm font-bold">3–5 Vehicles</p>
+                  <p className="text-xs text-muted-foreground">Pilot Fleet</p>
+                </div>
+                <div className="p-3 bg-background/60 rounded-lg text-center">
+                  <p className="text-sm font-bold">E750K–E1.25M</p>
+                  <p className="text-xs text-muted-foreground">Pilot Cost</p>
+                </div>
+                <div className="p-3 bg-background/60 rounded-lg text-center">
+                  <p className="text-sm font-bold">3–4 Months</p>
+                  <p className="text-xs text-muted-foreground">To Revenue</p>
+                </div>
+                <div className="p-3 bg-background/60 rounded-lg text-center">
+                  <p className="text-sm font-bold">Zero Competition</p>
+                  <p className="text-xs text-muted-foreground">Mid-Tier Segment</p>
+                </div>
+              </div>
+              <Button asChild className="w-full">
+                <Link to="/investor/eswatini">
+                  View eSwatini Expansion Case <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
       {/* Quick comparison */}
       <section className="py-12 px-4 bg-muted/30">
         <div className="max-w-6xl mx-auto">

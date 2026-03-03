@@ -42,6 +42,7 @@ import InvestorR2MFleet from "./pages/InvestorR2MFleet";
 import InvestorHardwareOnly from "./pages/InvestorHardwareOnly";
 import InvestorScaleFunding from "./pages/InvestorScaleFunding";
 import InvestorHybridFunding from "./pages/InvestorHybridFunding";
+import InvestorEswatini from "./pages/InvestorEswatini";
 import LegalNDA from "./pages/LegalNDA";
 import LegalRevenueShareAgreement from "./pages/LegalRevenueShareAgreement";
 import DOTPresentation from "./pages/DOTPresentation";
@@ -139,6 +140,7 @@ const App = () => {
                 <Route path="/investor/hardware-only" element={<InvestorHardwareOnly />} />
                 <Route path="/investor/scale-funding" element={<InvestorScaleFunding />} />
                 <Route path="/investor/hybrid-funding" element={<InvestorHybridFunding />} />
+                <Route path="/investor/eswatini" element={<InvestorEswatini />} />
                 <Route path="/legal/nda" element={<LegalNDA />} />
                 <Route path="/legal/revenue-share" element={<LegalRevenueShareAgreement />} />
                 <Route path="/dot-presentation" element={<DOTPresentation />} />
