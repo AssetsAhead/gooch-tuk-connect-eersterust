@@ -227,6 +227,139 @@ const InvestorPortal = () => {
         </div>
       </section>
 
+      {/* Investment Timeline */}
+      <section className="py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <Badge variant="outline" className="mb-3">
+              <Clock className="h-3 w-3 mr-1" /> Deployment Roadmap
+            </Badge>
+            <h2 className="text-3xl font-bold mb-2">If Funded Tomorrow</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Realistic 30-month trajectory from capital deployment to full-scale operations.
+            </p>
+          </div>
+
+          <div className="relative">
+            {/* Timeline line */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2" />
+
+            {[
+              {
+                phase: "Phase 0 — Deployment",
+                period: "Months 1–6",
+                icon: AlertTriangle,
+                iconColor: "text-amber-500",
+                bgColor: "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800",
+                revenue: "R0 — Zero Revenue",
+                items: [
+                  "Vehicle procurement & delivery (2–3 months)",
+                  "DOT e-hailing operating license application filed",
+                  "DOT processing period (3–6 months mandatory)",
+                  "Driver recruitment, employment contracts & onboarding",
+                  "Platform hardening, route mapping, SANTACO engagement",
+                  "Save R2,000/month toward regulatory licensing",
+                ],
+              },
+              {
+                phase: "Phase 1 — Soft Launch",
+                period: "Months 7–12",
+                icon: Rocket,
+                iconColor: "text-primary",
+                bgColor: "bg-primary/5 border-primary/20",
+                revenue: "Revenue ramps — cash-first model",
+                items: [
+                  "First rides in Eersterust pilot area",
+                  "Cash-first payments to reduce onboarding friction",
+                  "Iterate on operations, driver schedules, loading zones",
+                  "Build rider base through local community activation",
+                  "Digital payment channels introduced gradually",
+                  "Advertising partnerships begin (vehicle wraps)",
+                ],
+              },
+              {
+                phase: "Phase 2 — Full Operations",
+                period: "Year 2 (Months 13–24)",
+                icon: BarChart3,
+                iconColor: "text-emerald-600",
+                bgColor: "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800",
+                revenue: "Optimized revenue — target unit economics",
+                items: [
+                  "Fleet utilization targets achieved",
+                  "Full digital payment adoption",
+                  "Ad platform & fintech referral revenue activated",
+                  "B2B data analytics sales begin",
+                  "SASSA discount integration live",
+                  "Government contract discussions (DOT, municipalities)",
+                ],
+              },
+              {
+                phase: "Phase 3 — Scale & Expand",
+                period: "Months 25–30+",
+                icon: TrendingUp,
+                iconColor: "text-blue-600",
+                bgColor: "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800",
+                revenue: "Multi-area revenue streams",
+                items: [
+                  "Second area expansion (Mamelodi / Soshanguve)",
+                  "Additional fleet procurement",
+                  "Insurance & fintech product launches",
+                  "Data monetization at scale",
+                  "Series A readiness / further investment rounds",
+                ],
+              },
+            ].map((phase, i) => (
+              <div key={i} className={`relative flex flex-col md:flex-row items-start gap-6 mb-8 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
+                {/* Timeline dot */}
+                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-background border-2 border-primary items-center justify-center z-10">
+                  <phase.icon className={`h-5 w-5 ${phase.iconColor}`} />
+                </div>
+
+                {/* Spacer */}
+                <div className="hidden md:block md:w-1/2" />
+
+                {/* Card */}
+                <Card className={`w-full md:w-1/2 ${phase.bgColor}`}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2 md:hidden mb-1">
+                      <phase.icon className={`h-5 w-5 ${phase.iconColor}`} />
+                    </div>
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <CardTitle className="text-lg">{phase.phase}</CardTitle>
+                      <Badge variant="secondary" className="text-xs">{phase.period}</Badge>
+                    </div>
+                    <CardDescription className="font-semibold">{phase.revenue}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-1.5 text-sm">
+                      {phase.items.map((item, j) => (
+                        <li key={j} className="flex items-start gap-2">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+
+          {/* Key bottleneck callout */}
+          <Card className="mt-4 border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-950/20">
+            <CardContent className="pt-6 flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-sm mb-1">Key Bottleneck: DOT Operating License</p>
+                <p className="text-sm text-muted-foreground">
+                  The Department of Transport e-hailing operating license application has a mandatory 3–6 month processing window with zero revenue during this period. This is unavoidable and already factored into all financial projections. Our "Partnership, Not Permission" DOT strategy is designed to accelerate this process.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
       {/* Proposal Cards */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
