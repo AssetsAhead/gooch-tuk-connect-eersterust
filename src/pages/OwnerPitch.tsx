@@ -628,29 +628,20 @@ const OwnerPitch = () => {
 };
 
 function KeyboardNav({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) {
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === " ") {
-      e.preventDefault();
-      onNext();
-    }
-    if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
-      e.preventDefault();
-      onPrev();
-    }
-  };
-
-  // Using useEffect via inline
-  import("react").then(({ useEffect }) => {});
-  
-  // Actually use the hook properly
-  if (typeof window !== "undefined") {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { useEffect } = require("react");
-    useEffect(() => {
-      window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
-    });
-  }
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === " ") {
+        e.preventDefault();
+        onNext();
+      }
+      if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        onPrev();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onNext, onPrev]);
 
   return null;
 }
