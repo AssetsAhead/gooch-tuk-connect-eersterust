@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowRight, Zap, FileText, Wrench, TrendingUp, Target,
   CheckCircle2, Car, Users, DollarSign, Smartphone, Globe, Shield, Repeat,
-  Handshake, Lock
+  Handshake, Lock, Clock, AlertTriangle, Rocket, BarChart3
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
