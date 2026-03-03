@@ -2,6 +2,7 @@ import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { SearchCommand } from "@/components/search/SearchCommand";
 
 export const GlobalHeader = () => {
   const navigate = useNavigate();
@@ -24,6 +25,17 @@ export const GlobalHeader = () => {
     }
   };
 
+  // Determine role from current path for search context
+  const getRoleFromPath = (): 'admin' | 'owner' | 'driver' | 'passenger' | 'marshall' | 'police' => {
+    const path = location.pathname;
+    if (path.includes('admin')) return 'admin';
+    if (path.includes('owner') || path.includes('fleet')) return 'owner';
+    if (path.includes('driver')) return 'driver';
+    if (path.includes('police') || path.includes('infringement')) return 'police';
+    if (path.includes('marshal')) return 'marshall';
+    return 'passenger';
+  };
+
   return (
     <>
       {/* Fixed header */}
@@ -40,6 +52,9 @@ export const GlobalHeader = () => {
               <span className="hidden sm:inline">Dashboard</span>
             </Button>
             <span className="text-sm font-semibold text-primary">PoortLink</span>
+          </div>
+          <div className="flex-1 max-w-md mx-4">
+            <SearchCommand role={getRoleFromPath()} />
           </div>
         </div>
       </header>
