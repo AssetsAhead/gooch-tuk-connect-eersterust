@@ -48,6 +48,7 @@ import LegalRevenueShareAgreement from "./pages/LegalRevenueShareAgreement";
 import DOTPresentation from "./pages/DOTPresentation";
 import InfringementMonitoring from "./pages/InfringementMonitoring";
 import CostBreakdown from "./pages/CostBreakdown";
+import WhyJoin from "./pages/WhyJoin";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
