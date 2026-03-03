@@ -48,6 +48,7 @@ import LegalRevenueShareAgreement from "./pages/LegalRevenueShareAgreement";
 import DOTPresentation from "./pages/DOTPresentation";
 import InfringementMonitoring from "./pages/InfringementMonitoring";
 import CostBreakdown from "./pages/CostBreakdown";
+import WhyJoin from "./pages/WhyJoin";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
@@ -150,6 +151,7 @@ const App = () => {
                     <InfringementMonitoring />
                   </ProtectedRoute>
                 } />
+                <Route path="/why-join" element={<WhyJoin />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />

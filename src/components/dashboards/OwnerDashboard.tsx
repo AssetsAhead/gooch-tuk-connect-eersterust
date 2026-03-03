@@ -19,6 +19,7 @@ import { PayrollCalculator } from "@/components/fleet/PayrollCalculator";
 import { DriverOnboardingChecklist } from "@/components/fleet/DriverOnboardingChecklist";
 import { DriverDocumentUpload } from "@/components/fleet/DriverDocumentUpload";
 import { RevenueIntelligence } from "@/components/fleet/RevenueIntelligence";
+import { RevenueLeakageCalculator } from "@/components/fleet/RevenueLeakageCalculator";
 import { SearchCommand } from "@/components/search/SearchCommand";
 
 export const OwnerDashboard = () => {
@@ -65,6 +66,7 @@ export const OwnerDashboard = () => {
 
           {/* Revenue Intelligence Tab */}
           <TabsContent value="revenue" className="space-y-6">
+            <RevenueLeakageCalculator />
             <RevenueIntelligence />
           </TabsContent>
 
