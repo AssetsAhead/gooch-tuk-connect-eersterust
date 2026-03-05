@@ -88,7 +88,7 @@ export type Database = {
           responded_at: string | null
           responded_by: string | null
           response_required: boolean | null
-          response_time: unknown
+          response_time: string | null
           severity: string
           status: string | null
         }
@@ -105,7 +105,7 @@ export type Database = {
           responded_at?: string | null
           responded_by?: string | null
           response_required?: boolean | null
-          response_time?: unknown
+          response_time?: string | null
           severity?: string
           status?: string | null
         }
@@ -122,7 +122,7 @@ export type Database = {
           responded_at?: string | null
           responded_by?: string | null
           response_required?: boolean | null
-          response_time?: unknown
+          response_time?: string | null
           severity?: string
           status?: string | null
         }
