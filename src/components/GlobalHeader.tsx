@@ -12,7 +12,7 @@ export const GlobalHeader = () => {
   // Don't show header on auth pages, landing page, or safe mode
   const hideOnPaths = ["/auth", "/", "/safe", "/unauthorized", "/owner-pitch", "/why-join", "/dot-presentation"];
   const shouldHide = hideOnPaths.some(path => 
-    location.pathname === path || location.pathname.startsWith("/auth/")
+    location.pathname === path || location.pathname.startsWith("/auth/") || location.pathname.startsWith("/track/")
   );
 
   if (shouldHide) return null;

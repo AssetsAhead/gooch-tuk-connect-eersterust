@@ -50,6 +50,7 @@ import InfringementMonitoring from "./pages/InfringementMonitoring";
 import CostBreakdown from "./pages/CostBreakdown";
 import WhyJoin from "./pages/WhyJoin";
 import OwnerPitch from "./pages/OwnerPitch";
+import LiveTrack from "./pages/LiveTrack";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
@@ -154,6 +155,7 @@ const App = () => {
                 } />
                 <Route path="/why-join" element={<WhyJoin />} />
                 <Route path="/owner-pitch" element={<OwnerPitch />} />
+                <Route path="/track/:driverId" element={<LiveTrack />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />

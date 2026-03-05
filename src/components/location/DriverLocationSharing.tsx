@@ -16,8 +16,13 @@ import {
   AlertTriangle,
   Eye,
   EyeOff,
-  RefreshCw
+  RefreshCw,
+  MessageCircle,
+  Share2,
+  Copy,
+  Check
 } from 'lucide-react';
+import { WhatsAppLocationShare } from '@/components/location/WhatsAppLocationShare';
 
 interface Vehicle {
   id: string;
@@ -57,7 +62,10 @@ export default function DriverLocationSharing({
   const [locationHistory, setLocationHistory] = useState<LocationData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [watchId, setWatchId] = useState<number | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
   const { toast } = useToast();
+
+  const trackingUrl = `${window.location.origin}/track/${userId}`;
 
   useEffect(() => {
     fetchAvailableVehicles();
@@ -299,6 +307,19 @@ export default function DriverLocationSharing({
     );
   };
 
+  const copyTrackingLink = () => {
+    navigator.clipboard.writeText(trackingUrl).then(() => {
+      setLinkCopied(true);
+      toast({ title: "Link Copied", description: "Tracking link copied to clipboard" });
+      setTimeout(() => setLinkCopied(false), 2000);
+    });
+  };
+
+  const shareViaWhatsApp = () => {
+    const msg = encodeURIComponent(`📍 Track my live location on MojaRide:\n${trackingUrl}`);
+    window.open(`https://wa.me/?text=${msg}`, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div className="space-y-6">
       {/* Vehicle Selection */}
@@ -470,6 +491,37 @@ export default function DriverLocationSharing({
                 </div>
               </div>
             )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* WhatsApp Live Tracking Share */}
+      {isOnShift && (
+        <Card className="border-[hsl(var(--success))]/30">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Share2 className="h-5 w-5" />
+              Share Live Tracking Link
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Share this link with passengers or your owner so they can track your location in real-time.
+            </p>
+            <div className="flex items-center gap-2">
+              <Input 
+                readOnly 
+                value={trackingUrl} 
+                className="text-xs font-mono bg-muted"
+              />
+              <Button variant="outline" size="icon" onClick={copyTrackingLink}>
+                {linkCopied ? <Check className="h-4 w-4 text-[hsl(var(--success))]" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
+            <Button onClick={shareViaWhatsApp} className="w-full bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white">
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Share via WhatsApp
+            </Button>
           </CardContent>
         </Card>
       )}
