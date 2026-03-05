@@ -307,6 +307,19 @@ export default function DriverLocationSharing({
     );
   };
 
+  const copyTrackingLink = () => {
+    navigator.clipboard.writeText(trackingUrl).then(() => {
+      setLinkCopied(true);
+      toast({ title: "Link Copied", description: "Tracking link copied to clipboard" });
+      setTimeout(() => setLinkCopied(false), 2000);
+    });
+  };
+
+  const shareViaWhatsApp = () => {
+    const msg = encodeURIComponent(`📍 Track my live location on MojaRide:\n${trackingUrl}`);
+    window.open(`https://wa.me/?text=${msg}`, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div className="space-y-6">
       {/* Vehicle Selection */}
