@@ -16,8 +16,13 @@ import {
   AlertTriangle,
   Eye,
   EyeOff,
-  RefreshCw
+  RefreshCw,
+  MessageCircle,
+  Share2,
+  Copy,
+  Check
 } from 'lucide-react';
+import { WhatsAppLocationShare } from '@/components/location/WhatsAppLocationShare';
 
 interface Vehicle {
   id: string;
