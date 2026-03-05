@@ -495,6 +495,37 @@ export default function DriverLocationSharing({
         </Card>
       )}
 
+      {/* WhatsApp Live Tracking Share */}
+      {isOnShift && (
+        <Card className="border-[hsl(var(--success))]/30">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Share2 className="h-5 w-5" />
+              Share Live Tracking Link
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Share this link with passengers or your owner so they can track your location in real-time.
+            </p>
+            <div className="flex items-center gap-2">
+              <Input 
+                readOnly 
+                value={trackingUrl} 
+                className="text-xs font-mono bg-muted"
+              />
+              <Button variant="outline" size="icon" onClick={copyTrackingLink}>
+                {linkCopied ? <Check className="h-4 w-4 text-[hsl(var(--success))]" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
+            <Button onClick={shareViaWhatsApp} className="w-full bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white">
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Share via WhatsApp
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Security Notice */}
       <Card className="border-orange-200 bg-orange-50">
         <CardContent className="p-4">
