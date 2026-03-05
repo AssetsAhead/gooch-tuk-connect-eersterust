@@ -62,7 +62,10 @@ export default function DriverLocationSharing({
   const [locationHistory, setLocationHistory] = useState<LocationData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [watchId, setWatchId] = useState<number | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
   const { toast } = useToast();
+
+  const trackingUrl = `${window.location.origin}/track/${userId}`;
 
   useEffect(() => {
     fetchAvailableVehicles();
