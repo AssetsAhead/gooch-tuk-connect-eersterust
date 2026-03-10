@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Shield, X, Camera, Mic, MapPin } from 'lucide-react';
+import { AlertTriangle, Shield, X, Camera, Mic, MapPin, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
