@@ -313,6 +313,33 @@ export const GlobalPanicButton = () => {
                 {isLawEnforcement() && <li>• Trigger law enforcement protocols</li>}
                 <li>• Broadcast emergency signal to security networks</li>
               </ul>
+
+              {/* TMPD Metro Police Complaint Numbers */}
+              <div className="mt-3 p-3 bg-muted rounded border border-border">
+                <h4 className="text-sm font-semibold flex items-center gap-1.5 mb-2 text-foreground">
+                  <Phone className="h-4 w-4 text-primary" />
+                  TMPD Metro Police (Noise / Disturbance of Peace)
+                </h4>
+                <div className="grid grid-cols-2 gap-1.5 text-xs">
+                  {[
+                    { label: "TMPD", number: "012 358 9450" },
+                    { label: "TMPD", number: "012 358 7095" },
+                    { label: "TMPD", number: "012 358 7096" },
+                    { label: "TMPD", number: "012 358 1905" },
+                    { label: "TMPD", number: "012 734 4144" },
+                    { label: "War Room", number: "012 358 2124" },
+                  ].map((contact) => (
+                    <a
+                      key={contact.number}
+                      href={`tel:${contact.number.replace(/\s/g, "")}`}
+                      className="flex items-center gap-1 text-primary hover:underline"
+                    >
+                      <Phone className="h-3 w-3" />
+                      <span className="font-medium">{contact.label}:</span> {contact.number}
+                    </a>
+                  ))}
+                </div>
+              </div>
               
               <div className="mt-3 p-3 bg-info/10 rounded border border-info/30">
                 <div className="flex items-center space-x-2 mb-2">
