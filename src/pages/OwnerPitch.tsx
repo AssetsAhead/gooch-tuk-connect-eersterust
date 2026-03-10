@@ -503,7 +503,7 @@ const OwnerPitch = () => {
                     { q: "My drivers will refuse", a: "Honest drivers welcome transparency — it protects them from false accusations. Dishonest drivers are costing you money." },
                     { q: "I don't trust technology", a: "Cash payments still work. The app runs in the background. You just check reports on WhatsApp." },
                     { q: "What about data / no signal?", a: "Works offline. Syncs when signal returns. No trip is ever lost." },
-                    { q: "Only 1-2 vehicles — worth it?", a: "Even with 2 vehicles losing 20%, that's R5,000-R8,000/month back. Every vehicle counts." },
+                    { q: "Only 1-2 vehicles — worth it?", a: "Even with 2 vehicles losing just 20%, that's R3,000-R4,000/month back in your pocket. On busier routes it's even more." },
                   ].map((item, i) => (
                     <motion.div
                       key={i}
