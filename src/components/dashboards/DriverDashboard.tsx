@@ -352,6 +352,10 @@ export const DriverDashboard = () => {
             <WhatsAppLocationShare
               message="🚗 MojaRide Driver — here is my current location:"
             />
+            <SMSFallbackSystem 
+              userId={user?.id}
+              driverPhone={driverProfile?.phone || userRegistration?.phone}
+            />
           </TabsContent>
 
           <TabsContent value="realtime" className="space-y-6">

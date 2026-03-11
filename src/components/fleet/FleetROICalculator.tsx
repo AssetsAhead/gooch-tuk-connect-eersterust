@@ -499,6 +499,9 @@ export const FleetROICalculator = () => {
         </CardContent>
       </Card>
 
+      {/* Driver Connectivity Budget */}
+      <ConnectivityCostCalculator />
+
       {/* Actual Revenue Tracking */}
       <RevenueTracking 
         projectedValues={{
