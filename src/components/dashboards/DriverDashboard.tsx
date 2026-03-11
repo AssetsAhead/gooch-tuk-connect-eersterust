@@ -34,6 +34,7 @@ import { IncomingRideRequests } from "@/components/driver/IncomingRideRequests";
 import { CriminalDeclarationForm } from "@/components/compliance/CriminalDeclarationForm";
 import { ICASACertificateUpload } from "@/components/compliance/ICASACertificateUpload";
 import FacialClockingSystem from "@/components/clocking/FacialClockingSystem";
+import { SMSFallbackSystem } from "@/components/driver/SMSFallbackSystem";
 
 export const DriverDashboard = () => {
   const [shiftStarted, setShiftStarted] = useState(false);
