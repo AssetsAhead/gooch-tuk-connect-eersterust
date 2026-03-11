@@ -33,6 +33,7 @@ import {
 } from "recharts";
 import { InvestorPitchExport } from "./InvestorPitchExport";
 import { RevenueTracking } from "./RevenueTracking";
+import { ConnectivityCostCalculator } from "./ConnectivityCostCalculator";
 
 interface ROIInputs {
   vehicleCost: number;
@@ -497,6 +498,9 @@ export const FleetROICalculator = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Driver Connectivity Budget */}
+      <ConnectivityCostCalculator />
 
       {/* Actual Revenue Tracking */}
       <RevenueTracking 
