@@ -160,6 +160,145 @@ const WhyJoin = () => {
         </div>
       </section>
 
+      {/* Permit Comparison */}
+      <section className="py-16 px-4">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">
+            Operating Permit: 3 Paths Compared
+          </h2>
+          <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
+            Every vehicle needs an e-hailing operating permit. Here's what each path costs you in money, time, and risk.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Solo */}
+            <Card className="border-destructive/30 relative">
+              <div className="absolute -top-3 left-4">
+                <Badge variant="destructive" className="text-xs">Most Expensive</Badge>
+              </div>
+              <CardContent className="pt-8 pb-6 space-y-4">
+                <div className="text-center">
+                  <Car className="h-8 w-8 text-destructive mx-auto mb-2" />
+                  <h3 className="text-lg font-bold">Go Solo</h3>
+                  <p className="text-xs text-muted-foreground">Apply on your own</p>
+                </div>
+                <div className="text-center py-3 rounded-lg bg-destructive/5">
+                  <p className="text-2xl font-bold text-destructive">R15,000–R37,000</p>
+                  <p className="text-xs text-muted-foreground">per vehicle</p>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                    <span>6–18 months processing time</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                    <span>Complex DOT paperwork yourself</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                    <span>No compliance system included</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                    <span>High rejection rate without guidance</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                    <span>No collective bargaining power</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Association */}
+            <Card className="border-warning/30 relative">
+              <div className="absolute -top-3 left-4">
+                <Badge className="text-xs bg-warning text-warning-foreground">Uncertain Timeline</Badge>
+              </div>
+              <CardContent className="pt-8 pb-6 space-y-4">
+                <div className="text-center">
+                  <Users className="h-8 w-8 text-warning mx-auto mb-2" />
+                  <h3 className="text-lg font-bold">Wait for Association</h3>
+                  <p className="text-xs text-muted-foreground">Hope the association sorts it out</p>
+                </div>
+                <div className="text-center py-3 rounded-lg bg-warning/5">
+                  <p className="text-2xl font-bold text-warning">Unknown</p>
+                  <p className="text-xs text-muted-foreground">no clear cost or timeline</p>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+                    <span>No guaranteed timeline</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+                    <span>Dependent on committee decisions</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+                    <span>No digital compliance proof</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    <span>Some collective voice</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+                    <span>You operate unprotected while waiting</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* MojaRide */}
+            <Card className="border-secondary/50 ring-2 ring-secondary/30 relative shadow-lg">
+              <div className="absolute -top-3 left-4">
+                <Badge className="text-xs bg-secondary text-secondary-foreground">Recommended</Badge>
+              </div>
+              <CardContent className="pt-8 pb-6 space-y-4">
+                <div className="text-center">
+                  <Shield className="h-8 w-8 text-secondary mx-auto mb-2" />
+                  <h3 className="text-lg font-bold">Join MojaRide</h3>
+                  <p className="text-xs text-muted-foreground">Register under our e-hailing license</p>
+                </div>
+                <div className="text-center py-3 rounded-lg bg-secondary/10">
+                  <p className="text-2xl font-bold text-secondary">R0 Upfront</p>
+                  <p className="text-xs text-muted-foreground">5–8% of app-facilitated rides only</p>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    <span>Vehicles covered under platform license</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    <span>DOT-ready compliance built in</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    <span>Authorities included — we work with them</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    <span>Association gains digital clout</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    <span>Cash rides stay 100% yours</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <p className="text-center text-xs text-muted-foreground mt-6">
+            Under the National Land Transport Amendment Act 23 of 2023, e-hailing vehicles must operate under a licensed platform. 
+            MojaRide holds the centralised e-hailing service license so your vehicles don't need individual permits.
+          </p>
+        </div>
+      </section>
+
       {/* How it works */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
