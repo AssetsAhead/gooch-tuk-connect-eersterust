@@ -101,4 +101,18 @@ export const ALL_SEARCHABLE_ITEMS: SearchableItem[] = [
   { id: 'feat-geofence', title: 'Geofence Zones', subtitle: 'Virtual boundaries and zone rules', category: 'Features', keywords: ['geofence', 'zone', 'boundary', 'area', 'restrict', 'virtual', 'fence'], path: '/admin' },
   { id: 'feat-rank-fees', title: 'Rank Access Fees', subtitle: 'Weekly rank access fee tracking', category: 'Features', keywords: ['rank', 'access', 'fee', 'weekly', 'payment', 'levy', 'association'], path: '/owner' },
   { id: 'infringement-monitoring', title: 'Road Infringement Monitoring', subtitle: 'AI traffic violation detection, AARTO demerits, DOT reports', category: 'Safety & Monitoring', keywords: ['infringement', 'violation', 'traffic', 'road', 'aarto', 'demerit', 'fine', 'speeding', 'red light', 'overloading', 'reckless', 'dot', 'compliance', 'report', 'camera', 'ai', 'monitoring', 'tsinglink'], path: '/infringement-monitoring', roles: ['admin', 'owner', 'police', 'marshall'] },
+
+  // ── Growth & Onboarding ──
+  { id: 'why-join', title: 'Why Join MojaRide', subtitle: 'Benefits of joining the platform, permit comparison', category: 'Growth', keywords: ['why', 'join', 'mojaride', 'poortlink', 'benefits', 'permit', 'comparison', 'solo', 'association', 'owner', 'onboard', 'sign up', 'advantages'], path: '/why-join' },
+  { id: 'owner-pitch', title: 'Owner Pitch', subtitle: 'Pitch deck for taxi owners to join', category: 'Growth', keywords: ['owner', 'pitch', 'deck', 'presentation', 'convince', 'join', 'benefits', 'taxi', 'value'], path: '/owner-pitch' },
+
+  // ── Live Tracking ──
+  { id: 'live-track', title: 'Live Driver Tracking', subtitle: 'Real-time GPS tracking of a driver', category: 'Safety', keywords: ['live', 'track', 'tracking', 'gps', 'driver', 'location', 'realtime', 'map', 'where'], path: '/track/' },
+
+  // ── Investor (eSwatini) ──
+  { id: 'investor-eswatini', title: 'eSwatini Expansion Proposal', subtitle: 'Cross-border expansion to eSwatini', category: 'Investor', keywords: ['eswatini', 'swaziland', 'cross-border', 'expansion', 'africa', 'international', 'investor'], path: '/investor/eswatini' },
+
+  // ── Legal (additional) ──
+  { id: 'legal-nda', title: 'Non-Disclosure Agreement', subtitle: 'NDA for partners and investors', category: 'Legal', keywords: ['nda', 'non-disclosure', 'agreement', 'confidential', 'confidentiality', 'partner', 'investor', 'secret'], path: '/legal/nda' },
+  { id: 'legal-revenue-share', title: 'Revenue Share Agreement', subtitle: 'Revenue sharing contract template', category: 'Legal', keywords: ['revenue', 'share', 'agreement', 'contract', 'split', 'commission', 'partnership', 'payout'], path: '/legal/revenue-share' },
 ];
