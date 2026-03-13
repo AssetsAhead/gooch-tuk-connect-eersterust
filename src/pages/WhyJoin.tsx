@@ -180,7 +180,7 @@ const WhyJoin = () => {
                 <div className="text-center">
                   <Car className="h-8 w-8 text-destructive mx-auto mb-2" />
                   <h3 className="text-lg font-bold">Go Solo</h3>
-                  <p className="text-xs text-muted-foreground">Apply on your own</p>
+                  <p className="text-xs text-muted-foreground">Apply on your own, per vehicle</p>
                 </div>
                 <div className="text-center py-3 rounded-lg bg-destructive/5">
                   <p className="text-2xl font-bold text-destructive">R15,000–R37,000</p>
@@ -193,11 +193,15 @@ const WhyJoin = () => {
                   </div>
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-                    <span>Complex DOT paperwork yourself</span>
+                    <span>Complex DOT Form 9A paperwork yourself</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-                    <span>No compliance system included</span>
+                    <span>ICASA equipment certificate required</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                    <span>Must demo a live, working app to DOT</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
@@ -205,7 +209,7 @@ const WhyJoin = () => {
                   </div>
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-                    <span>No collective bargaining power</span>
+                    <span>No compliance system included</span>
                   </div>
                 </div>
               </CardContent>
@@ -214,38 +218,60 @@ const WhyJoin = () => {
             {/* Association */}
             <Card className="border-warning/30 relative">
               <div className="absolute -top-3 left-4">
-                <Badge className="text-xs bg-warning text-warning-foreground">Uncertain Timeline</Badge>
+                <Badge className="text-xs bg-warning text-warning-foreground">R180K–R550K+</Badge>
               </div>
               <CardContent className="pt-8 pb-6 space-y-4">
                 <div className="text-center">
                   <Users className="h-8 w-8 text-warning mx-auto mb-2" />
-                  <h3 className="text-lg font-bold">Wait for Association</h3>
-                  <p className="text-xs text-muted-foreground">Hope the association sorts it out</p>
+                  <h3 className="text-lg font-bold">Association DIY</h3>
+                  <p className="text-xs text-muted-foreground">Build your own platform & apply</p>
                 </div>
                 <div className="text-center py-3 rounded-lg bg-warning/5">
-                  <p className="text-2xl font-bold text-warning">Unknown</p>
-                  <p className="text-xs text-muted-foreground">no clear cost or timeline</p>
+                  <p className="text-2xl font-bold text-warning">R180K–R550K+</p>
+                  <p className="text-xs text-muted-foreground">before a single vehicle is permitted</p>
                 </div>
+
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">What you'd need to build:</p>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
-                    <span>No guaranteed timeline</span>
+                    <span><strong>App development:</strong> R150K–R500K</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
-                    <span>Dependent on committee decisions</span>
+                    <span><strong>ICASA cert:</strong> R3K–R8K</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
-                    <span>No digital compliance proof</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
-                    <span>Some collective voice</span>
+                    <span><strong>Legal & DOT filing:</strong> R8K–R27K</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
-                    <span>You operate unprotected while waiting</span>
+                    <span><strong>Gazette publication:</strong> R2K–R5K</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+                    <span><strong>Ongoing hosting:</strong> R5K–R15K/month</span>
+                  </div>
+                </div>
+
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide pt-1">Plus DOT requires:</p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+                    <span>Live app demo at assessment</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+                    <span>SARS tax compliance as platform operator</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+                    <span>POPIA registration as data processor</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+                    <span>6–18 month timeline at best</span>
                   </div>
                 </div>
               </CardContent>
@@ -266,35 +292,58 @@ const WhyJoin = () => {
                   <p className="text-2xl font-bold text-secondary">R0 Upfront</p>
                   <p className="text-xs text-muted-foreground">5–8% of app-facilitated rides only</p>
                 </div>
+
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">All included — already built:</p>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
-                    <span>Vehicles covered under platform license</span>
+                    <span><strong>Working app:</strong> ✅ Already live</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
-                    <span>DOT-ready compliance built in</span>
+                    <span><strong>ICASA cert:</strong> ✅ Platform handles</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
-                    <span>Authorities included — we work with them</span>
+                    <span><strong>DOT application:</strong> ✅ Covered</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
-                    <span>Association gains digital clout</span>
+                    <span><strong>POPIA & SARS:</strong> ✅ Compliant</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    <span><strong>Hosting & tech:</strong> ✅ Maintained</span>
+                  </div>
+                </div>
+
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide pt-1">Association benefits preserved:</p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    <span>Keep your identity & governance</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    <span>Route authority stays with you</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
                     <span>Cash rides stay 100% yours</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    <span>Co-branded compliance dashboard</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          <p className="text-center text-xs text-muted-foreground mt-6">
+          <p className="text-center text-xs text-muted-foreground mt-6 max-w-3xl mx-auto">
             Under the National Land Transport Amendment Act 23 of 2023, e-hailing vehicles must operate under a licensed platform. 
-            MojaRide holds the centralised e-hailing service license so your vehicles don't need individual permits.
+            MojaRide holds the centralised e-hailing service license so your vehicles don't need individual permits. 
+            The association gains digital clout and DOT-ready reporting without spending R180K+ building their own system.
           </p>
         </div>
       </section>
