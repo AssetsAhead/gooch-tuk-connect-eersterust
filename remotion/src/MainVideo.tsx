@@ -1,6 +1,4 @@
 import { AbsoluteFill, Series, useCurrentFrame, interpolate } from "remotion";
-import { loadFont as loadOswald } from "@remotion/google-fonts/Oswald";
-import { loadFont as loadInter } from "@remotion/google-fonts/Inter";
 import { Scene1Hook } from "./scenes/Scene1Hook";
 import { Scene2Problem } from "./scenes/Scene2Problem";
 import { Scene3Solution } from "./scenes/Scene3Solution";
