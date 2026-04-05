@@ -43,10 +43,13 @@ const subtitles: { text: string; from: number; to: number }[] = [
   { text: "Eersterust pilot ready to launch.", from: 2370, to: 2510 },
   
   // Scene 5: Revenue (2520-3150)
-  { text: "Revenue from three streams:", from: 2550, to: 2670 },
-  { text: "SaaS subscriptions for fleet owners.", from: 2670, to: 2810 },
-  { text: "Transaction fees on every digital payment.", from: 2810, to: 2960 },
-  { text: "SASSA verification processing fees.", from: 2960, to: 3100 },
+  { text: "Revenue from six diversified streams:", from: 2550, to: 2650 },
+  { text: "SaaS subscriptions for fleet owners.", from: 2650, to: 2760 },
+  { text: "Transaction fees on every digital payment.", from: 2760, to: 2870 },
+  { text: "SASSA verification processing fees.", from: 2870, to: 2960 },
+  { text: "Vehicle wraps and in-app advertising.", from: 2960, to: 3040 },
+  { text: "Fintech referrals: micro-loans, airtime, electricity.", from: 3040, to: 3100 },
+  { text: "Data analytics licensing to government.", from: 3100, to: 3150 },
   
   // Scene 6: Ask (3150-3600)
   { text: "We're raising R2 million in seed funding.", from: 3180, to: 3310 },

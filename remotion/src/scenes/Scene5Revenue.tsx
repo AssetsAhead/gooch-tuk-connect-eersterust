@@ -28,9 +28,9 @@ export const Scene5Revenue: React.FC = () => {
         </span>
         <div style={{
           fontFamily: FONTS.body, fontSize: 24, color: COLORS.lightGray,
-          letterSpacing: "0.1em", marginTop: 8,
+         letterSpacing: "0.1em", marginTop: 4,
         }}>
-          Three diversified income streams
+          Six diversified income streams
         </div>
       </div>
       
