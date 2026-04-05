@@ -22,6 +22,7 @@ const composition = await selectComposition({
   serveUrl: bundled,
   id: "main",
   puppeteerInstance: browser,
+  timeoutInMilliseconds: 120000,
 });
 
 console.log("Rendering", composition.durationInFrames, "frames...");
