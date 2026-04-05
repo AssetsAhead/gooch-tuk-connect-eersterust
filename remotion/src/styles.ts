@@ -14,6 +14,6 @@ export const COLORS = {
 };
 
 export const FONTS = {
-  display: "Oswald",
-  body: "Inter",
+  display: "Liberation Sans, Arial, sans-serif",
+  body: "Liberation Sans, Arial, sans-serif",
 };
