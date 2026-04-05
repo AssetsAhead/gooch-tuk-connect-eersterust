@@ -3,8 +3,11 @@ import { COLORS, FONTS } from "../styles";
 
 const streams = [
   { title: "SaaS Subscriptions", amount: "R499/mo", desc: "Per vehicle fleet management", color: COLORS.electricGreen, width: 55 },
-  { title: "Transaction Fees", amount: "1.5%", desc: "On every digital payment", color: COLORS.accentBlue, width: 35 },
-  { title: "SASSA Processing", amount: "R5/verify", desc: "Grant verification fees", color: COLORS.gold, width: 25 },
+  { title: "Transaction Fees", amount: "1.5%", desc: "On every digital payment", color: COLORS.accentBlue, width: 40 },
+  { title: "SASSA Processing", amount: "R5/verify", desc: "Grant verification fees", color: COLORS.gold, width: 20 },
+  { title: "Advertising", amount: "Wraps+Ads", desc: "Vehicle wraps & in-app banners", color: "#FF6B6B", width: 30 },
+  { title: "Fintech & VAS", amount: "Referrals", desc: "Micro-loans, airtime, electricity", color: "#A78BFA", width: 25 },
+  { title: "Data Analytics", amount: "Licensing", desc: "Anonymised transport insights", color: "#38BDF8", width: 35 },
 ];
 
 export const Scene5Revenue: React.FC = () => {
@@ -19,25 +22,25 @@ export const Scene5Revenue: React.FC = () => {
         opacity: interpolate(frame, [0, 30], [0, 1], { extrapolateRight: "clamp" }),
       }}>
         <span style={{
-          fontFamily: FONTS.display, fontSize: 80, fontWeight: 700, color: COLORS.electricGreen,
+          fontFamily: FONTS.display, fontSize: 72, fontWeight: 700, color: COLORS.electricGreen,
         }}>
           REVENUE MODEL
         </span>
         <div style={{
           fontFamily: FONTS.body, fontSize: 24, color: COLORS.lightGray,
-          letterSpacing: "0.1em", marginTop: 8,
+         letterSpacing: "0.1em", marginTop: 4,
         }}>
-          Three diversified income streams
+          Six diversified income streams
         </div>
       </div>
       
       {/* Revenue stream cards */}
       <div style={{
-        position: "absolute", top: 240, left: 80, right: 80, bottom: 120,
-        display: "flex", flexDirection: "column", gap: 30,
+        position: "absolute", top: 220, left: 80, right: 80, bottom: 100,
+        display: "flex", flexDirection: "column", gap: 16,
       }}>
         {streams.map((s, i) => {
-          const delay = 60 + i * 80;
+          const delay = 40 + i * 50;
           const sp = spring({ frame: frame - delay, fps, config: { damping: 18 } });
           const barWidth = interpolate(sp, [0, 1], [0, s.width]);
           const op = interpolate(sp, [0, 1], [0, 1]);
@@ -46,21 +49,21 @@ export const Scene5Revenue: React.FC = () => {
           return (
             <div key={i} style={{ opacity: op, transform: `translateX(${x}px)` }}>
               <div style={{
-                display: "flex", alignItems: "flex-end", gap: 30, marginBottom: 12,
+                display: "flex", alignItems: "flex-end", gap: 24, marginBottom: 8,
               }}>
                 <span style={{
-                  fontFamily: FONTS.display, fontSize: 56, fontWeight: 700, color: s.color,
+                  fontFamily: FONTS.display, fontSize: 40, fontWeight: 700, color: s.color,
                 }}>
                   {s.amount}
                 </span>
                 <div>
                   <div style={{
-                    fontFamily: FONTS.display, fontSize: 32, color: COLORS.white, fontWeight: 600,
+                    fontFamily: FONTS.display, fontSize: 26, color: COLORS.white, fontWeight: 600,
                   }}>
                     {s.title}
                   </div>
                   <div style={{
-                    fontFamily: FONTS.body, fontSize: 22, color: COLORS.lightGray,
+                    fontFamily: FONTS.body, fontSize: 18, color: COLORS.lightGray,
                   }}>
                     {s.desc}
                   </div>
