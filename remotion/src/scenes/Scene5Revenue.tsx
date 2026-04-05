@@ -40,7 +40,7 @@ export const Scene5Revenue: React.FC = () => {
         display: "flex", flexDirection: "column", gap: 16,
       }}>
         {streams.map((s, i) => {
-          const delay = 60 + i * 80;
+          const delay = 40 + i * 50;
           const sp = spring({ frame: frame - delay, fps, config: { damping: 18 } });
           const barWidth = interpolate(sp, [0, 1], [0, s.width]);
           const op = interpolate(sp, [0, 1], [0, 1]);
