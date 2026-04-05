@@ -49,21 +49,21 @@ export const Scene5Revenue: React.FC = () => {
           return (
             <div key={i} style={{ opacity: op, transform: `translateX(${x}px)` }}>
               <div style={{
-                display: "flex", alignItems: "flex-end", gap: 30, marginBottom: 12,
+                display: "flex", alignItems: "flex-end", gap: 24, marginBottom: 8,
               }}>
                 <span style={{
-                  fontFamily: FONTS.display, fontSize: 56, fontWeight: 700, color: s.color,
+                  fontFamily: FONTS.display, fontSize: 40, fontWeight: 700, color: s.color,
                 }}>
                   {s.amount}
                 </span>
                 <div>
                   <div style={{
-                    fontFamily: FONTS.display, fontSize: 32, color: COLORS.white, fontWeight: 600,
+                    fontFamily: FONTS.display, fontSize: 26, color: COLORS.white, fontWeight: 600,
                   }}>
                     {s.title}
                   </div>
                   <div style={{
-                    fontFamily: FONTS.body, fontSize: 22, color: COLORS.lightGray,
+                    fontFamily: FONTS.body, fontSize: 18, color: COLORS.lightGray,
                   }}>
                     {s.desc}
                   </div>
