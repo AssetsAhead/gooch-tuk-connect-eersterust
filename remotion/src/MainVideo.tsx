@@ -9,8 +9,6 @@ import { PersistentBackground } from "./components/PersistentBackground";
 import { SubtitleBar } from "./components/SubtitleBar";
 import { COLORS } from "./styles";
 
-loadOswald();
-loadInter();
 
 // Subtitles timed to scenes
 const subtitles: { text: string; from: number; to: number }[] = [
