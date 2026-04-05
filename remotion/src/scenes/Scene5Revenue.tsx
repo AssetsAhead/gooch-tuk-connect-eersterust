@@ -36,8 +36,8 @@ export const Scene5Revenue: React.FC = () => {
       
       {/* Revenue stream cards */}
       <div style={{
-        position: "absolute", top: 240, left: 80, right: 80, bottom: 120,
-        display: "flex", flexDirection: "column", gap: 30,
+        position: "absolute", top: 220, left: 80, right: 80, bottom: 100,
+        display: "flex", flexDirection: "column", gap: 16,
       }}>
         {streams.map((s, i) => {
           const delay = 60 + i * 80;
