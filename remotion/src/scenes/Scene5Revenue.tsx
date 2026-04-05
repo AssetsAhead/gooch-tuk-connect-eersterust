@@ -3,8 +3,11 @@ import { COLORS, FONTS } from "../styles";
 
 const streams = [
   { title: "SaaS Subscriptions", amount: "R499/mo", desc: "Per vehicle fleet management", color: COLORS.electricGreen, width: 55 },
-  { title: "Transaction Fees", amount: "1.5%", desc: "On every digital payment", color: COLORS.accentBlue, width: 35 },
-  { title: "SASSA Processing", amount: "R5/verify", desc: "Grant verification fees", color: COLORS.gold, width: 25 },
+  { title: "Transaction Fees", amount: "1.5%", desc: "On every digital payment", color: COLORS.accentBlue, width: 40 },
+  { title: "SASSA Processing", amount: "R5/verify", desc: "Grant verification fees", color: COLORS.gold, width: 20 },
+  { title: "Advertising", amount: "Wraps+Ads", desc: "Vehicle wraps & in-app banners", color: "#FF6B6B", width: 30 },
+  { title: "Fintech & VAS", amount: "Referrals", desc: "Micro-loans, airtime, electricity", color: "#A78BFA", width: 25 },
+  { title: "Data Analytics", amount: "Licensing", desc: "Anonymised transport insights", color: "#38BDF8", width: 35 },
 ];
 
 export const Scene5Revenue: React.FC = () => {
