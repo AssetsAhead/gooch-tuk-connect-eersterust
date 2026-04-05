@@ -22,7 +22,7 @@ export const Scene5Revenue: React.FC = () => {
         opacity: interpolate(frame, [0, 30], [0, 1], { extrapolateRight: "clamp" }),
       }}>
         <span style={{
-          fontFamily: FONTS.display, fontSize: 80, fontWeight: 700, color: COLORS.electricGreen,
+          fontFamily: FONTS.display, fontSize: 72, fontWeight: 700, color: COLORS.electricGreen,
         }}>
           REVENUE MODEL
         </span>
