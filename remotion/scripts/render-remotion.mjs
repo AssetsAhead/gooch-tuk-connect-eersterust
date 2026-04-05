@@ -34,6 +34,7 @@ await renderMedia({
   puppeteerInstance: browser,
   muted: true,
   concurrency: 1,
+  timeoutInMilliseconds: 120000,
 });
 
 await browser.close({ silent: false });
