@@ -86,19 +86,19 @@ export const MainVideo: React.FC = () => {
         <Series.Sequence durationInFrames={720}>
           <Scene3Solution />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={540}>
+        <Series.Sequence durationInFrames={450}>
           <Scene4Traction />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={630}>
+        <Series.Sequence durationInFrames={510}>
           <Scene5Customer />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={630}>
+        <Series.Sequence durationInFrames={480}>
           <Scene5Revenue />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={630}>
+        <Series.Sequence durationInFrames={510}>
           <Scene7FareEconomics />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={450}>
+        <Series.Sequence durationInFrames={390}>
           <Scene6Ask />
         </Series.Sequence>
       </Series>
