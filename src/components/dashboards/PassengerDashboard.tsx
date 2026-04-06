@@ -543,6 +543,7 @@ export const PassengerDashboard = () => {
 
           {/* Rewards Tab */}
           <TabsContent value="rewards" className="space-y-6">
+            <PassengerLoyalty />
             <ReputationSystem 
               userType="passenger" 
               currentPoints={320} 
