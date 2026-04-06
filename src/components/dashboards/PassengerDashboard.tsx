@@ -35,6 +35,7 @@ import { NotificationCenter } from "@/components/notifications/NotificationCente
 import { SmartHailCard } from "@/components/hailing/SmartHailCard";
 import { DriverRatingDialog } from "@/components/passenger/DriverRatingDialog";
 import { WhatsAppLocationShare } from "@/components/location/WhatsAppLocationShare";
+import { PassengerLoyalty } from "@/components/incentives/PassengerLoyalty";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
