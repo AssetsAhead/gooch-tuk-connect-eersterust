@@ -74,28 +74,28 @@ export const MainVideo: React.FC = () => {
       <PersistentBackground />
 
       <Series>
-        <Series.Sequence durationInFrames={540}>
+        <Series.Sequence durationInFrames={360}>
           <Scene1Hook />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={540}>
+        <Series.Sequence durationInFrames={360}>
           <Scene2Problem />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={720}>
+        <Series.Sequence durationInFrames={450}>
           <Scene3Solution />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={450}>
+        <Series.Sequence durationInFrames={300}>
           <Scene4Traction />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={510}>
+        <Series.Sequence durationInFrames={360}>
           <Scene5Customer />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={480}>
+        <Series.Sequence durationInFrames={360}>
           <Scene5Revenue />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={510}>
+        <Series.Sequence durationInFrames={360}>
           <Scene7FareEconomics />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={390}>
+        <Series.Sequence durationInFrames={300}>
           <Scene6Ask />
         </Series.Sequence>
       </Series>
