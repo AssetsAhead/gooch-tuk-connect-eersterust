@@ -48,6 +48,7 @@ import LegalRevenueShareAgreement from "./pages/LegalRevenueShareAgreement";
 import DOTPresentation from "./pages/DOTPresentation";
 import InfringementMonitoring from "./pages/InfringementMonitoring";
 import CostBreakdown from "./pages/CostBreakdown";
+import IntelHub from "./pages/IntelHub";
 import WhyJoin from "./pages/WhyJoin";
 import OwnerPitch from "./pages/OwnerPitch";
 import LiveTrack from "./pages/LiveTrack";
@@ -151,6 +152,11 @@ const App = () => {
                 <Route path="/infringement-monitoring" element={
                   <ProtectedRoute requiredRole={['admin', 'owner', 'police', 'marshall']}>
                     <InfringementMonitoring />
+                  </ProtectedRoute>
+                } />
+                <Route path="/intel-hub" element={
+                  <ProtectedRoute requiredRole={['admin', 'owner']}>
+                    <IntelHub />
                   </ProtectedRoute>
                 } />
                 <Route path="/why-join" element={<WhyJoin />} />

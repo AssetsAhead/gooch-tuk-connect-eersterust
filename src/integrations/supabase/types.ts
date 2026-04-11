@@ -2804,6 +2804,54 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_intel_messages: {
+        Row: {
+          category: string
+          created_at: string
+          forwarded_from: string | null
+          from_number: string
+          id: string
+          is_reviewed: boolean
+          media_url: string | null
+          message_body: string | null
+          received_at: string
+          review_notes: string | null
+          reviewed_by: string | null
+          twilio_sid: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          forwarded_from?: string | null
+          from_number: string
+          id?: string
+          is_reviewed?: boolean
+          media_url?: string | null
+          message_body?: string | null
+          received_at?: string
+          review_notes?: string | null
+          reviewed_by?: string | null
+          twilio_sid?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          forwarded_from?: string | null
+          from_number?: string
+          id?: string
+          is_reviewed?: boolean
+          media_url?: string | null
+          message_body?: string | null
+          received_at?: string
+          review_notes?: string | null
+          reviewed_by?: string | null
+          twilio_sid?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       zone_queue: {
         Row: {
           created_at: string
