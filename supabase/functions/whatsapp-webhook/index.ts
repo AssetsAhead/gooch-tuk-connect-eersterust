@@ -10,6 +10,13 @@ const corsHeaders = {
 };
 
 // Auto-categorise messages based on keywords
+// Filter out political and religious banter — strictly business
+const isPoliticalOrReligious = (body: string): boolean => {
+  const lower = body.toLowerCase();
+  return /\b(anc|da|eff|mk\s?party|action\s?sa|patriotic\s?alliance|zuma|ramaphosa|malema|steenhuisen|election|vote|ballot|parliament|politician|political|municipality\s?election|ward\s?councillor\s?election|campaign|rally|manifesto)\b/i.test(lower)
+    || /\b(church|mosque|pastor|imam|pray|prayer|god\s?is|jesus|allah|bible|quran|scripture|sermon|congregation|worship|hallelujah|amen|blessed|prophec|prophet|apostle|ministry|gospel)\b/i.test(lower);
+};
+
 const categoriseMessage = (body: string): string => {
   const lower = body.toLowerCase();
   if (/accident|crash|hijack|robbery|attack|stab|shoot|gun|knife|dead|kill/i.test(lower)) return 'safety';
@@ -60,6 +67,15 @@ const handler = async (req: Request): Promise<Response> => {
         '<Response><Message>Invalid request.</Message></Response>',
         { status: 400, headers: { 'Content-Type': 'text/xml', ...corsHeaders } }
       );
+    }
+
+    // Filter out political/religious banter — strictly business
+    if (isPoliticalOrReligious(body)) {
+      console.log(`Filtered: political/religious content from ${cleanNumber.slice(-4)}`);
+      return new Response('<Response></Response>', {
+        status: 200,
+        headers: { 'Content-Type': 'text/xml', ...corsHeaders },
+      });
     }
 
     // Auto-categorise
