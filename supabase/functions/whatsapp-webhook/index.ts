@@ -69,6 +69,15 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    // Filter out political/religious banter — strictly business
+    if (isPoliticalOrReligious(body)) {
+      console.log(`Filtered: political/religious content from ${cleanNumber.slice(-4)}`);
+      return new Response('<Response></Response>', {
+        status: 200,
+        headers: { 'Content-Type': 'text/xml', ...corsHeaders },
+      });
+    }
+
     // Auto-categorise
     const category = categoriseMessage(body);
 
