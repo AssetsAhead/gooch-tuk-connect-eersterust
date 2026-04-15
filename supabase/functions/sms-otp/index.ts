@@ -176,17 +176,27 @@ const handler = async (req: Request): Promise<Response> => {
         console.log('User has no active roles - granting passenger role');
         
         // Use upsert to avoid duplicate key errors
-        await supabase.from('user_roles').upsert({
+        const { error: roleError } = await supabase.from('user_roles').upsert({
           user_id: user.id,
           role: 'passenger',
           is_active: true,
         }, { onConflict: 'user_id,role' });
 
-        await supabase.from('portal_access').upsert({
+        if (roleError) {
+          console.error('Failed to insert passenger role:', JSON.stringify(roleError));
+        } else {
+          console.log('Passenger role granted successfully');
+        }
+
+        const { error: portalError } = await supabase.from('portal_access').upsert({
           user_id: user.id,
           portal_type: 'passenger',
           access_granted: true,
         }, { onConflict: 'user_id,portal_type' });
+
+        if (portalError) {
+          console.error('Failed to insert portal access:', JSON.stringify(portalError));
+        }
       }
 
       return new Response(
