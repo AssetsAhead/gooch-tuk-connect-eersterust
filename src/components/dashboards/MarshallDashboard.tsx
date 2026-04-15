@@ -6,7 +6,7 @@ import { MapPin, Car, User, Settings, Users, AlertTriangle, FileText } from "luc
 import { useState } from "react";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { ZoneQueueManager } from "@/components/queue/ZoneQueueManager";
-
+import { HailRideCard } from "@/components/hailing/HailRideCard";
 export const MarshallDashboard = () => {
   const [currentShift, setCurrentShift] = useState(false);
 
@@ -52,6 +52,9 @@ export const MarshallDashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Hail a Ride for passengers */}
+        <HailRideCard compact />
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="queue" className="space-y-6">

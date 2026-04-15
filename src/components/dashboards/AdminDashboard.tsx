@@ -22,7 +22,7 @@ import { SmsUsageTracker } from "@/components/admin/SmsUsageTracker";
 import { RevenueIntelligence } from "@/components/fleet/RevenueIntelligence";
 import { VideoFrameExtractor } from "@/components/camera/VideoFrameExtractor";
 import { SearchCommand } from "@/components/search/SearchCommand";
-
+import { HailRideCard } from "@/components/hailing/HailRideCard";
 export const AdminDashboard = () => {
   const [sassaVerifications, setSassaVerifications] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -130,6 +130,11 @@ export const AdminDashboard = () => {
               Sign Out
             </Button>
           </div>
+        </div>
+
+        {/* Hail a Ride */}
+        <div className="mb-6">
+          <HailRideCard compact />
         </div>
 
         {/* Key Metrics */}

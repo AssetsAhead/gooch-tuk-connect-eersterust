@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mic, MicOff, Loader2, Globe } from 'lucide-react';
+import { Mic, MicOff, Loader2, Globe, Volume2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface VoiceHailButtonProps {
@@ -218,23 +218,30 @@ const VoiceHailButton: React.FC<VoiceHailButtonProps> = ({
 
       {/* Mic Button */}
       <Button
-        variant={isListening ? "destructive" : "outline"}
+        variant={isListening ? "destructive" : "default"}
         size="lg"
         onClick={isListening ? stopListening : startListening}
         disabled={disabled || isProcessing}
-        className="h-16 w-16 rounded-full p-0 transition-all duration-200"
+        className={`h-16 w-16 rounded-full p-0 transition-all duration-200 ${
+          !isListening && !isProcessing
+            ? 'bg-yellow-400 hover:bg-yellow-300 text-black border-yellow-500 shadow-lg'
+            : ''
+        }`}
       >
         {isProcessing ? (
           <Loader2 className="h-6 w-6 animate-spin" />
         ) : isListening ? (
           <MicOff className="h-6 w-6" />
         ) : (
-          <Mic className="h-6 w-6" />
+          <div className="flex flex-col items-center gap-0.5">
+            <Volume2 className="h-5 w-5" />
+            <Mic className="h-4 w-4" />
+          </div>
         )}
       </Button>
       
       <span className="text-xs text-muted-foreground text-center">
-        {isListening ? 'Listening...' : isProcessing ? 'Processing...' : 'Voice Hail'}
+        {isListening ? 'Listening...' : isProcessing ? 'Processing...' : '🗣️ Voice Hail'}
       </span>
       
       {transcript && isListening && (

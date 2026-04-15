@@ -35,7 +35,7 @@ import { CriminalDeclarationForm } from "@/components/compliance/CriminalDeclara
 import { ICASACertificateUpload } from "@/components/compliance/ICASACertificateUpload";
 import FacialClockingSystem from "@/components/clocking/FacialClockingSystem";
 import { SMSFallbackSystem } from "@/components/driver/SMSFallbackSystem";
-
+import { HailRideCard } from "@/components/hailing/HailRideCard";
 export const DriverDashboard = () => {
   const [shiftStarted, setShiftStarted] = useState(false);
   const [availableRides, setAvailableRides] = useState([]);
@@ -176,6 +176,11 @@ export const DriverDashboard = () => {
               <p className="text-sm text-muted-foreground">Today's Earnings</p>
             </div>
           </div>
+        </div>
+
+        {/* Hail a Ride */}
+        <div className="mb-6">
+          <HailRideCard compact />
         </div>
 
         <Tabs defaultValue="rides" className="space-y-6">

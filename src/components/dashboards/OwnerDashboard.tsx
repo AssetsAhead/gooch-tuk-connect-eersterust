@@ -21,7 +21,7 @@ import { DriverDocumentUpload } from "@/components/fleet/DriverDocumentUpload";
 import { RevenueIntelligence } from "@/components/fleet/RevenueIntelligence";
 import { RevenueLeakageCalculator } from "@/components/fleet/RevenueLeakageCalculator";
 import { SearchCommand } from "@/components/search/SearchCommand";
-
+import { HailRideCard } from "@/components/hailing/HailRideCard";
 export const OwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("fleet");
 
@@ -38,6 +38,11 @@ export const OwnerDashboard = () => {
             <SearchCommand role="owner" />
             <NotificationCenter />
           </div>
+        </div>
+
+        {/* Hail a Ride */}
+        <div className="mb-6">
+          <HailRideCard compact />
         </div>
 
         {/* Tabs */}
