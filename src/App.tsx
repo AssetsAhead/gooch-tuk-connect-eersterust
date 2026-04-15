@@ -167,6 +167,7 @@ const App = () => {
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                <FloatingHailFAB />
                 <GlobalPanicButton />
                 {/* Dev tools disabled by default to prevent React conflicts */}
                 {/* Uncomment only the tools you need, not all at once */}
