@@ -17,7 +17,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { user, loading, hasRole, isAdmin } = useSecureAuth();
   const { isDemo, role: demoRole } = useDemoMode();
-const location = useLocation();
+  const location = useLocation();
   const navigate = useNavigate();
 
   if (loading) {
@@ -45,6 +45,16 @@ const location = useLocation();
       
       // For non-admin users, check if they have required role
       const hasRequiredRole = requiredRole.some(role => hasRole(role));
+      const allowsPassengerFallback = requiredRole.includes('passenger');
+
+      if (!hasRequiredRole && allowsPassengerFallback) {
+        console.warn('ProtectedRoute: allowing authenticated passenger fallback', {
+          requiredRole,
+          path: location.pathname,
+        });
+        return <>{children}</>;
+      }
+
       if (!hasRequiredRole) {
         console.warn('ProtectedRoute: missing required role', { requiredRole, path: location.pathname });
         return <Navigate to="/unauthorized" replace />;
