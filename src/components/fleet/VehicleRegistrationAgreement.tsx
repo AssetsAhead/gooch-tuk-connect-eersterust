@@ -281,7 +281,7 @@ export const VehicleRegistrationAgreement = () => {
           Vehicle Registration Agreement
         </CardTitle>
         <CardDescription>
-          Register vehicles under your e-hailing platform license - vehicles operate legally without individual permits
+          Register vehicles under MojaRide's e-hailing platform license - vehicles operate legally without individual permits
         </CardDescription>
       </CardHeader>
       <CardContent>
