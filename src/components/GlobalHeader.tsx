@@ -18,11 +18,7 @@ export const GlobalHeader = () => {
   if (shouldHide) return null;
 
   const handleHomeClick = () => {
-    if (user) {
-      navigate("/dashboard");
-    } else {
-      navigate("/");
-    }
+    navigate("/");
   };
 
   // Determine role from current path for search context

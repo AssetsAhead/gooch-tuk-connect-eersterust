@@ -158,16 +158,16 @@ export const PassengerDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="flex w-full overflow-x-auto mb-8 gap-1">
-            <TabsTrigger value="booking" className="flex-shrink-0 text-xs sm:text-sm">Book</TabsTrigger>
-            <TabsTrigger value="realtime" className="flex-shrink-0 text-xs sm:text-sm">Live</TabsTrigger>
-            <TabsTrigger value="community" className="flex-shrink-0 text-xs sm:text-sm">Community</TabsTrigger>
-            <TabsTrigger value="safety" className="flex-shrink-0 text-xs sm:text-sm">Safety</TabsTrigger>
-            <TabsTrigger value="economy" className="flex-shrink-0 text-xs sm:text-sm">Economy</TabsTrigger>
-            <TabsTrigger value="assistant" className="flex-shrink-0 text-xs sm:text-sm">Assistant</TabsTrigger>
-            <TabsTrigger value="rewards" className="flex-shrink-0 text-xs sm:text-sm">Rewards</TabsTrigger>
-            <TabsTrigger value="payments" className="flex-shrink-0 text-xs sm:text-sm">Payments</TabsTrigger>
-            <TabsTrigger value="roles" className="flex-shrink-0 text-xs sm:text-sm">Roles</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto mb-8 gap-1 h-auto flex-wrap sm:flex-nowrap">
+            <TabsTrigger value="booking" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">📍 Book</TabsTrigger>
+            <TabsTrigger value="realtime" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">🔴 Live</TabsTrigger>
+            <TabsTrigger value="community" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">👥 Community</TabsTrigger>
+            <TabsTrigger value="safety" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">🛡️ Safety</TabsTrigger>
+            <TabsTrigger value="economy" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">💰 Economy</TabsTrigger>
+            <TabsTrigger value="assistant" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">🗣️ Assistant</TabsTrigger>
+            <TabsTrigger value="rewards" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">⭐ Rewards</TabsTrigger>
+            <TabsTrigger value="payments" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">💳 Payments</TabsTrigger>
+            <TabsTrigger value="roles" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">🎭 Roles</TabsTrigger>
           </TabsList>
 
           {/* Booking Tab */}
