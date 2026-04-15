@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, MapPin, Zap } from 'lucide-react';
+import { Loader2, MapPin, Pointer } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface QuickHailButtonProps {
@@ -172,8 +172,8 @@ export const QuickHailButton = ({
       {/* Pulse ring animation */}
       {pulseAnimation && (
         <>
-          <div className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
-          <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
+          <div className="absolute inset-0 rounded-full bg-green-500/30 animate-ping" />
+          <div className="absolute inset-0 rounded-full bg-green-500/20 animate-pulse" />
         </>
       )}
       
@@ -182,10 +182,10 @@ export const QuickHailButton = ({
         disabled={disabled || isHailing || !userLocation}
         className={cn(
           'relative z-10 h-20 w-20 rounded-full text-lg font-bold shadow-lg',
-          'bg-gradient-to-br from-primary via-primary to-primary/80',
-          'hover:from-primary/90 hover:to-primary/70',
+          'bg-gradient-to-br from-green-500 via-green-400 to-emerald-500',
+          'hover:from-green-400 hover:to-emerald-400',
           'active:scale-95 transition-all duration-200',
-          'disabled:opacity-50',
+          'disabled:opacity-50 text-white',
           className
         )}
       >
@@ -194,7 +194,7 @@ export const QuickHailButton = ({
         ) : locationError ? (
           <MapPin className="h-8 w-8" />
         ) : (
-          <Zap className="h-8 w-8" />
+          <Pointer className="h-8 w-8 animate-tap-bounce" />
         )}
       </Button>
 

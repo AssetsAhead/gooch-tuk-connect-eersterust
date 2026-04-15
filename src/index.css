@@ -183,3 +183,13 @@ Brand Hierarchy:
     font-family: 'Heebo', system-ui, sans-serif;
   }
 }
+
+/* Tap bounce animation for Quick Hail pointer */
+@keyframes tap-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-tap-bounce {
+  animation: tap-bounce 1.2s ease-in-out infinite;
+}
