@@ -47,17 +47,17 @@ export const OwnerDashboard = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 md:grid-cols-9 mb-8">
-            <TabsTrigger value="fleet">🚗 Fleet</TabsTrigger>
-            <TabsTrigger value="revenue">💵 Revenue</TabsTrigger>
-            <TabsTrigger value="drivers">👤 Drivers</TabsTrigger>
-            <TabsTrigger value="payroll">📋 Payroll</TabsTrigger>
-            <TabsTrigger value="roi">💰 ROI</TabsTrigger>
-            <TabsTrigger value="ev-savings">⚡ EV Savings</TabsTrigger>
-            <TabsTrigger value="parts">🔧 Parts</TabsTrigger>
-            <TabsTrigger value="community">🛡️ Community</TabsTrigger>
-            <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
-            <TabsTrigger value="safety">🚨 Safety</TabsTrigger>
+          <TabsList className="flex flex-wrap h-auto gap-1 w-full mb-8 p-1">
+            <TabsTrigger value="fleet" className="text-xs px-2 py-1.5">🚗 Fleet</TabsTrigger>
+            <TabsTrigger value="revenue" className="text-xs px-2 py-1.5">💵 Revenue</TabsTrigger>
+            <TabsTrigger value="drivers" className="text-xs px-2 py-1.5">👤 Drivers</TabsTrigger>
+            <TabsTrigger value="payroll" className="text-xs px-2 py-1.5">📋 Payroll</TabsTrigger>
+            <TabsTrigger value="roi" className="text-xs px-2 py-1.5">💰 ROI</TabsTrigger>
+            <TabsTrigger value="ev-savings" className="text-xs px-2 py-1.5">⚡ EV Savings</TabsTrigger>
+            <TabsTrigger value="parts" className="text-xs px-2 py-1.5">🔧 Parts</TabsTrigger>
+            <TabsTrigger value="community" className="text-xs px-2 py-1.5">🛡️ Community</TabsTrigger>
+            <TabsTrigger value="analytics" className="text-xs px-2 py-1.5">📊 Analytics</TabsTrigger>
+            <TabsTrigger value="safety" className="text-xs px-2 py-1.5">🚨 Safety</TabsTrigger>
           </TabsList>
 
           {/* Fleet Tab */}
