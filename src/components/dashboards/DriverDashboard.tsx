@@ -178,6 +178,11 @@ export const DriverDashboard = () => {
           </div>
         </div>
 
+        {/* Hail a Ride */}
+        <div className="mb-6">
+          <HailRideCard compact />
+        </div>
+
         <Tabs defaultValue="rides" className="space-y-6">
           <TabsList className="flex w-full overflow-x-auto gap-1">
             <TabsTrigger value="clocking" className="flex-shrink-0 text-xs sm:text-sm">Clocking</TabsTrigger>

@@ -40,6 +40,11 @@ export const OwnerDashboard = () => {
           </div>
         </div>
 
+        {/* Hail a Ride */}
+        <div className="mb-6">
+          <HailRideCard compact />
+        </div>
+
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-5 md:grid-cols-9 mb-8">

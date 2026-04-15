@@ -132,6 +132,11 @@ export const AdminDashboard = () => {
           </div>
         </div>
 
+        {/* Hail a Ride */}
+        <div className="mb-6">
+          <HailRideCard compact />
+        </div>
+
         {/* Key Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card className="border-success/20">
