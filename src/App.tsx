@@ -54,6 +54,7 @@ import OwnerPitch from "./pages/OwnerPitch";
 import LiveTrack from "./pages/LiveTrack";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
+import { FloatingHailFAB } from "./components/hailing/FloatingHailFAB";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
 import { PerformanceProfiler } from "./components/dev/PerformanceProfiler";
 import { StateDebugger } from "./components/dev/StateDebugger";
