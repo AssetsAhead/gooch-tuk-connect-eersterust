@@ -36,6 +36,8 @@ import { SmartHailCard } from "@/components/hailing/SmartHailCard";
 import { DriverRatingDialog } from "@/components/passenger/DriverRatingDialog";
 import { WhatsAppLocationShare } from "@/components/location/WhatsAppLocationShare";
 import { PassengerLoyalty } from "@/components/incentives/PassengerLoyalty";
+import { FareEstimator } from "@/components/hailing/FareEstimator";
+import { SavedPlaces } from "@/components/hailing/SavedPlaces";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
@@ -187,10 +189,26 @@ export const PassengerDashboard = () => {
               }}
             />
 
+            {/* Saved Places - quick access chips */}
+            <SavedPlaces userId={user?.id} onSelectPlace={(addr) => setDestination(addr)} compact />
+
+            {/* Fare Estimator */}
+            <FareEstimator
+              discountInfo={{ isVerified: discountInfo.isVerified, discountPercentage: discountInfo.discountPercentage }}
+              onSelectRoute={(from, to, fare) => {
+                setPickup(from);
+                setDestination(to);
+                toast({ title: `Route selected: R${fare}` });
+              }}
+            />
+
             <WhatsAppLocationShare
               message="📍 I'm here — pick me up! MojaRide passenger location:"
               className="w-full"
             />
+
+            {/* Saved Places - full manager */}
+            <SavedPlaces userId={user?.id} onSelectPlace={(addr) => setDestination(addr)} />
 
             {/* Active Ride Tracking */}
             {activeRide && (
