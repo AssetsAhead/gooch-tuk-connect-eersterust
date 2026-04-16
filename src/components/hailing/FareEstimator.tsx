@@ -99,14 +99,14 @@ export const FareEstimator = ({ discountInfo, onSelectRoute }: FareEstimatorProp
             placeholder="From where?"
             value={fromLocation}
             onChange={setFromLocation}
-            storageKey="fare-from"
+            storageKey="pickup"
             quickSuggestions={['Eersterust', '7de Laan', 'Volga Street']}
           />
           <SmartLocationInput
             placeholder="Going to?"
             value={toLocation}
             onChange={setToLocation}
-            storageKey="fare-to"
+            storageKey="destination"
             quickSuggestions={['Denlyn Mall', 'Mamelodi Mall', 'Silverton']}
           />
         </div>
