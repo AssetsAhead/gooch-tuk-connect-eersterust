@@ -30,11 +30,13 @@ interface Props {
 }
 
 export const InvestorPitchExport = ({ data }: Props) => {
+  const { toast } = useToast();
   const generatePDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 20;
     let yPos = 20;
+
 
     // Helper function for centered text
     const centerText = (text: string, y: number, fontSize: number = 12) => {
