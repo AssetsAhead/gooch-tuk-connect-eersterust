@@ -2,6 +2,9 @@ import { Button } from "@/components/ui/button";
 import { FileDown, Presentation } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { assertInitiativeSeparation } from "@/lib/initiativeGuard";
+import { useToast } from "@/hooks/use-toast";
+
 
 interface InvestorPitchData {
   vehicleCost: number;
@@ -27,11 +30,13 @@ interface Props {
 }
 
 export const InvestorPitchExport = ({ data }: Props) => {
+  const { toast } = useToast();
   const generatePDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 20;
     let yPos = 20;
+
 
     // Helper function for centered text
     const centerText = (text: string, y: number, fontSize: number = 12) => {
@@ -338,6 +343,23 @@ export const InvestorPitchExport = ({ data }: Props) => {
     centerText("Building the future of township mobility", yPos + 12, 10);
     
     // Save the PDF
+    // Guard: refuse to emit a PDF that mixes Taxi-app branding with MTN-initiative phrasing.
+    try {
+      // jsPDF exposes all rendered text via getTextContent on internal pages; fall back to
+      // concatenating the source data we know about for a fast pre-flight check.
+      const pdfText = (doc as any).internal?.pages
+        ?.flat?.()
+        ?.filter?.((p: any) => typeof p === "string")
+        ?.join(" ") ?? "";
+      assertInitiativeSeparation(pdfText, "InvestorPitchExport.pdf");
+    } catch (e) {
+      toast({
+        title: "Export blocked",
+        description: (e as Error).message,
+        variant: "destructive",
+      });
+      return;
+    }
     doc.save(`PoortLink_Investor_Pitch_${new Date().toISOString().split("T")[0]}.pdf`);
   };
 
