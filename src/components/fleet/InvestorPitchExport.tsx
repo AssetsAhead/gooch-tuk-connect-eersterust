@@ -343,6 +343,23 @@ export const InvestorPitchExport = ({ data }: Props) => {
     centerText("Building the future of township mobility", yPos + 12, 10);
     
     // Save the PDF
+    // Guard: refuse to emit a PDF that mixes Taxi-app branding with MTN-initiative phrasing.
+    try {
+      // jsPDF exposes all rendered text via getTextContent on internal pages; fall back to
+      // concatenating the source data we know about for a fast pre-flight check.
+      const pdfText = (doc as any).internal?.pages
+        ?.flat?.()
+        ?.filter?.((p: any) => typeof p === "string")
+        ?.join(" ") ?? "";
+      assertInitiativeSeparation(pdfText, "InvestorPitchExport.pdf");
+    } catch (e) {
+      toast({
+        title: "Export blocked",
+        description: (e as Error).message,
+        variant: "destructive",
+      });
+      return;
+    }
     doc.save(`PoortLink_Investor_Pitch_${new Date().toISOString().split("T")[0]}.pdf`);
   };
 
