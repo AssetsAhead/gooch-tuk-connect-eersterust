@@ -2,6 +2,9 @@ import { Button } from "@/components/ui/button";
 import { FileDown, Presentation } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { assertInitiativeSeparation } from "@/lib/initiativeGuard";
+import { useToast } from "@/hooks/use-toast";
+
 
 interface InvestorPitchData {
   vehicleCost: number;

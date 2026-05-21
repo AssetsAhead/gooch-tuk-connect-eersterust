@@ -54,6 +54,7 @@ import OwnerPitch from "./pages/OwnerPitch";
 import LiveTrack from "./pages/LiveTrack";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
+import { InitiativeSeparationGuard } from "./components/dev/InitiativeSeparationGuard";
 import { FloatingHailFAB } from "./components/hailing/FloatingHailFAB";
 import { ReactHealthMonitor } from "./components/dev/ReactHealthMonitor";
 import { PerformanceProfiler } from "./components/dev/PerformanceProfiler";
@@ -169,6 +170,7 @@ const App = () => {
                 </Routes>
                 <FloatingHailFAB />
                 <GlobalPanicButton />
+                <InitiativeSeparationGuard />
                 {/* Dev tools disabled by default to prevent React conflicts */}
                 {/* Uncomment only the tools you need, not all at once */}
                 {/* <ReactHealthMonitor /> */}
