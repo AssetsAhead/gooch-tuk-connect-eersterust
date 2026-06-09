@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { RevenueLeakageCalculator } from "@/components/fleet/RevenueLeakageCalculator";
+import { NTAStatementCitation } from "@/components/trust/NTAStatementCitation";
 
 const WhyJoin = () => {
   const navigate = useNavigate();
@@ -406,6 +407,24 @@ const WhyJoin = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* NTA Alignment */}
+      <section className="py-12 px-4 bg-background">
+        <div className="max-w-3xl mx-auto space-y-4">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl md:text-3xl font-bold">Aligned With Industry Policy</h2>
+            <p className="text-sm text-muted-foreground">
+              Our platform reflects the position the National Taxi Alliance has publicly affirmed.
+            </p>
+          </div>
+          <NTAStatementCitation />
+          <div className="text-center">
+            <Button variant="link" onClick={() => navigate('/passenger-rights')}>
+              Read our full passenger-rights stance →
+            </Button>
           </div>
         </div>
       </section>
