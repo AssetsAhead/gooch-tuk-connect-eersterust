@@ -1,42 +1,45 @@
+# Leverage NTA Statement (5 June 2026) — Option C
 
+Use the NTA media statement (passenger freedom of choice, no forced patronage, discipline against intimidation) in two places: a new public trust page, and as a citation block reused in partnership-facing materials.
 
-## Plan: Enhanced Hailing Buttons + Cross-Portal Availability
+## 1. New public page: `/passenger-rights`
 
-### 1. QuickHailButton — Shocking Green + Pointer Animation
-**File:** `src/components/hailing/QuickHailButton.tsx`
-- Replace gradient from `from-primary` to shocking green (`from-green-500 via-green-400 to-emerald-500`)
-- Replace `Zap` icon with `Pointer` from lucide-react (index finger pressing)
-- Add animated "tap" motion using a CSS class that bobs the pointer up and down
-- Update pulse rings to green
+Route added to `src/App.tsx` (public, no auth required — matches visibility policy for trust assets).
 
-### 2. VoiceHailButton — Canary Yellow + Speak Icon
-**File:** `src/components/hailing/VoiceHailButton.tsx`
-- Change default button from `variant="outline"` to custom canary yellow background (`bg-yellow-400 text-black hover:bg-yellow-300`)
-- Add `Volume2` icon next to `Mic` icon so non-readers understand "speak here"
-- Increase size slightly for prominence
+Page content (`src/pages/PassengerRights.tsx`):
+- H1: "Passenger Freedom of Choice"
+- Lead paragraph framing PoortLink/MojaRide alignment with NTA's stated position.
+- Pull-quote card with the key NTA lines (freedom of choice, no forced patronage, intimidation = disciplinary action).
+- "What this means on our platform" — short bullet list:
+  - Passengers choose any operator; the app never coerces.
+  - Drivers/marshals who intimidate are flagged via the reputation system and reported.
+  - Cash and card trips are logged the same as digital — no penalty for choice of payment.
+- Source attribution: "National Taxi Alliance media statement, 5 June 2026."
+- SEO: title ≤60 chars, meta description ≤160 chars, single H1, canonical tag.
 
-### 3. CSS Animation
-**File:** `src/index.css`
-- Add `@keyframes tap-bounce` — a subtle up-down bob animation for the Pointer icon
-- Add `animate-tap-bounce` utility
+## 2. Reusable citation component
 
-### 4. Add Hailing to All Dashboards
-Currently SmartHailCard only appears in `PassengerDashboard`. Add a compact "Quick Hail" strip (QuickHailButton + VoiceHailButton side by side) to:
-- `src/components/dashboards/DriverDashboard.tsx` — helps drivers test / demo the system
-- `src/components/dashboards/MarshallDashboard.tsx` — marshalls hail on behalf of phoneless passengers
-- `src/components/dashboards/OwnerDashboard.tsx` — owners can assist users
-- `src/components/dashboards/AdminDashboard.tsx` — admin testing access
+`src/components/trust/NTAStatementCitation.tsx` — compact card with quote + source line. Drop-in for any page.
 
-Each will get a small "Hail a Ride" card with both buttons, using the same props pattern as PassengerDashboard.
+Embed in existing partnership/owner-facing pages:
+- `src/pages/OwnerPitch.tsx` — under the trust/compliance section.
+- `src/pages/WhyJoin.tsx` — near the "what associations get" section.
 
-### Files Changed
-| File | Change |
-|------|--------|
-| `src/components/hailing/QuickHailButton.tsx` | Green gradient, Pointer icon, tap animation |
-| `src/components/hailing/VoiceHailButton.tsx` | Canary yellow, Volume2+Mic icons |
-| `src/index.css` | `tap-bounce` keyframe |
-| `src/components/dashboards/MarshallDashboard.tsx` | Add hail buttons |
-| `src/components/dashboards/DriverDashboard.tsx` | Add hail buttons |
-| `src/components/dashboards/OwnerDashboard.tsx` | Add hail buttons |
-| `src/components/dashboards/AdminDashboard.tsx` | Add hail buttons |
+Both embeds use the same component so future edits propagate once.
 
+## 3. Navigation / discoverability
+
+- Add a link to `/passenger-rights` from `src/components/GlobalHeader.tsx` footer area or compliance menu (whichever pattern the header currently uses — will check on implementation).
+- Add the route to `src/components/search/searchRoutes.ts` so it surfaces in search.
+
+## Out of scope
+
+- No changes to MTN-stream materials (per separation rule).
+- No DB changes; this is pure content/presentation.
+- No edits to the actual partnership agreement PDFs/legal docs — citation lives in the web-facing pitch pages only. Legal doc updates can be a separate pass if you want.
+
+## Technical notes
+
+- Files created: `src/pages/PassengerRights.tsx`, `src/components/trust/NTAStatementCitation.tsx`.
+- Files edited: `src/App.tsx` (route), `src/pages/OwnerPitch.tsx`, `src/pages/WhyJoin.tsx`, `src/components/search/searchRoutes.ts`, possibly `src/components/GlobalHeader.tsx` for a nav entry.
+- Initiative-separation guard already in place will catch any accidental MTN references in the new files.

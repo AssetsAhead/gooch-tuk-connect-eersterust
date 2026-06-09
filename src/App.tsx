@@ -52,6 +52,7 @@ import IntelHub from "./pages/IntelHub";
 import WhyJoin from "./pages/WhyJoin";
 import OwnerPitch from "./pages/OwnerPitch";
 import LiveTrack from "./pages/LiveTrack";
+import PassengerRights from "./pages/PassengerRights";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { InitiativeSeparationGuard } from "./components/dev/InitiativeSeparationGuard";
@@ -164,6 +165,7 @@ const App = () => {
                 <Route path="/why-join" element={<WhyJoin />} />
                 <Route path="/owner-pitch" element={<OwnerPitch />} />
                 <Route path="/track/:driverId" element={<LiveTrack />} />
+                <Route path="/passenger-rights" element={<PassengerRights />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />

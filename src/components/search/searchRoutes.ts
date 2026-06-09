@@ -115,4 +115,7 @@ export const ALL_SEARCHABLE_ITEMS: SearchableItem[] = [
   // ── Legal (additional) ──
   { id: 'legal-nda', title: 'Non-Disclosure Agreement', subtitle: 'NDA for partners and investors', category: 'Legal', keywords: ['nda', 'non-disclosure', 'agreement', 'confidential', 'confidentiality', 'partner', 'investor', 'secret'], path: '/legal/nda' },
   { id: 'legal-revenue-share', title: 'Revenue Share Agreement', subtitle: 'Revenue sharing contract template', category: 'Legal', keywords: ['revenue', 'share', 'agreement', 'contract', 'split', 'commission', 'partnership', 'payout'], path: '/legal/revenue-share' },
+
+  // ── Trust & Passenger Rights ──
+  { id: 'passenger-rights', title: 'Passenger Freedom of Choice', subtitle: 'NTA-aligned stance on no forced patronage and anti-intimidation', category: 'Trust', keywords: ['passenger', 'rights', 'freedom', 'choice', 'nta', 'national taxi alliance', 'intimidation', 'patronage', 'commuter', 'trust', 'compliance'], path: '/passenger-rights' },
 ];
