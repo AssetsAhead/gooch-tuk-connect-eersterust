@@ -3,7 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Activity, Camera, Compass, MapPin, Maximize2, Radio, Video } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Activity, AlertTriangle, Camera, Compass, MapPin, Maximize2, Radio, Search, Video } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 // Eersterust center
