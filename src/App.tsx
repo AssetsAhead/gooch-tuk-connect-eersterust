@@ -37,6 +37,7 @@ import OperatingLicenseApplication from "./pages/OperatingLicenseApplication";
 import Form9A from "./pages/Form9A";
 import CommunityAnnouncements from "./pages/CommunityAnnouncements";
 import FleetVehiclesDashboard from "./pages/FleetVehiclesDashboard";
+import DashcamDashboard from "./pages/DashcamDashboard";
 import InvestorPortal from "./pages/InvestorPortal";
 import InvestorR2MFleet from "./pages/InvestorR2MFleet";
 import InvestorHardwareOnly from "./pages/InvestorHardwareOnly";
