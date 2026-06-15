@@ -581,14 +581,42 @@ const DashcamDashboard = () => {
           )}
 
           <Card className="overflow-hidden">
-            <div className="px-4 py-3 border-b flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-semibold text-sm flex items-center gap-2"><MapPin className="h-4 w-4" /> Fleet Map</h2>
-              <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-green-500" />Live</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />Stale</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-gray-400" />Offline</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-500" />Demo</span>
+            <div className="px-4 py-3 border-b space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="font-semibold text-sm flex items-center gap-2"><MapPin className="h-4 w-4" /> Fleet Map</h2>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-green-500" />Live</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />Stale</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-gray-400" />Offline</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-500" />Demo</span>
+                </div>
               </div>
+              <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    placeholder="Search address or landmark (e.g. Volga St, Eersterust Mall)"
+                    className="pl-9"
+                    aria-label="Search the map"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit" size="sm" disabled={!mapReady}>Go</Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={triggerSimulatedIncident}
+                    disabled={!selected}
+                    title="Trigger a demo SOS alert for the selected vehicle"
+                  >
+                    <AlertTriangle className="h-4 w-4 mr-1" /> Simulate SOS
+                  </Button>
+                </div>
+              </form>
+              {searchMsg && <p className="text-xs text-muted-foreground truncate">{searchMsg}</p>}
             </div>
             <div ref={mapRef} className="h-[420px] w-full bg-muted">
               {!mapReady && (
