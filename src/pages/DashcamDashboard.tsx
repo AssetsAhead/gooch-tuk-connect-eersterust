@@ -441,6 +441,73 @@ const DashcamDashboard = () => {
     infoWindowRef.current.open({ map: gMapRef.current, anchor: marker });
   };
 
+  // Address / landmark search → geocode and pan
+  const handleSearch = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const q = searchInput.trim();
+    if (!q) return;
+    if (!gMapRef.current || !window.google?.maps) {
+      setSearchMsg("Map not ready yet");
+      return;
+    }
+    setSearchMsg("Searching…");
+    const g = window.google;
+    const geocoder = new g.maps.Geocoder();
+    // Bias results around the Eersterust area
+    const bias = new g.maps.LatLngBounds(
+      { lat: EERSTERUST.lat - 0.5, lng: EERSTERUST.lng - 0.5 },
+      { lat: EERSTERUST.lat + 0.5, lng: EERSTERUST.lng + 0.5 },
+    );
+    geocoder.geocode({ address: q, bounds: bias, region: "ZA" }, (results: any[], status: string) => {
+      if (status !== "OK" || !results?.[0]) {
+        setSearchMsg("No matches found");
+        return;
+      }
+      const r = results[0];
+      const loc = r.geometry.location;
+      const pos = { lat: loc.lat(), lng: loc.lng() };
+      gMapRef.current.panTo(pos);
+      gMapRef.current.setZoom(Math.max(gMapRef.current.getZoom() ?? 14, 15));
+      if (searchMarkerRef.current) searchMarkerRef.current.setMap(null);
+      searchMarkerRef.current = new g.maps.Marker({
+        position: pos,
+        map: gMapRef.current,
+        icon: {
+          path: g.maps.SymbolPath.CIRCLE,
+          scale: 9,
+          fillColor: "#ef4444",
+          fillOpacity: 0.85,
+          strokeColor: "#ffffff",
+          strokeWeight: 2,
+        },
+        zIndex: 9999,
+      });
+      setSearchMsg(r.formatted_address ?? null);
+    });
+  };
+
+  // Manual trigger for demoing the SOS popup
+  const triggerSimulatedIncident = () => {
+    if (!selected) return;
+    const now = Date.now();
+    incidentCooldownRef.current.set(selected.id, now);
+    setIncident({
+      id: `${selected.id}-${now}`,
+      vehicleId: selected.id,
+      label: "Sudden Stop Detected (Simulated)",
+      kind: "sudden_stop",
+      registration: selected.registration ?? "—",
+      eNumber: selected.e_number ?? "",
+      driver: selected.driver_name ?? "Unassigned",
+      address: selected.address,
+      lat: selected.lat,
+      lng: selected.lng,
+      fromSpeed: Math.round(selected.speedKmh),
+      toSpeed: 0,
+      ts: now,
+    });
+  };
+
   const selected = useMemo(() => vehicles.find((v) => v.id === selectedId), [vehicles, selectedId]);
   const selectedFreshness = selected ? getFreshness(selected, now) : "demo";
   const selectedClasses = freshnessClasses(selectedFreshness);
