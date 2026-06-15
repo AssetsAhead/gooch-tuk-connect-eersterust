@@ -492,6 +492,104 @@ const DashcamDashboard = () => {
     });
   };
 
+  // Place a marker + pan at a given location with a label
+  const panToLocation = (pos: { lat: number; lng: number }, label: string) => {
+    if (!gMapRef.current || !window.google?.maps) return;
+    const g = window.google;
+    gMapRef.current.panTo(pos);
+    gMapRef.current.setZoom(Math.max(gMapRef.current.getZoom() ?? 14, 15));
+    if (searchMarkerRef.current) searchMarkerRef.current.setMap(null);
+    searchMarkerRef.current = new g.maps.Marker({
+      position: pos,
+      map: gMapRef.current,
+      icon: {
+        path: g.maps.SymbolPath.CIRCLE,
+        scale: 9,
+        fillColor: "#ef4444",
+        fillOpacity: 0.85,
+        strokeColor: "#ffffff",
+        strokeWeight: 2,
+      },
+      zIndex: 9999,
+    });
+    setSearchMsg(label);
+  };
+
+  // Debounced autocomplete suggestions via Places API (New)
+  const fetchSuggestions = (raw: string) => {
+    const q = raw.trim();
+    if (suggestTimerRef.current) window.clearTimeout(suggestTimerRef.current);
+    if (q.length < 2 || !window.google?.maps) {
+      setSuggestions([]);
+      setSuggestLoading(false);
+      return;
+    }
+    setSuggestLoading(true);
+    const seq = ++suggestSeqRef.current;
+    suggestTimerRef.current = window.setTimeout(async () => {
+      try {
+        const places: any = await (window as any).google.maps.importLibrary("places");
+        if (!sessionTokenRef.current) {
+          sessionTokenRef.current = new places.AutocompleteSessionToken();
+        }
+        const bias = {
+          north: EERSTERUST.lat + 0.5,
+          south: EERSTERUST.lat - 0.5,
+          east: EERSTERUST.lng + 0.5,
+          west: EERSTERUST.lng - 0.5,
+        };
+        const { suggestions: out } = await places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+          input: q,
+          sessionToken: sessionTokenRef.current,
+          locationBias: bias,
+          region: "ZA",
+        });
+        if (seq !== suggestSeqRef.current) return; // stale
+        const mapped = (out || [])
+          .map((s: any) => s.placePrediction)
+          .filter(Boolean)
+          .slice(0, 6)
+          .map((p: any) => ({
+            placeId: p.placeId,
+            primary: p.mainText?.text ?? p.text?.text ?? "",
+            secondary: p.secondaryText?.text ?? "",
+          }));
+        setSuggestions(mapped);
+        setSuggestOpen(true);
+      } catch (err) {
+        if (seq === suggestSeqRef.current) {
+          setSuggestions([]);
+          setSuggestOpen(false);
+        }
+      } finally {
+        if (seq === suggestSeqRef.current) setSuggestLoading(false);
+      }
+    }, 220);
+  };
+
+  const selectSuggestion = async (s: { placeId: string; primary: string; secondary: string }) => {
+    setSuggestOpen(false);
+    setSuggestions([]);
+    const label = [s.primary, s.secondary].filter(Boolean).join(", ");
+    setSearchInput(label);
+    setSearchMsg("Loading place…");
+    try {
+      const places: any = await (window as any).google.maps.importLibrary("places");
+      const place = new places.Place({ id: s.placeId });
+      await place.fetchFields({ fields: ["location", "formattedAddress", "displayName"] });
+      sessionTokenRef.current = null; // session ends after a place selection
+      const loc = place.location;
+      if (!loc) {
+        setSearchMsg("No location for that place");
+        return;
+      }
+      panToLocation({ lat: loc.lat(), lng: loc.lng() }, place.formattedAddress ?? label);
+    } catch {
+      // Fallback to geocoding the label
+      handleSearch();
+    }
+  };
+
   // Manual trigger for demoing the SOS popup
   const triggerSimulatedIncident = () => {
     if (!selected) return;
