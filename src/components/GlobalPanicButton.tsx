@@ -252,9 +252,10 @@ export const GlobalPanicButton = () => {
               onClick={cancelPanic}
               size="sm"
               variant="outline"
+              aria-label="Cancel emergency alert"
               className="border-white text-white hover:bg-white hover:text-danger h-8 w-8 p-0"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
           <p className="text-sm">Help is on the way. Stay safe!</p>
