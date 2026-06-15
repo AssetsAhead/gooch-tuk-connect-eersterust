@@ -122,6 +122,12 @@ const DashcamDashboard = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchMsg, setSearchMsg] = useState<string | null>(null);
   const searchMarkerRef = useRef<any>(null);
+  const [suggestions, setSuggestions] = useState<Array<{ placeId: string; primary: string; secondary: string }>>([]);
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const [suggestLoading, setSuggestLoading] = useState(false);
+  const sessionTokenRef = useRef<any>(null);
+  const suggestTimerRef = useRef<number | null>(null);
+  const suggestSeqRef = useRef(0);
   const [incident, setIncident] = useState<null | {
     id: string;
     vehicleId: string;
