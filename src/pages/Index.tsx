@@ -103,8 +103,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground p-5">
-      <h1 className="text-3xl mb-5 text-foreground">MojaRide App Loading Test</h1>
-      <p className="text-lg mb-5 text-muted-foreground">If you can see this text, the React app is working!</p>
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <div className="mb-8">

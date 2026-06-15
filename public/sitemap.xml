@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://tukconnect.lovable.app/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://tukconnect.lovable.app/auth</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://tukconnect.lovable.app/business-portal</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tukconnect.lovable.app/community-safety</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tukconnect.lovable.app/passenger-recruitment</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tukconnect.lovable.app/compliance</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tukconnect.lovable.app/regulatory-registration</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://tukconnect.lovable.app/operating-license-application</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://tukconnect.lovable.app/community-announcements</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tukconnect.lovable.app/investor</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tukconnect.lovable.app/investor/r2m-fleet</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tukconnect.lovable.app/investor/hardware-only</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tukconnect.lovable.app/investor/scale-funding</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tukconnect.lovable.app/investor/hybrid-funding</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tukconnect.lovable.app/investor/eswatini</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tukconnect.lovable.app/dot-presentation</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tukconnect.lovable.app/cost-breakdown</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://tukconnect.lovable.app/why-join</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tukconnect.lovable.app/owner-pitch</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tukconnect.lovable.app/passenger-rights</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tukconnect.lovable.app/privacy-policy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://tukconnect.lovable.app/terms-of-service</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+</urlset>
