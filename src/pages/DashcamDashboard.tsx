@@ -57,6 +57,13 @@ const DashcamDashboard = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mapReady, setMapReady] = useState(false);
   const mapRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    document.title = "Live Dashcam Dashboard | MojaRide Fleet";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "Real-time dashcam feeds and GPS tracking for the MojaRide fleet across Eersterust.");
+  }, []);
+
   const gMapRef = useRef<any>(null);
   const markersRef = useRef<Record<string, any>>({});
 
