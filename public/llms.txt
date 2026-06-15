@@ -1,0 +1,34 @@
+# MojaRide
+
+> MojaRide connects South African communities to safe, reliable minibus taxi transport. Operated by MobilityOne (Pty) Ltd, focused initially on Eersterust, Pretoria.
+
+MojaRide is a multi-role transport platform (passengers, drivers, vehicle owners, rank marshalls, traffic/police, admins) covering ride hailing, fleet compliance, regulatory registration, and community safety. The PoortLink operational layer and TukConnect infrastructure layer support the consumer-facing MojaRide brand.
+
+## Pages
+
+- [Home](/): Role selection and overview of the MojaRide ecosystem.
+- [Why Join](/why-join): Value proposition for vehicle owners and drivers.
+- [Owner Pitch](/owner-pitch): Conversion pitch for taxi owners considering the platform.
+- [Passenger Rights](/passenger-rights): NTA-aligned passenger protections and complaint channels.
+- [Community Safety](/community-safety): Community safety partnership programme.
+- [Business Portal](/business-portal): Corporate accounts and fleet partnerships.
+- [Compliance](/compliance): Operator compliance checklist (DOT, SANTACO, AARTO).
+- [Regulatory Registration](/regulatory-registration): Registration guidance for operators.
+- [Operating License Application](/operating-license-application): Step-by-step application flow.
+- [Community Announcements](/community-announcements): Public updates and notices.
+- [Cost Breakdown](/cost-breakdown): Year-1 cost model for a 10-vehicle pilot.
+- [DOT Presentation](/dot-presentation): Department of Transport stakeholder deck.
+
+## Investor
+
+- [Investor Portal](/investor): Investment tiers and proposals overview.
+- [R2M Fleet](/investor/r2m-fleet): Fleet acquisition investment tier.
+- [Hardware Only](/investor/hardware-only): Hardware-financing investment tier.
+- [Scale Funding](/investor/scale-funding): Scale-stage funding proposal.
+- [Hybrid Funding](/investor/hybrid-funding): Hybrid SaaS + fleet proposal.
+- [eSwatini Expansion](/investor/eswatini): Moving eSwatini cross-border expansion.
+
+## Optional
+
+- [Privacy Policy](/privacy-policy)
+- [Terms of Service](/terms-of-service)
