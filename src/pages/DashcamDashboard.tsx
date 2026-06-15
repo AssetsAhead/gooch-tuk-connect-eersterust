@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Activity, Camera, Compass, MapPin, Maximize2, Radio, Video } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Activity, AlertTriangle, Camera, Compass, MapPin, Maximize2, Radio, Search, Video } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 // Eersterust center
@@ -117,6 +119,25 @@ const DashcamDashboard = () => {
   const [mapReady, setMapReady] = useState(false);
   const [now, setNow] = useState(Date.now());
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchMsg, setSearchMsg] = useState<string | null>(null);
+  const searchMarkerRef = useRef<any>(null);
+  const [incident, setIncident] = useState<null | {
+    id: string;
+    vehicleId: string;
+    label: string;
+    registration: string;
+    eNumber: string;
+    driver: string;
+    address: string | null;
+    lat: number;
+    lng: number;
+    fromSpeed: number;
+    toSpeed: number;
+    ts: number;
+    kind: "sudden_stop" | "crash";
+  }>(null);
+  const incidentCooldownRef = useRef<Map<string, number>>(new Map());
 
   useEffect(() => {
     document.title = "Live Dashcam Dashboard | MojaRide Fleet";
@@ -223,6 +244,29 @@ const DashcamDashboard = () => {
             const meters = Math.sqrt((dLat * 111000) ** 2 + (dLng * 111000 * Math.cos((u.lat * Math.PI) / 180)) ** 2);
             speedKmh = Math.min(120, meters * 3.6);
           }
+        }
+        // Incident detection: sudden stop / crash pattern
+        const drop = v.speedKmh - speedKmh;
+        const now = Date.now();
+        const lastAlert = incidentCooldownRef.current.get(v.id) ?? 0;
+        if (v.realGps && drop >= 30 && speedKmh < 8 && v.speedKmh >= 35 && now - lastAlert > 60_000) {
+          incidentCooldownRef.current.set(v.id, now);
+          const kind: "sudden_stop" | "crash" = drop >= 55 ? "crash" : "sudden_stop";
+          setIncident({
+            id: `${v.id}-${now}`,
+            vehicleId: v.id,
+            label: kind === "crash" ? "Possible Crash Detected" : "Sudden Stop Detected",
+            kind,
+            registration: v.registration ?? "—",
+            eNumber: v.e_number ?? "",
+            driver: v.driver_name ?? "Unassigned",
+            address: v.address,
+            lat: u.lat,
+            lng: u.lng,
+            fromSpeed: Math.round(v.speedKmh),
+            toSpeed: Math.round(speedKmh),
+            ts: now,
+          });
         }
         return { ...v, lat: u.lat, lng: u.lng, heading, speedKmh, realGps: true, lastFixAt: u.ts };
       }));
@@ -397,6 +441,73 @@ const DashcamDashboard = () => {
     infoWindowRef.current.open({ map: gMapRef.current, anchor: marker });
   };
 
+  // Address / landmark search → geocode and pan
+  const handleSearch = (e?: FormEvent) => {
+    e?.preventDefault();
+    const q = searchInput.trim();
+    if (!q) return;
+    if (!gMapRef.current || !window.google?.maps) {
+      setSearchMsg("Map not ready yet");
+      return;
+    }
+    setSearchMsg("Searching…");
+    const g = window.google;
+    const geocoder = new g.maps.Geocoder();
+    // Bias results around the Eersterust area
+    const bias = new g.maps.LatLngBounds(
+      { lat: EERSTERUST.lat - 0.5, lng: EERSTERUST.lng - 0.5 },
+      { lat: EERSTERUST.lat + 0.5, lng: EERSTERUST.lng + 0.5 },
+    );
+    geocoder.geocode({ address: q, bounds: bias, region: "ZA" }, (results: any[], status: string) => {
+      if (status !== "OK" || !results?.[0]) {
+        setSearchMsg("No matches found");
+        return;
+      }
+      const r = results[0];
+      const loc = r.geometry.location;
+      const pos = { lat: loc.lat(), lng: loc.lng() };
+      gMapRef.current.panTo(pos);
+      gMapRef.current.setZoom(Math.max(gMapRef.current.getZoom() ?? 14, 15));
+      if (searchMarkerRef.current) searchMarkerRef.current.setMap(null);
+      searchMarkerRef.current = new g.maps.Marker({
+        position: pos,
+        map: gMapRef.current,
+        icon: {
+          path: g.maps.SymbolPath.CIRCLE,
+          scale: 9,
+          fillColor: "#ef4444",
+          fillOpacity: 0.85,
+          strokeColor: "#ffffff",
+          strokeWeight: 2,
+        },
+        zIndex: 9999,
+      });
+      setSearchMsg(r.formatted_address ?? null);
+    });
+  };
+
+  // Manual trigger for demoing the SOS popup
+  const triggerSimulatedIncident = () => {
+    if (!selected) return;
+    const now = Date.now();
+    incidentCooldownRef.current.set(selected.id, now);
+    setIncident({
+      id: `${selected.id}-${now}`,
+      vehicleId: selected.id,
+      label: "Sudden Stop Detected (Simulated)",
+      kind: "sudden_stop",
+      registration: selected.registration ?? "—",
+      eNumber: selected.e_number ?? "",
+      driver: selected.driver_name ?? "Unassigned",
+      address: selected.address,
+      lat: selected.lat,
+      lng: selected.lng,
+      fromSpeed: Math.round(selected.speedKmh),
+      toSpeed: 0,
+      ts: now,
+    });
+  };
+
   const selected = useMemo(() => vehicles.find((v) => v.id === selectedId), [vehicles, selectedId]);
   const selectedFreshness = selected ? getFreshness(selected, now) : "demo";
   const selectedClasses = freshnessClasses(selectedFreshness);
@@ -470,14 +581,42 @@ const DashcamDashboard = () => {
           )}
 
           <Card className="overflow-hidden">
-            <div className="px-4 py-3 border-b flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-semibold text-sm flex items-center gap-2"><MapPin className="h-4 w-4" /> Fleet Map</h2>
-              <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-green-500" />Live</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />Stale</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-gray-400" />Offline</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-500" />Demo</span>
+            <div className="px-4 py-3 border-b space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="font-semibold text-sm flex items-center gap-2"><MapPin className="h-4 w-4" /> Fleet Map</h2>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-green-500" />Live</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" />Stale</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-gray-400" />Offline</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-500" />Demo</span>
+                </div>
               </div>
+              <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    placeholder="Search address or landmark (e.g. Volga St, Eersterust Mall)"
+                    className="pl-9"
+                    aria-label="Search the map"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit" size="sm" disabled={!mapReady}>Go</Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={triggerSimulatedIncident}
+                    disabled={!selected}
+                    title="Trigger a demo SOS alert for the selected vehicle"
+                  >
+                    <AlertTriangle className="h-4 w-4 mr-1" /> Simulate SOS
+                  </Button>
+                </div>
+              </form>
+              {searchMsg && <p className="text-xs text-muted-foreground truncate">{searchMsg}</p>}
             </div>
             <div ref={mapRef} className="h-[420px] w-full bg-muted">
               {!mapReady && (
@@ -535,6 +674,71 @@ const DashcamDashboard = () => {
           </Card>
         </aside>
       </main>
+
+      <Dialog open={!!incident} onOpenChange={(o) => !o && setIncident(null)}>
+        <DialogContent className="border-destructive/40">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5 animate-pulse" />
+              {incident?.label ?? "Incident Detected"}
+            </DialogTitle>
+            <DialogDescription>
+              Automatic detection from GPS telemetry. Verify with the driver and dispatch help if needed.
+            </DialogDescription>
+          </DialogHeader>
+          {incident && (
+            <div className="space-y-3 text-sm">
+              <div className="rounded-md border bg-destructive/5 p-3 grid grid-cols-2 gap-2">
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Vehicle</div>
+                  <div className="font-semibold">{incident.eNumber} · {incident.registration}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Driver</div>
+                  <div className="font-semibold">{incident.driver}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Speed Drop</div>
+                  <div className="font-semibold">{incident.fromSpeed} → {incident.toSpeed} km/h</div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Time</div>
+                  <div className="font-semibold">{new Date(incident.ts).toLocaleTimeString()}</div>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Location</div>
+                  <div className="font-medium">{incident.address ?? `${incident.lat.toFixed(5)}, ${incident.lng.toFixed(5)}`}</div>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="outline" onClick={() => setIncident(null)}>Acknowledge</Button>
+            <Button
+              onClick={() => {
+                if (!incident) return;
+                setSelectedId(incident.vehicleId);
+                if (gMapRef.current) {
+                  gMapRef.current.panTo({ lat: incident.lat, lng: incident.lng });
+                  gMapRef.current.setZoom(17);
+                }
+                openInfoWindow(incident.vehicleId);
+                setIncident(null);
+              }}
+            >
+              Open Feed & Locate
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                window.open("tel:0123582124", "_self");
+              }}
+            >
+              Call TMPD War Room
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
