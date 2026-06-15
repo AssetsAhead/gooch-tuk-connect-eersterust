@@ -442,7 +442,7 @@ const DashcamDashboard = () => {
   };
 
   // Address / landmark search → geocode and pan
-  const handleSearch = (e?: React.FormEvent) => {
+  const handleSearch = (e?: FormEvent) => {
     e?.preventDefault();
     const q = searchInput.trim();
     if (!q) return;
