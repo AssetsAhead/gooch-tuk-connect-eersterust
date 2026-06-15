@@ -245,6 +245,29 @@ const DashcamDashboard = () => {
             speedKmh = Math.min(120, meters * 3.6);
           }
         }
+        // Incident detection: sudden stop / crash pattern
+        const drop = v.speedKmh - speedKmh;
+        const now = Date.now();
+        const lastAlert = incidentCooldownRef.current.get(v.id) ?? 0;
+        if (v.realGps && drop >= 30 && speedKmh < 8 && v.speedKmh >= 35 && now - lastAlert > 60_000) {
+          incidentCooldownRef.current.set(v.id, now);
+          const kind: "sudden_stop" | "crash" = drop >= 55 ? "crash" : "sudden_stop";
+          setIncident({
+            id: `${v.id}-${now}`,
+            vehicleId: v.id,
+            label: kind === "crash" ? "Possible Crash Detected" : "Sudden Stop Detected",
+            kind,
+            registration: v.registration ?? "—",
+            eNumber: v.e_number ?? "",
+            driver: v.driver_name ?? "Unassigned",
+            address: v.address,
+            lat: u.lat,
+            lng: u.lng,
+            fromSpeed: Math.round(v.speedKmh),
+            toSpeed: Math.round(speedKmh),
+            ts: now,
+          });
+        }
         return { ...v, lat: u.lat, lng: u.lng, heading, speedKmh, realGps: true, lastFixAt: u.ts };
       }));
     };
