@@ -695,16 +695,43 @@ const DashcamDashboard = () => {
                   <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-500" />Demo</span>
                 </div>
               </div>
-              <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
+              <form onSubmit={(e) => { e.preventDefault(); if (suggestions[0]) { selectSuggestion(suggestions[0]); } else { handleSearch(e); } }} className="flex flex-col sm:flex-row gap-2">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
+                    onChange={(e) => { setSearchInput(e.target.value); fetchSuggestions(e.target.value); }}
+                    onFocus={() => { if (suggestions.length) setSuggestOpen(true); }}
+                    onBlur={() => setTimeout(() => setSuggestOpen(false), 150)}
+                    onKeyDown={(e) => { if (e.key === "Escape") setSuggestOpen(false); }}
                     placeholder="Search address or landmark (e.g. Volga St, Eersterust Mall)"
                     className="pl-9"
                     aria-label="Search the map"
+                    aria-autocomplete="list"
+                    aria-expanded={suggestOpen}
+                    autoComplete="off"
                   />
+                  {suggestOpen && (suggestions.length > 0 || suggestLoading) && (
+                    <div className="absolute z-50 mt-1 left-0 right-0 bg-popover border border-border rounded-md shadow-lg max-h-72 overflow-y-auto">
+                      {suggestLoading && suggestions.length === 0 && (
+                        <div className="px-3 py-2 text-xs text-muted-foreground">Searching…</div>
+                      )}
+                      {suggestions.map((s) => (
+                        <button
+                          key={s.placeId}
+                          type="button"
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-accent focus:bg-accent focus:outline-none flex items-start gap-2"
+                          onMouseDown={(e) => { e.preventDefault(); selectSuggestion(s); }}
+                        >
+                          <MapPin className="h-3.5 w-3.5 mt-0.5 text-muted-foreground flex-shrink-0" />
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate font-medium">{s.primary}</span>
+                            {s.secondary && <span className="block truncate text-xs text-muted-foreground">{s.secondary}</span>}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <Button type="submit" size="sm" disabled={!mapReady}>Go</Button>
