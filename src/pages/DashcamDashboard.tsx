@@ -327,7 +327,7 @@ const DashcamDashboard = () => {
     if (existing) return;
 
     const s = document.createElement("script");
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=__initDashcamMap${channel ? `&channel=${channel}` : ""}`;
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&libraries=places&callback=__initDashcamMap${channel ? `&channel=${channel}` : ""}`;
     s.async = true;
     s.defer = true;
     s.setAttribute("data-dashcam-maps", "true");
