@@ -674,6 +674,71 @@ const DashcamDashboard = () => {
           </Card>
         </aside>
       </main>
+
+      <Dialog open={!!incident} onOpenChange={(o) => !o && setIncident(null)}>
+        <DialogContent className="border-destructive/40">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5 animate-pulse" />
+              {incident?.label ?? "Incident Detected"}
+            </DialogTitle>
+            <DialogDescription>
+              Automatic detection from GPS telemetry. Verify with the driver and dispatch help if needed.
+            </DialogDescription>
+          </DialogHeader>
+          {incident && (
+            <div className="space-y-3 text-sm">
+              <div className="rounded-md border bg-destructive/5 p-3 grid grid-cols-2 gap-2">
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Vehicle</div>
+                  <div className="font-semibold">{incident.eNumber} · {incident.registration}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Driver</div>
+                  <div className="font-semibold">{incident.driver}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Speed Drop</div>
+                  <div className="font-semibold">{incident.fromSpeed} → {incident.toSpeed} km/h</div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Time</div>
+                  <div className="font-semibold">{new Date(incident.ts).toLocaleTimeString()}</div>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Location</div>
+                  <div className="font-medium">{incident.address ?? `${incident.lat.toFixed(5)}, ${incident.lng.toFixed(5)}`}</div>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="outline" onClick={() => setIncident(null)}>Acknowledge</Button>
+            <Button
+              onClick={() => {
+                if (!incident) return;
+                setSelectedId(incident.vehicleId);
+                if (gMapRef.current) {
+                  gMapRef.current.panTo({ lat: incident.lat, lng: incident.lng });
+                  gMapRef.current.setZoom(17);
+                }
+                openInfoWindow(incident.vehicleId);
+                setIncident(null);
+              }}
+            >
+              Open Feed & Locate
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                window.open("tel:0123582124", "_self");
+              }}
+            >
+              Call TMPD War Room
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
