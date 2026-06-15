@@ -122,6 +122,12 @@ const DashcamDashboard = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchMsg, setSearchMsg] = useState<string | null>(null);
   const searchMarkerRef = useRef<any>(null);
+  const [suggestions, setSuggestions] = useState<Array<{ placeId: string; primary: string; secondary: string }>>([]);
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const [suggestLoading, setSuggestLoading] = useState(false);
+  const sessionTokenRef = useRef<any>(null);
+  const suggestTimerRef = useRef<number | null>(null);
+  const suggestSeqRef = useRef(0);
   const [incident, setIncident] = useState<null | {
     id: string;
     vehicleId: string;
@@ -327,7 +333,7 @@ const DashcamDashboard = () => {
     if (existing) return;
 
     const s = document.createElement("script");
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=__initDashcamMap${channel ? `&channel=${channel}` : ""}`;
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&libraries=places&callback=__initDashcamMap${channel ? `&channel=${channel}` : ""}`;
     s.async = true;
     s.defer = true;
     s.setAttribute("data-dashcam-maps", "true");
@@ -486,6 +492,104 @@ const DashcamDashboard = () => {
     });
   };
 
+  // Place a marker + pan at a given location with a label
+  const panToLocation = (pos: { lat: number; lng: number }, label: string) => {
+    if (!gMapRef.current || !window.google?.maps) return;
+    const g = window.google;
+    gMapRef.current.panTo(pos);
+    gMapRef.current.setZoom(Math.max(gMapRef.current.getZoom() ?? 14, 15));
+    if (searchMarkerRef.current) searchMarkerRef.current.setMap(null);
+    searchMarkerRef.current = new g.maps.Marker({
+      position: pos,
+      map: gMapRef.current,
+      icon: {
+        path: g.maps.SymbolPath.CIRCLE,
+        scale: 9,
+        fillColor: "#ef4444",
+        fillOpacity: 0.85,
+        strokeColor: "#ffffff",
+        strokeWeight: 2,
+      },
+      zIndex: 9999,
+    });
+    setSearchMsg(label);
+  };
+
+  // Debounced autocomplete suggestions via Places API (New)
+  const fetchSuggestions = (raw: string) => {
+    const q = raw.trim();
+    if (suggestTimerRef.current) window.clearTimeout(suggestTimerRef.current);
+    if (q.length < 2 || !window.google?.maps) {
+      setSuggestions([]);
+      setSuggestLoading(false);
+      return;
+    }
+    setSuggestLoading(true);
+    const seq = ++suggestSeqRef.current;
+    suggestTimerRef.current = window.setTimeout(async () => {
+      try {
+        const places: any = await (window as any).google.maps.importLibrary("places");
+        if (!sessionTokenRef.current) {
+          sessionTokenRef.current = new places.AutocompleteSessionToken();
+        }
+        const bias = {
+          north: EERSTERUST.lat + 0.5,
+          south: EERSTERUST.lat - 0.5,
+          east: EERSTERUST.lng + 0.5,
+          west: EERSTERUST.lng - 0.5,
+        };
+        const { suggestions: out } = await places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+          input: q,
+          sessionToken: sessionTokenRef.current,
+          locationBias: bias,
+          region: "ZA",
+        });
+        if (seq !== suggestSeqRef.current) return; // stale
+        const mapped = (out || [])
+          .map((s: any) => s.placePrediction)
+          .filter(Boolean)
+          .slice(0, 6)
+          .map((p: any) => ({
+            placeId: p.placeId,
+            primary: p.mainText?.text ?? p.text?.text ?? "",
+            secondary: p.secondaryText?.text ?? "",
+          }));
+        setSuggestions(mapped);
+        setSuggestOpen(true);
+      } catch (err) {
+        if (seq === suggestSeqRef.current) {
+          setSuggestions([]);
+          setSuggestOpen(false);
+        }
+      } finally {
+        if (seq === suggestSeqRef.current) setSuggestLoading(false);
+      }
+    }, 220);
+  };
+
+  const selectSuggestion = async (s: { placeId: string; primary: string; secondary: string }) => {
+    setSuggestOpen(false);
+    setSuggestions([]);
+    const label = [s.primary, s.secondary].filter(Boolean).join(", ");
+    setSearchInput(label);
+    setSearchMsg("Loading place…");
+    try {
+      const places: any = await (window as any).google.maps.importLibrary("places");
+      const place = new places.Place({ id: s.placeId });
+      await place.fetchFields({ fields: ["location", "formattedAddress", "displayName"] });
+      sessionTokenRef.current = null; // session ends after a place selection
+      const loc = place.location;
+      if (!loc) {
+        setSearchMsg("No location for that place");
+        return;
+      }
+      panToLocation({ lat: loc.lat(), lng: loc.lng() }, place.formattedAddress ?? label);
+    } catch {
+      // Fallback to geocoding the label
+      handleSearch();
+    }
+  };
+
   // Manual trigger for demoing the SOS popup
   const triggerSimulatedIncident = () => {
     if (!selected) return;
@@ -591,16 +695,43 @@ const DashcamDashboard = () => {
                   <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-500" />Demo</span>
                 </div>
               </div>
-              <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
+              <form onSubmit={(e) => { e.preventDefault(); if (suggestions[0]) { selectSuggestion(suggestions[0]); } else { handleSearch(e); } }} className="flex flex-col sm:flex-row gap-2">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
+                    onChange={(e) => { setSearchInput(e.target.value); fetchSuggestions(e.target.value); }}
+                    onFocus={() => { if (suggestions.length) setSuggestOpen(true); }}
+                    onBlur={() => setTimeout(() => setSuggestOpen(false), 150)}
+                    onKeyDown={(e) => { if (e.key === "Escape") setSuggestOpen(false); }}
                     placeholder="Search address or landmark (e.g. Volga St, Eersterust Mall)"
                     className="pl-9"
                     aria-label="Search the map"
+                    aria-autocomplete="list"
+                    aria-expanded={suggestOpen}
+                    autoComplete="off"
                   />
+                  {suggestOpen && (suggestions.length > 0 || suggestLoading) && (
+                    <div className="absolute z-50 mt-1 left-0 right-0 bg-popover border border-border rounded-md shadow-lg max-h-72 overflow-y-auto">
+                      {suggestLoading && suggestions.length === 0 && (
+                        <div className="px-3 py-2 text-xs text-muted-foreground">Searching…</div>
+                      )}
+                      {suggestions.map((s) => (
+                        <button
+                          key={s.placeId}
+                          type="button"
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-accent focus:bg-accent focus:outline-none flex items-start gap-2"
+                          onMouseDown={(e) => { e.preventDefault(); selectSuggestion(s); }}
+                        >
+                          <MapPin className="h-3.5 w-3.5 mt-0.5 text-muted-foreground flex-shrink-0" />
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate font-medium">{s.primary}</span>
+                            {s.secondary && <span className="block truncate text-xs text-muted-foreground">{s.secondary}</span>}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <Button type="submit" size="sm" disabled={!mapReady}>Go</Button>
