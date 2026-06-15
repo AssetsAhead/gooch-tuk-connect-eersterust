@@ -37,6 +37,7 @@ import OperatingLicenseApplication from "./pages/OperatingLicenseApplication";
 import Form9A from "./pages/Form9A";
 import CommunityAnnouncements from "./pages/CommunityAnnouncements";
 import FleetVehiclesDashboard from "./pages/FleetVehiclesDashboard";
+import DashcamDashboard from "./pages/DashcamDashboard";
 import InvestorPortal from "./pages/InvestorPortal";
 import InvestorR2MFleet from "./pages/InvestorR2MFleet";
 import InvestorHardwareOnly from "./pages/InvestorHardwareOnly";
@@ -142,6 +143,7 @@ const App = () => {
                 <Route path="/form-9a" element={<Form9A />} />
                 <Route path="/community-announcements" element={<CommunityAnnouncements />} />
                 <Route path="/fleet-vehicles" element={<FleetVehiclesDashboard />} />
+                <Route path="/dashcam" element={<DashcamDashboard />} />
                 <Route path="/investor" element={<InvestorPortal />} />
                 <Route path="/investor/r2m-fleet" element={<InvestorR2MFleet />} />
                 <Route path="/investor/hardware-only" element={<InvestorHardwareOnly />} />
