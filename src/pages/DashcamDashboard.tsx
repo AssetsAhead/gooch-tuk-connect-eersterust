@@ -217,11 +217,6 @@ const DashcamDashboard = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Live Dashcam Dashboard | MojaRide Fleet</title>
-        <meta name="description" content="Real-time dashcam feeds and GPS tracking for the MojaRide fleet across Eersterust." />
-        <link rel="canonical" href="https://tukconnect.lovable.app/dashcam" />
-      </Helmet>
 
       <div className="min-h-screen bg-background">
         <header className="border-b bg-card">
