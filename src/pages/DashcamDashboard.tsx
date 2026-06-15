@@ -119,6 +119,25 @@ const DashcamDashboard = () => {
   const [mapReady, setMapReady] = useState(false);
   const [now, setNow] = useState(Date.now());
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchMsg, setSearchMsg] = useState<string | null>(null);
+  const searchMarkerRef = useRef<any>(null);
+  const [incident, setIncident] = useState<null | {
+    id: string;
+    vehicleId: string;
+    label: string;
+    registration: string;
+    eNumber: string;
+    driver: string;
+    address: string | null;
+    lat: number;
+    lng: number;
+    fromSpeed: number;
+    toSpeed: number;
+    ts: number;
+    kind: "sudden_stop" | "crash";
+  }>(null);
+  const incidentCooldownRef = useRef<Map<string, number>>(new Map());
 
   useEffect(() => {
     document.title = "Live Dashcam Dashboard | MojaRide Fleet";
