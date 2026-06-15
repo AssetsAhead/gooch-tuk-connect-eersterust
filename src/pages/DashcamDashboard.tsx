@@ -124,7 +124,73 @@ const DashcamDashboard = () => {
     return () => { cancelled = true; };
   }, []);
 
-  // Simulated movement tick
+  // Realtime: subscribe to live GPS pings from location_logs and assign them
+  // deterministically to fleet vehicles (i-th distinct driver → i-th vehicle).
+  useEffect(() => {
+    const latestByUser = new Map<string, { lat: number; lng: number; ts: number; prevLat?: number; prevLng?: number }>();
+
+    const applyToVehicles = () => {
+      const users = Array.from(latestByUser.entries())
+        .sort((a, b) => b[1].ts - a[1].ts)
+        .map(([uid, p]) => ({ uid, ...p }));
+
+      setVehicles((prev) => prev.map((v, i) => {
+        const u = users[i];
+        if (!u) return v;
+        // Compute heading + rough speed from previous fix
+        let heading = v.heading;
+        let speedKmh = v.speedKmh;
+        if (u.prevLat != null && u.prevLng != null) {
+          const dLat = u.lat - u.prevLat;
+          const dLng = u.lng - u.prevLng;
+          if (Math.abs(dLat) + Math.abs(dLng) > 1e-7) {
+            heading = (Math.atan2(dLng, dLat) * 180) / Math.PI;
+            // ~111km per degree latitude; rough but OK for display
+            const meters = Math.sqrt((dLat * 111000) ** 2 + (dLng * 111000 * Math.cos((u.lat * Math.PI) / 180)) ** 2);
+            speedKmh = Math.min(120, meters * 3.6); // assume ~1s between pings; capped
+          }
+        }
+        return { ...v, lat: u.lat, lng: u.lng, heading, speedKmh, realGps: true };
+      }));
+    };
+
+    // Seed from initial fetch already in state
+    setVehicles((prev) => {
+      prev.forEach((v) => {
+        if (v.realGps) {
+          // We don't know original user_id mapping; skip seeding map here.
+        }
+      });
+      return prev;
+    });
+
+    const channel = supabase
+      .channel("dashcam-location-logs")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "location_logs" },
+        (payload) => {
+          const row: any = payload.new;
+          if (row?.user_id == null || row?.latitude == null || row?.longitude == null) return;
+          const prev = latestByUser.get(row.user_id);
+          latestByUser.set(row.user_id, {
+            lat: Number(row.latitude),
+            lng: Number(row.longitude),
+            ts: row.timestamp ? new Date(row.timestamp).getTime() : Date.now(),
+            prevLat: prev?.lat,
+            prevLng: prev?.lng,
+          });
+          applyToVehicles();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // Simulated movement tick — only nudges vehicles that have NO real GPS yet.
   useEffect(() => {
     const id = setInterval(() => {
       setVehicles((prev) => prev.map((v) => {
@@ -138,6 +204,7 @@ const DashcamDashboard = () => {
           heading: (v.heading + (Math.random() - 0.5) * 30 + 360) % 360,
           speedKmh: Math.max(0, Math.min(80, v.speedKmh + (Math.random() - 0.5) * 8)),
         };
+
       }));
     }, 2000);
     return () => clearInterval(id);
