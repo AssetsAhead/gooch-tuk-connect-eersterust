@@ -143,6 +143,7 @@ const App = () => {
                 <Route path="/form-9a" element={<Form9A />} />
                 <Route path="/community-announcements" element={<CommunityAnnouncements />} />
                 <Route path="/fleet-vehicles" element={<FleetVehiclesDashboard />} />
+                <Route path="/dashcam" element={<DashcamDashboard />} />
                 <Route path="/investor" element={<InvestorPortal />} />
                 <Route path="/investor/r2m-fleet" element={<InvestorR2MFleet />} />
                 <Route path="/investor/hardware-only" element={<InvestorHardwareOnly />} />
