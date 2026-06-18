@@ -978,8 +978,13 @@ function buildInfoContent(v: LiveVehicle, now: number): string {
   const reg = escapeHtml(v.registration ?? "—");
   const eNum = escapeHtml(v.e_number ?? "");
   const driver = escapeHtml(v.driver_name ?? "Unassigned");
+  const accuracy = v.accuracyM != null ? `± ${Math.round(v.accuracyM)} m` : "—";
+  const confidenceBadge = v.lowConfidence
+    ? `<span style="margin-left:6px;padding:1px 5px;border-radius:4px;background:#fef3c7;color:#92400e;font-size:9px;font-weight:700;letter-spacing:0.04em">LOW CONFIDENCE</span>`
+    : "";
+  const lastFixTitle = v.lastFixAt ? escapeHtml(new Date(v.lastFixAt).toLocaleString()) : "No GPS fix";
   return `
-    <div style="font-family:system-ui,sans-serif;min-width:220px;max-width:280px;color:#111827;font-size:12px;line-height:1.4">
+    <div style="font-family:system-ui,sans-serif;min-width:240px;max-width:300px;color:#111827;font-size:12px;line-height:1.4">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
         <strong style="font-size:13px">${eNum} · ${reg}</strong>
         <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:${color}1a;color:${color};border:1px solid ${color}55;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.04em">
@@ -992,7 +997,8 @@ function buildInfoContent(v: LiveVehicle, now: number): string {
         <div><strong style="color:#111827">Speed:</strong> ${Math.round(v.speedKmh)} km/h</div>
         <div><strong style="color:#111827">Heading:</strong> ${compass(v.heading)} ${headingDeg}°</div>
         <div><strong style="color:#111827">Driver:</strong> ${driver}</div>
-        <div><strong style="color:#111827">Last fix:</strong> ${timeAgo(v.lastFixAt, now)}</div>
+        <div><strong style="color:#111827">Accuracy:</strong> ${accuracy}${confidenceBadge}</div>
+        <div style="grid-column:1 / -1" title="${lastFixTitle}"><strong style="color:#111827">Last GPS update:</strong> ${timeAgo(v.lastFixAt, now)}</div>
       </div>
     </div>
   `;
