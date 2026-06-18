@@ -760,11 +760,17 @@ const DashcamDashboard = () => {
                     <Maximize2 className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white text-xs flex flex-wrap items-center justify-between gap-2">
+                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white text-xs flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                   <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {selected.address ?? `${selected.lat.toFixed(5)}, ${selected.lng.toFixed(5)}`}</span>
                   <span className="flex items-center gap-1"><Activity className="h-3 w-3" /> {Math.round(selected.speedKmh)} km/h</span>
                   <span className="flex items-center gap-1"><Compass className="h-3 w-3" /> {compass(selected.heading)} {Math.round(((selected.heading % 360) + 360) % 360)}°</span>
-                  <span>Last fix: {timeAgo(selected.lastFixAt, now)}</span>
+                  <span className="flex items-center gap-1" title="Horizontal GPS accuracy">
+                    ± {selected.accuracyM != null ? `${Math.round(selected.accuracyM)} m` : "—"}
+                    {selected.lowConfidence && <span className="ml-1 rounded bg-amber-500/20 text-amber-200 px-1 py-px text-[10px] font-semibold">LOW</span>}
+                  </span>
+                  <span title={selected.lastFixAt ? new Date(selected.lastFixAt).toLocaleString() : "No GPS fix"}>
+                    Last GPS update: {timeAgo(selected.lastFixAt, now)}
+                  </span>
                 </div>
               </div>
             </Card>
