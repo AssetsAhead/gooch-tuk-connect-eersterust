@@ -1129,6 +1129,56 @@ export type Database = {
         }
         Relationships: []
       }
+      live_vehicle_locations: {
+        Row: {
+          accuracy_m: number | null
+          created_at: string
+          heading: number | null
+          id: string
+          latitude: number
+          longitude: number
+          recorded_at: string
+          recorded_by: string | null
+          source: string
+          speed_kmh: number | null
+          vehicle_id: string
+        }
+        Insert: {
+          accuracy_m?: number | null
+          created_at?: string
+          heading?: number | null
+          id?: string
+          latitude: number
+          longitude: number
+          recorded_at?: string
+          recorded_by?: string | null
+          source?: string
+          speed_kmh?: number | null
+          vehicle_id: string
+        }
+        Update: {
+          accuracy_m?: number | null
+          created_at?: string
+          heading?: number | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          recorded_at?: string
+          recorded_by?: string | null
+          source?: string
+          speed_kmh?: number | null
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_vehicle_locations_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loading_zones: {
         Row: {
           address: string | null
