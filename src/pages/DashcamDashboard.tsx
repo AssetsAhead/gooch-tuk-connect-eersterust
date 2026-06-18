@@ -232,73 +232,71 @@ const DashcamDashboard = () => {
     return () => { cancelled = true; };
   }, []);
 
-  // Realtime: live GPS pings
+  // Realtime: live GPS pings keyed by vehicle_id
   useEffect(() => {
-    const latestByUser = new Map<string, { lat: number; lng: number; ts: number; prevLat?: number; prevLng?: number }>();
-
-    const applyToVehicles = () => {
-      const users = Array.from(latestByUser.entries())
-        .sort((a, b) => b[1].ts - a[1].ts)
-        .map(([uid, p]) => ({ uid, ...p }));
-
-      setVehicles((prev) => prev.map((v, i) => {
-        const u = users[i];
-        if (!u) return v;
-        let heading = v.heading;
-        let speedKmh = v.speedKmh;
-        if (u.prevLat != null && u.prevLng != null) {
-          const dLat = u.lat - u.prevLat;
-          const dLng = u.lng - u.prevLng;
-          if (Math.abs(dLat) + Math.abs(dLng) > 1e-7) {
-            heading = (Math.atan2(dLng, dLat) * 180) / Math.PI;
-            const meters = Math.sqrt((dLat * 111000) ** 2 + (dLng * 111000 * Math.cos((u.lat * Math.PI) / 180)) ** 2);
-            speedKmh = Math.min(120, meters * 3.6);
-          }
-        }
-        // Incident detection: sudden stop / crash pattern
-        const drop = v.speedKmh - speedKmh;
-        const now = Date.now();
-        const lastAlert = incidentCooldownRef.current.get(v.id) ?? 0;
-        if (v.realGps && drop >= 30 && speedKmh < 8 && v.speedKmh >= 35 && now - lastAlert > 60_000) {
-          incidentCooldownRef.current.set(v.id, now);
-          const kind: "sudden_stop" | "crash" = drop >= 55 ? "crash" : "sudden_stop";
-          setIncident({
-            id: `${v.id}-${now}`,
-            vehicleId: v.id,
-            label: kind === "crash" ? "Possible Crash Detected" : "Sudden Stop Detected",
-            kind,
-            registration: v.registration ?? "—",
-            eNumber: v.e_number ?? "",
-            driver: v.driver_name ?? "Unassigned",
-            address: v.address,
-            lat: u.lat,
-            lng: u.lng,
-            fromSpeed: Math.round(v.speedKmh),
-            toSpeed: Math.round(speedKmh),
-            ts: now,
-          });
-        }
-        return { ...v, lat: u.lat, lng: u.lng, heading, speedKmh, realGps: true, lastFixAt: u.ts };
-      }));
-    };
+    const prevByVehicle = new Map<string, { lat: number; lng: number; ts: number }>();
 
     const channel = supabase
-      .channel("dashcam-location-logs")
+      .channel("dashcam-live-vehicle-locations")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "location_logs" },
+        { event: "INSERT", schema: "public", table: "live_vehicle_locations" },
         (payload) => {
           const row: any = payload.new;
-          if (row?.user_id == null || row?.latitude == null || row?.longitude == null) return;
-          const prev = latestByUser.get(row.user_id);
-          latestByUser.set(row.user_id, {
-            lat: Number(row.latitude),
-            lng: Number(row.longitude),
-            ts: row.timestamp ? new Date(row.timestamp).getTime() : Date.now(),
-            prevLat: prev?.lat,
-            prevLng: prev?.lng,
-          });
-          applyToVehicles();
+          if (!row?.vehicle_id || row.latitude == null || row.longitude == null) return;
+          const lat = Number(row.latitude);
+          const lng = Number(row.longitude);
+          const ts = row.recorded_at ? new Date(row.recorded_at).getTime() : Date.now();
+          const reportedSpeed = row.speed_kmh != null ? Number(row.speed_kmh) : null;
+          const reportedHeading = row.heading != null ? Number(row.heading) : null;
+          const prev = prevByVehicle.get(row.vehicle_id);
+          prevByVehicle.set(row.vehicle_id, { lat, lng, ts });
+
+          setVehicles((list) => list.map((v) => {
+            if (v.id !== row.vehicle_id) return v;
+
+            // Derive heading/speed from delta when device didn't supply them
+            let heading = reportedHeading ?? v.heading;
+            let speedKmh = reportedSpeed ?? v.speedKmh;
+            if ((reportedHeading == null || reportedSpeed == null) && prev) {
+              const dLat = lat - prev.lat;
+              const dLng = lng - prev.lng;
+              const dt = Math.max(0.5, (ts - prev.ts) / 1000);
+              if (Math.abs(dLat) + Math.abs(dLng) > 1e-7) {
+                if (reportedHeading == null) heading = (Math.atan2(dLng, dLat) * 180) / Math.PI;
+                if (reportedSpeed == null) {
+                  const meters = Math.sqrt((dLat * 111000) ** 2 + (dLng * 111000 * Math.cos((lat * Math.PI) / 180)) ** 2);
+                  speedKmh = Math.min(120, (meters / dt) * 3.6);
+                }
+              }
+            }
+
+            // Incident detection: sudden stop / crash pattern
+            const drop = v.speedKmh - speedKmh;
+            const nowMs = Date.now();
+            const lastAlert = incidentCooldownRef.current.get(v.id) ?? 0;
+            if (v.realGps && drop >= 30 && speedKmh < 8 && v.speedKmh >= 35 && nowMs - lastAlert > 60_000) {
+              incidentCooldownRef.current.set(v.id, nowMs);
+              const kind: "sudden_stop" | "crash" = drop >= 55 ? "crash" : "sudden_stop";
+              setIncident({
+                id: `${v.id}-${nowMs}`,
+                vehicleId: v.id,
+                label: kind === "crash" ? "Possible Crash Detected" : "Sudden Stop Detected",
+                kind,
+                registration: v.registration ?? "—",
+                eNumber: v.e_number ?? "",
+                driver: v.driver_name ?? "Unassigned",
+                address: v.address,
+                lat,
+                lng,
+                fromSpeed: Math.round(v.speedKmh),
+                toSpeed: Math.round(speedKmh),
+                ts: nowMs,
+              });
+            }
+
+            return { ...v, lat, lng, heading, speedKmh, realGps: true, lastFixAt: ts };
+          }));
         }
       )
       .subscribe();
