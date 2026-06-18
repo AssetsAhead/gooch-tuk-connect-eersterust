@@ -25,6 +25,14 @@ const DEMO_VIDEOS = [
 const FRESH_MS = 30_000;        // <30s → live
 const STALE_MS = 5 * 60_000;    // 30s–5min → stale; >5min → offline
 
+// GPS quality thresholds (metres)
+const ACCURACY_REJECT_M = 150;  // discard fixes worse than this — noise
+const ACCURACY_LOW_M = 75;      // worse than this → flag as low confidence (downweighted on map)
+
+// Marker smoothing — easing factor per animation frame (0..1). Higher = snappier, lower = smoother.
+const SMOOTH_POS = 0.18;
+const SMOOTH_HEADING = 0.22;
+
 type Freshness = "live" | "stale" | "offline" | "demo";
 
 interface FleetVehicle {
@@ -41,6 +49,8 @@ interface LiveVehicle extends FleetVehicle {
   lng: number;
   speedKmh: number;
   heading: number;
+  accuracyM: number | null;
+  lowConfidence: boolean;
   realGps: boolean;
   lastFixAt: number | null; // ms epoch, real GPS only
   address: string | null;
