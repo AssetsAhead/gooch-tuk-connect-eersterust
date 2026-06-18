@@ -476,6 +476,31 @@ const DashcamDashboard = () => {
         });
         markersRef.current[v.id] = marker;
       }
+
+      // Create the trail polylines once per vehicle (stepped opacity = fading effect).
+      if (!trailPolysRef.current[v.id]) {
+        trailPolysRef.current[v.id] = Array.from({ length: TRAIL_SEGMENTS }).map((_, i) =>
+          new g.maps.Polyline({
+            map: gMapRef.current,
+            path: [],
+            strokeColor: freshnessHex(f),
+            // i=0 oldest/faintest → i=last newest/strongest
+            strokeOpacity: 0.12 + (i / (TRAIL_SEGMENTS - 1)) * 0.6,
+            strokeWeight: isSel ? 4 : 2.5,
+            zIndex: 1,
+          })
+        );
+      } else {
+        // Refresh styling each pass so colour tracks freshness and weight tracks selection.
+        const color = freshnessHex(f);
+        trailPolysRef.current[v.id].forEach((p, i) => {
+          p.setOptions({
+            strokeColor: color,
+            strokeOpacity: 0.12 + (i / (TRAIL_SEGMENTS - 1)) * 0.6,
+            strokeWeight: isSel ? 4 : 2.5,
+          });
+        });
+      }
     });
   }, [vehicles, selectedId, mapReady, now]);
 
