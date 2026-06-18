@@ -182,33 +182,37 @@ const DashcamDashboard = () => {
         status: "active",
       }));
 
+      // Latest live GPS fix per vehicle (window the lookup to the last 24h)
+      const sinceIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
       const { data: locs } = await supabase
-        .from("location_logs")
-        .select("user_id,latitude,longitude,timestamp")
-        .order("timestamp", { ascending: false })
-        .limit(50);
+        .from("live_vehicle_locations")
+        .select("vehicle_id,latitude,longitude,speed_kmh,heading,recorded_at")
+        .gte("recorded_at", sinceIso)
+        .order("recorded_at", { ascending: false })
+        .limit(500);
 
-      const latestByUser = new Map<string, { lat: number; lng: number; ts: number }>();
+      const latestByVehicle = new Map<string, { lat: number; lng: number; ts: number; speed: number | null; heading: number | null }>();
       (locs ?? []).forEach((l: any) => {
-        if (!latestByUser.has(l.user_id)) {
-          latestByUser.set(l.user_id, {
+        if (!latestByVehicle.has(l.vehicle_id)) {
+          latestByVehicle.set(l.vehicle_id, {
             lat: Number(l.latitude),
             lng: Number(l.longitude),
-            ts: l.timestamp ? new Date(l.timestamp).getTime() : Date.now(),
+            ts: l.recorded_at ? new Date(l.recorded_at).getTime() : Date.now(),
+            speed: l.speed_kmh != null ? Number(l.speed_kmh) : null,
+            heading: l.heading != null ? Number(l.heading) : null,
           });
         }
       });
-      const realPool = Array.from(latestByUser.values());
 
       const live: LiveVehicle[] = rows.map((v, i) => {
-        const real = realPool[i];
+        const real = latestByVehicle.get(v.id);
         const off = seededOffset(v.id);
         return {
           ...v,
           lat: real?.lat ?? EERSTERUST.lat + off.dLat,
           lng: real?.lng ?? EERSTERUST.lng + off.dLng,
-          speedKmh: 15 + Math.floor(Math.random() * 50),
-          heading: Math.floor(Math.random() * 360),
+          speedKmh: real?.speed ?? 15 + Math.floor(Math.random() * 50),
+          heading: real?.heading ?? Math.floor(Math.random() * 360),
           realGps: !!real,
           lastFixAt: real?.ts ?? null,
           address: null,
