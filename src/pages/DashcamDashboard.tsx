@@ -33,6 +33,11 @@ const ACCURACY_LOW_M = 75;      // worse than this → flag as low confidence (d
 const SMOOTH_POS = 0.18;
 const SMOOTH_HEADING = 0.22;
 
+// Route trail — breadcrumb history rendered as fading polyline behind each marker.
+const TRAIL_MAX = 80;            // max points kept per vehicle
+const TRAIL_MIN_DIST_M = 4;      // ignore sub-noise movement
+const TRAIL_SEGMENTS = 4;        // number of polylines per trail (for stepped fade)
+
 type Freshness = "live" | "stale" | "offline" | "demo";
 
 interface FleetVehicle {
