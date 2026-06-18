@@ -196,7 +196,7 @@ const DashcamDashboard = () => {
       const sinceIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
       const { data: locs } = await supabase
         .from("live_vehicle_locations")
-        .select("vehicle_id,latitude,longitude,speed_kmh,heading,recorded_at")
+        .select("vehicle_id,latitude,longitude,speed_kmh,heading,accuracy_m,recorded_at")
         .gte("recorded_at", sinceIso)
         .order("recorded_at", { ascending: false })
         .limit(500);
