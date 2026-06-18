@@ -181,6 +181,10 @@ const DashcamDashboard = () => {
   const targetRef = useRef<Record<string, { lat: number; lng: number; heading: number }>>({});
   const displayRef = useRef<Record<string, { lat: number; lng: number; heading: number }>>({});
   const markerIconRef = useRef<Record<string, any>>({});
+  // Per-vehicle breadcrumb trail (points come from the smoothed display position so the
+  // line matches what the user actually sees, not the raw GPS pings).
+  const trailPointsRef = useRef<Record<string, { lat: number; lng: number }[]>>({});
+  const trailPolysRef = useRef<Record<string, any[]>>({});
   const rafRef = useRef<number | null>(null);
 
   // Load fleet + seed any recent real GPS fixes
