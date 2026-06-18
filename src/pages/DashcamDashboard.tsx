@@ -172,6 +172,11 @@ const DashcamDashboard = () => {
   const infoWindowRef = useRef<any>(null);
   const geocoderRef = useRef<any>(null);
   const pendingGeocodeRef = useRef<Set<string>>(new Set());
+  // Smoothing state for marker interpolation
+  const targetRef = useRef<Record<string, { lat: number; lng: number; heading: number }>>({});
+  const displayRef = useRef<Record<string, { lat: number; lng: number; heading: number }>>({});
+  const markerIconRef = useRef<Record<string, any>>({});
+  const rafRef = useRef<number | null>(null);
 
   // Load fleet + seed any recent real GPS fixes
   useEffect(() => {
