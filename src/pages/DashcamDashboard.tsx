@@ -25,6 +25,14 @@ const DEMO_VIDEOS = [
 const FRESH_MS = 30_000;        // <30s → live
 const STALE_MS = 5 * 60_000;    // 30s–5min → stale; >5min → offline
 
+// GPS quality thresholds (metres)
+const ACCURACY_REJECT_M = 150;  // discard fixes worse than this — noise
+const ACCURACY_LOW_M = 75;      // worse than this → flag as low confidence (downweighted on map)
+
+// Marker smoothing — easing factor per animation frame (0..1). Higher = snappier, lower = smoother.
+const SMOOTH_POS = 0.18;
+const SMOOTH_HEADING = 0.22;
+
 type Freshness = "live" | "stale" | "offline" | "demo";
 
 interface FleetVehicle {
@@ -41,6 +49,8 @@ interface LiveVehicle extends FleetVehicle {
   lng: number;
   speedKmh: number;
   heading: number;
+  accuracyM: number | null;
+  lowConfidence: boolean;
   realGps: boolean;
   lastFixAt: number | null; // ms epoch, real GPS only
   address: string | null;
@@ -162,6 +172,11 @@ const DashcamDashboard = () => {
   const infoWindowRef = useRef<any>(null);
   const geocoderRef = useRef<any>(null);
   const pendingGeocodeRef = useRef<Set<string>>(new Set());
+  // Smoothing state for marker interpolation
+  const targetRef = useRef<Record<string, { lat: number; lng: number; heading: number }>>({});
+  const displayRef = useRef<Record<string, { lat: number; lng: number; heading: number }>>({});
+  const markerIconRef = useRef<Record<string, any>>({});
+  const rafRef = useRef<number | null>(null);
 
   // Load fleet + seed any recent real GPS fixes
   useEffect(() => {
@@ -186,13 +201,16 @@ const DashcamDashboard = () => {
       const sinceIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
       const { data: locs } = await supabase
         .from("live_vehicle_locations")
-        .select("vehicle_id,latitude,longitude,speed_kmh,heading,recorded_at")
+        .select("vehicle_id,latitude,longitude,speed_kmh,heading,accuracy_m,recorded_at")
         .gte("recorded_at", sinceIso)
         .order("recorded_at", { ascending: false })
         .limit(500);
 
-      const latestByVehicle = new Map<string, { lat: number; lng: number; ts: number; speed: number | null; heading: number | null }>();
+      const latestByVehicle = new Map<string, { lat: number; lng: number; ts: number; speed: number | null; heading: number | null; accuracy: number | null }>();
       (locs ?? []).forEach((l: any) => {
+        // Skip fixes that are too inaccurate to trust
+        const acc = l.accuracy_m != null ? Number(l.accuracy_m) : null;
+        if (acc != null && acc > ACCURACY_REJECT_M) return;
         if (!latestByVehicle.has(l.vehicle_id)) {
           latestByVehicle.set(l.vehicle_id, {
             lat: Number(l.latitude),
@@ -200,6 +218,7 @@ const DashcamDashboard = () => {
             ts: l.recorded_at ? new Date(l.recorded_at).getTime() : Date.now(),
             speed: l.speed_kmh != null ? Number(l.speed_kmh) : null,
             heading: l.heading != null ? Number(l.heading) : null,
+            accuracy: acc,
           });
         }
       });
@@ -207,12 +226,15 @@ const DashcamDashboard = () => {
       const live: LiveVehicle[] = rows.map((v, i) => {
         const real = latestByVehicle.get(v.id);
         const off = seededOffset(v.id);
+        const lowConfidence = !!real && (real.heading == null || (real.accuracy != null && real.accuracy > ACCURACY_LOW_M));
         return {
           ...v,
           lat: real?.lat ?? EERSTERUST.lat + off.dLat,
           lng: real?.lng ?? EERSTERUST.lng + off.dLng,
           speedKmh: real?.speed ?? 15 + Math.floor(Math.random() * 50),
           heading: real?.heading ?? Math.floor(Math.random() * 360),
+          accuracyM: real?.accuracy ?? null,
+          lowConfidence,
           realGps: !!real,
           lastFixAt: real?.ts ?? null,
           address: null,
@@ -244,6 +266,9 @@ const DashcamDashboard = () => {
         (payload) => {
           const row: any = payload.new;
           if (!row?.vehicle_id || row.latitude == null || row.longitude == null) return;
+          const reportedAccuracy = row.accuracy_m != null ? Number(row.accuracy_m) : null;
+          // Hard-reject obviously noisy fixes
+          if (reportedAccuracy != null && reportedAccuracy > ACCURACY_REJECT_M) return;
           const lat = Number(row.latitude);
           const lng = Number(row.longitude);
           const ts = row.recorded_at ? new Date(row.recorded_at).getTime() : Date.now();
@@ -258,24 +283,30 @@ const DashcamDashboard = () => {
             // Derive heading/speed from delta when device didn't supply them
             let heading = reportedHeading ?? v.heading;
             let speedKmh = reportedSpeed ?? v.speedKmh;
+            let derivedHeading = reportedHeading == null;
             if ((reportedHeading == null || reportedSpeed == null) && prev) {
               const dLat = lat - prev.lat;
               const dLng = lng - prev.lng;
               const dt = Math.max(0.5, (ts - prev.ts) / 1000);
-              if (Math.abs(dLat) + Math.abs(dLng) > 1e-7) {
-                if (reportedHeading == null) heading = (Math.atan2(dLng, dLat) * 180) / Math.PI;
-                if (reportedSpeed == null) {
-                  const meters = Math.sqrt((dLat * 111000) ** 2 + (dLng * 111000 * Math.cos((lat * Math.PI) / 180)) ** 2);
-                  speedKmh = Math.min(120, (meters / dt) * 3.6);
-                }
+              const meters = Math.sqrt((dLat * 111000) ** 2 + (dLng * 111000 * Math.cos((lat * Math.PI) / 180)) ** 2);
+              // Only trust derived heading when we actually moved
+              if (meters > 3) {
+                if (reportedHeading == null) { heading = (Math.atan2(dLng, dLat) * 180) / Math.PI; derivedHeading = false; }
+                if (reportedSpeed == null) speedKmh = Math.min(120, (meters / dt) * 3.6);
+              } else if (reportedSpeed == null) {
+                speedKmh = 0;
               }
             }
 
-            // Incident detection: sudden stop / crash pattern
+            const lowConfidence =
+              derivedHeading ||
+              (reportedAccuracy != null && reportedAccuracy > ACCURACY_LOW_M);
+
+            // Incident detection: sudden stop / crash pattern (only on trusted fixes)
             const drop = v.speedKmh - speedKmh;
             const nowMs = Date.now();
             const lastAlert = incidentCooldownRef.current.get(v.id) ?? 0;
-            if (v.realGps && drop >= 30 && speedKmh < 8 && v.speedKmh >= 35 && nowMs - lastAlert > 60_000) {
+            if (!lowConfidence && v.realGps && drop >= 30 && speedKmh < 8 && v.speedKmh >= 35 && nowMs - lastAlert > 60_000) {
               incidentCooldownRef.current.set(v.id, nowMs);
               const kind: "sudden_stop" | "crash" = drop >= 55 ? "crash" : "sudden_stop";
               setIncident({
@@ -295,7 +326,7 @@ const DashcamDashboard = () => {
               });
             }
 
-            return { ...v, lat, lng, heading, speedKmh, realGps: true, lastFixAt: ts };
+            return { ...v, lat, lng, heading, speedKmh, accuracyM: reportedAccuracy, lowConfidence, realGps: true, lastFixAt: ts };
           }));
         }
       )
@@ -392,33 +423,43 @@ const DashcamDashboard = () => {
     });
   }, [vehicles, mapReady]);
 
-  // Sync markers
+  // Sync markers — creates marker if missing, updates target position/heading for the rAF tweener,
+  // and refreshes the static icon style (colour, scale, opacity) when selection/freshness changes.
   useEffect(() => {
     if (!mapReady || !gMapRef.current) return;
     const g = window.google;
     const nowTs = now;
     vehicles.forEach((v) => {
-      const pos = { lat: v.lat, lng: v.lng };
       const isSel = v.id === selectedId;
       const f = getFreshness(v, nowTs);
-      const icon = {
+      // Low-confidence fixes are visibly downweighted so the operator knows they're soft data.
+      const baseOpacity = f === "offline" ? 0.55 : v.lowConfidence ? 0.55 : 1;
+      const iconStyle = {
         path: g.maps.SymbolPath.FORWARD_CLOSED_ARROW,
         scale: isSel ? 7 : 5,
         fillColor: freshnessHex(f),
-        fillOpacity: f === "offline" ? 0.55 : 1,
-        strokeColor: "#ffffff",
-        strokeWeight: isSel ? 2 : 1,
-        rotation: v.heading,
+        fillOpacity: baseOpacity,
+        strokeColor: v.lowConfidence ? "#fbbf24" : "#ffffff",
+        strokeWeight: isSel ? 2 : v.lowConfidence ? 2 : 1,
+        rotation: (displayRef.current[v.id]?.heading ?? v.heading),
       };
+      markerIconRef.current[v.id] = iconStyle;
+
+      // Seed display position on first sight so we don't tween from (0,0).
+      if (!displayRef.current[v.id]) {
+        displayRef.current[v.id] = { lat: v.lat, lng: v.lng, heading: v.heading };
+      }
+      targetRef.current[v.id] = { lat: v.lat, lng: v.lng, heading: v.heading };
+
       if (markersRef.current[v.id]) {
-        markersRef.current[v.id].setPosition(pos);
-        markersRef.current[v.id].setIcon(icon);
+        markersRef.current[v.id].setIcon(iconStyle);
       } else {
         const marker = new g.maps.Marker({
-          position: pos,
+          position: displayRef.current[v.id],
           map: gMapRef.current,
           title: `${v.e_number ?? ""} ${v.registration ?? ""}`,
-          icon,
+          icon: iconStyle,
+          optimized: false,
         });
         marker.addListener("click", () => {
           setSelectedId(v.id);
@@ -428,6 +469,49 @@ const DashcamDashboard = () => {
       }
     });
   }, [vehicles, selectedId, mapReady, now]);
+
+  // rAF tweener — eases each marker's displayed position/heading toward the latest target.
+  // This is what turns discrete GPS pings into smooth motion on the map.
+  useEffect(() => {
+    if (!mapReady) return;
+    const step = () => {
+      let needsRedraw = false;
+      Object.keys(targetRef.current).forEach((id) => {
+        const t = targetRef.current[id];
+        const d = displayRef.current[id];
+        const marker = markersRef.current[id];
+        if (!t || !d || !marker) return;
+        const dLat = t.lat - d.lat;
+        const dLng = t.lng - d.lng;
+        // Shortest-arc heading delta
+        let dH = ((t.heading - d.heading + 540) % 360) - 180;
+
+        const moved = Math.abs(dLat) > 1e-7 || Math.abs(dLng) > 1e-7;
+        const turned = Math.abs(dH) > 0.5;
+        if (!moved && !turned) return;
+
+        const newLat = d.lat + dLat * SMOOTH_POS;
+        const newLng = d.lng + dLng * SMOOTH_POS;
+        const newHeading = (d.heading + dH * SMOOTH_HEADING + 360) % 360;
+        displayRef.current[id] = { lat: newLat, lng: newLng, heading: newHeading };
+
+        marker.setPosition({ lat: newLat, lng: newLng });
+        if (turned) {
+          const base = markerIconRef.current[id];
+          if (base && Math.abs(((base.rotation ?? 0) - newHeading + 540) % 360 - 180) > 1) {
+            const next = { ...base, rotation: newHeading };
+            markerIconRef.current[id] = next;
+            marker.setIcon(next);
+          }
+        }
+        needsRedraw = true;
+      });
+      rafRef.current = requestAnimationFrame(step);
+      void needsRedraw;
+    };
+    rafRef.current = requestAnimationFrame(step);
+    return () => { if (rafRef.current != null) cancelAnimationFrame(rafRef.current); };
+  }, [mapReady]);
 
   // Keep open InfoWindow content up-to-date with latest vehicle data
   useEffect(() => {
@@ -676,11 +760,17 @@ const DashcamDashboard = () => {
                     <Maximize2 className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white text-xs flex flex-wrap items-center justify-between gap-2">
+                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white text-xs flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                   <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {selected.address ?? `${selected.lat.toFixed(5)}, ${selected.lng.toFixed(5)}`}</span>
                   <span className="flex items-center gap-1"><Activity className="h-3 w-3" /> {Math.round(selected.speedKmh)} km/h</span>
                   <span className="flex items-center gap-1"><Compass className="h-3 w-3" /> {compass(selected.heading)} {Math.round(((selected.heading % 360) + 360) % 360)}°</span>
-                  <span>Last fix: {timeAgo(selected.lastFixAt, now)}</span>
+                  <span className="flex items-center gap-1" title="Horizontal GPS accuracy">
+                    ± {selected.accuracyM != null ? `${Math.round(selected.accuracyM)} m` : "—"}
+                    {selected.lowConfidence && <span className="ml-1 rounded bg-amber-500/20 text-amber-200 px-1 py-px text-[10px] font-semibold">LOW</span>}
+                  </span>
+                  <span title={selected.lastFixAt ? new Date(selected.lastFixAt).toLocaleString() : "No GPS fix"}>
+                    Last GPS update: {timeAgo(selected.lastFixAt, now)}
+                  </span>
                 </div>
               </div>
             </Card>
@@ -888,8 +978,13 @@ function buildInfoContent(v: LiveVehicle, now: number): string {
   const reg = escapeHtml(v.registration ?? "—");
   const eNum = escapeHtml(v.e_number ?? "");
   const driver = escapeHtml(v.driver_name ?? "Unassigned");
+  const accuracy = v.accuracyM != null ? `± ${Math.round(v.accuracyM)} m` : "—";
+  const confidenceBadge = v.lowConfidence
+    ? `<span style="margin-left:6px;padding:1px 5px;border-radius:4px;background:#fef3c7;color:#92400e;font-size:9px;font-weight:700;letter-spacing:0.04em">LOW CONFIDENCE</span>`
+    : "";
+  const lastFixTitle = v.lastFixAt ? escapeHtml(new Date(v.lastFixAt).toLocaleString()) : "No GPS fix";
   return `
-    <div style="font-family:system-ui,sans-serif;min-width:220px;max-width:280px;color:#111827;font-size:12px;line-height:1.4">
+    <div style="font-family:system-ui,sans-serif;min-width:240px;max-width:300px;color:#111827;font-size:12px;line-height:1.4">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
         <strong style="font-size:13px">${eNum} · ${reg}</strong>
         <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:${color}1a;color:${color};border:1px solid ${color}55;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.04em">
@@ -902,7 +997,8 @@ function buildInfoContent(v: LiveVehicle, now: number): string {
         <div><strong style="color:#111827">Speed:</strong> ${Math.round(v.speedKmh)} km/h</div>
         <div><strong style="color:#111827">Heading:</strong> ${compass(v.heading)} ${headingDeg}°</div>
         <div><strong style="color:#111827">Driver:</strong> ${driver}</div>
-        <div><strong style="color:#111827">Last fix:</strong> ${timeAgo(v.lastFixAt, now)}</div>
+        <div><strong style="color:#111827">Accuracy:</strong> ${accuracy}${confidenceBadge}</div>
+        <div style="grid-column:1 / -1" title="${lastFixTitle}"><strong style="color:#111827">Last GPS update:</strong> ${timeAgo(v.lastFixAt, now)}</div>
       </div>
     </div>
   `;
