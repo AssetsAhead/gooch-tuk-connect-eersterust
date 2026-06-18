@@ -201,8 +201,11 @@ const DashcamDashboard = () => {
         .order("recorded_at", { ascending: false })
         .limit(500);
 
-      const latestByVehicle = new Map<string, { lat: number; lng: number; ts: number; speed: number | null; heading: number | null }>();
+      const latestByVehicle = new Map<string, { lat: number; lng: number; ts: number; speed: number | null; heading: number | null; accuracy: number | null }>();
       (locs ?? []).forEach((l: any) => {
+        // Skip fixes that are too inaccurate to trust
+        const acc = l.accuracy_m != null ? Number(l.accuracy_m) : null;
+        if (acc != null && acc > ACCURACY_REJECT_M) return;
         if (!latestByVehicle.has(l.vehicle_id)) {
           latestByVehicle.set(l.vehicle_id, {
             lat: Number(l.latitude),
@@ -210,6 +213,7 @@ const DashcamDashboard = () => {
             ts: l.recorded_at ? new Date(l.recorded_at).getTime() : Date.now(),
             speed: l.speed_kmh != null ? Number(l.speed_kmh) : null,
             heading: l.heading != null ? Number(l.heading) : null,
+            accuracy: acc,
           });
         }
       });
@@ -217,12 +221,15 @@ const DashcamDashboard = () => {
       const live: LiveVehicle[] = rows.map((v, i) => {
         const real = latestByVehicle.get(v.id);
         const off = seededOffset(v.id);
+        const lowConfidence = !!real && (real.heading == null || (real.accuracy != null && real.accuracy > ACCURACY_LOW_M));
         return {
           ...v,
           lat: real?.lat ?? EERSTERUST.lat + off.dLat,
           lng: real?.lng ?? EERSTERUST.lng + off.dLng,
           speedKmh: real?.speed ?? 15 + Math.floor(Math.random() * 50),
           heading: real?.heading ?? Math.floor(Math.random() * 360),
+          accuracyM: real?.accuracy ?? null,
+          lowConfidence,
           realGps: !!real,
           lastFixAt: real?.ts ?? null,
           address: null,
