@@ -538,6 +538,26 @@ const DashcamDashboard = () => {
             marker.setIcon(next);
           }
         }
+
+        // Append to the fading breadcrumb trail when we've actually moved enough.
+        const hist = trailPointsRef.current[id] ?? (trailPointsRef.current[id] = []);
+        const last = hist[hist.length - 1];
+        const movedM = last ? distanceMeters(last.lat, last.lng, newLat, newLng) : Infinity;
+        if (movedM >= TRAIL_MIN_DIST_M) {
+          hist.push({ lat: newLat, lng: newLng });
+          if (hist.length > TRAIL_MAX) hist.splice(0, hist.length - TRAIL_MAX);
+          const polys = trailPolysRef.current[id];
+          if (polys && polys.length === TRAIL_SEGMENTS) {
+            // Split history across N segments with 1-point overlap so they visually connect.
+            const n = hist.length;
+            const segLen = Math.max(1, Math.ceil(n / TRAIL_SEGMENTS));
+            for (let i = 0; i < TRAIL_SEGMENTS; i++) {
+              const startIdx = Math.max(0, i * segLen - (i > 0 ? 1 : 0));
+              const endIdx = Math.min(n, (i + 1) * segLen);
+              polys[i].setPath(hist.slice(startIdx, endIdx));
+            }
+          }
+        }
         needsRedraw = true;
       });
       rafRef.current = requestAnimationFrame(step);
