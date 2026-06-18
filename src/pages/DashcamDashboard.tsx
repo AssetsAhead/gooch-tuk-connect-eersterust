@@ -33,6 +33,11 @@ const ACCURACY_LOW_M = 75;      // worse than this → flag as low confidence (d
 const SMOOTH_POS = 0.18;
 const SMOOTH_HEADING = 0.22;
 
+// Route trail — breadcrumb history rendered as fading polyline behind each marker.
+const TRAIL_MAX = 80;            // max points kept per vehicle
+const TRAIL_MIN_DIST_M = 4;      // ignore sub-noise movement
+const TRAIL_SEGMENTS = 4;        // number of polylines per trail (for stepped fade)
+
 type Freshness = "live" | "stale" | "offline" | "demo";
 
 interface FleetVehicle {
@@ -176,6 +181,10 @@ const DashcamDashboard = () => {
   const targetRef = useRef<Record<string, { lat: number; lng: number; heading: number }>>({});
   const displayRef = useRef<Record<string, { lat: number; lng: number; heading: number }>>({});
   const markerIconRef = useRef<Record<string, any>>({});
+  // Per-vehicle breadcrumb trail (points come from the smoothed display position so the
+  // line matches what the user actually sees, not the raw GPS pings).
+  const trailPointsRef = useRef<Record<string, { lat: number; lng: number }[]>>({});
+  const trailPolysRef = useRef<Record<string, any[]>>({});
   const rafRef = useRef<number | null>(null);
 
   // Load fleet + seed any recent real GPS fixes
@@ -467,6 +476,31 @@ const DashcamDashboard = () => {
         });
         markersRef.current[v.id] = marker;
       }
+
+      // Create the trail polylines once per vehicle (stepped opacity = fading effect).
+      if (!trailPolysRef.current[v.id]) {
+        trailPolysRef.current[v.id] = Array.from({ length: TRAIL_SEGMENTS }).map((_, i) =>
+          new g.maps.Polyline({
+            map: gMapRef.current,
+            path: [],
+            strokeColor: freshnessHex(f),
+            // i=0 oldest/faintest → i=last newest/strongest
+            strokeOpacity: 0.12 + (i / (TRAIL_SEGMENTS - 1)) * 0.6,
+            strokeWeight: isSel ? 4 : 2.5,
+            zIndex: 1,
+          })
+        );
+      } else {
+        // Refresh styling each pass so colour tracks freshness and weight tracks selection.
+        const color = freshnessHex(f);
+        trailPolysRef.current[v.id].forEach((p, i) => {
+          p.setOptions({
+            strokeColor: color,
+            strokeOpacity: 0.12 + (i / (TRAIL_SEGMENTS - 1)) * 0.6,
+            strokeWeight: isSel ? 4 : 2.5,
+          });
+        });
+      }
     });
   }, [vehicles, selectedId, mapReady, now]);
 
@@ -502,6 +536,26 @@ const DashcamDashboard = () => {
             const next = { ...base, rotation: newHeading };
             markerIconRef.current[id] = next;
             marker.setIcon(next);
+          }
+        }
+
+        // Append to the fading breadcrumb trail when we've actually moved enough.
+        const hist = trailPointsRef.current[id] ?? (trailPointsRef.current[id] = []);
+        const last = hist[hist.length - 1];
+        const movedM = last ? distanceMeters(last.lat, last.lng, newLat, newLng) : Infinity;
+        if (movedM >= TRAIL_MIN_DIST_M) {
+          hist.push({ lat: newLat, lng: newLng });
+          if (hist.length > TRAIL_MAX) hist.splice(0, hist.length - TRAIL_MAX);
+          const polys = trailPolysRef.current[id];
+          if (polys && polys.length === TRAIL_SEGMENTS) {
+            // Split history across N segments with 1-point overlap so they visually connect.
+            const n = hist.length;
+            const segLen = Math.max(1, Math.ceil(n / TRAIL_SEGMENTS));
+            for (let i = 0; i < TRAIL_SEGMENTS; i++) {
+              const startIdx = Math.max(0, i * segLen - (i > 0 ? 1 : 0));
+              const endIdx = Math.min(n, (i + 1) * segLen);
+              polys[i].setPath(hist.slice(startIdx, endIdx));
+            }
           }
         }
         needsRedraw = true;
