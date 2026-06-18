@@ -423,33 +423,43 @@ const DashcamDashboard = () => {
     });
   }, [vehicles, mapReady]);
 
-  // Sync markers
+  // Sync markers — creates marker if missing, updates target position/heading for the rAF tweener,
+  // and refreshes the static icon style (colour, scale, opacity) when selection/freshness changes.
   useEffect(() => {
     if (!mapReady || !gMapRef.current) return;
     const g = window.google;
     const nowTs = now;
     vehicles.forEach((v) => {
-      const pos = { lat: v.lat, lng: v.lng };
       const isSel = v.id === selectedId;
       const f = getFreshness(v, nowTs);
-      const icon = {
+      // Low-confidence fixes are visibly downweighted so the operator knows they're soft data.
+      const baseOpacity = f === "offline" ? 0.55 : v.lowConfidence ? 0.55 : 1;
+      const iconStyle = {
         path: g.maps.SymbolPath.FORWARD_CLOSED_ARROW,
         scale: isSel ? 7 : 5,
         fillColor: freshnessHex(f),
-        fillOpacity: f === "offline" ? 0.55 : 1,
-        strokeColor: "#ffffff",
-        strokeWeight: isSel ? 2 : 1,
-        rotation: v.heading,
+        fillOpacity: baseOpacity,
+        strokeColor: v.lowConfidence ? "#fbbf24" : "#ffffff",
+        strokeWeight: isSel ? 2 : v.lowConfidence ? 2 : 1,
+        rotation: (displayRef.current[v.id]?.heading ?? v.heading),
       };
+      markerIconRef.current[v.id] = iconStyle;
+
+      // Seed display position on first sight so we don't tween from (0,0).
+      if (!displayRef.current[v.id]) {
+        displayRef.current[v.id] = { lat: v.lat, lng: v.lng, heading: v.heading };
+      }
+      targetRef.current[v.id] = { lat: v.lat, lng: v.lng, heading: v.heading };
+
       if (markersRef.current[v.id]) {
-        markersRef.current[v.id].setPosition(pos);
-        markersRef.current[v.id].setIcon(icon);
+        markersRef.current[v.id].setIcon(iconStyle);
       } else {
         const marker = new g.maps.Marker({
-          position: pos,
+          position: displayRef.current[v.id],
           map: gMapRef.current,
           title: `${v.e_number ?? ""} ${v.registration ?? ""}`,
-          icon,
+          icon: iconStyle,
+          optimized: false,
         });
         marker.addListener("click", () => {
           setSelectedId(v.id);
@@ -459,6 +469,49 @@ const DashcamDashboard = () => {
       }
     });
   }, [vehicles, selectedId, mapReady, now]);
+
+  // rAF tweener — eases each marker's displayed position/heading toward the latest target.
+  // This is what turns discrete GPS pings into smooth motion on the map.
+  useEffect(() => {
+    if (!mapReady) return;
+    const step = () => {
+      let needsRedraw = false;
+      Object.keys(targetRef.current).forEach((id) => {
+        const t = targetRef.current[id];
+        const d = displayRef.current[id];
+        const marker = markersRef.current[id];
+        if (!t || !d || !marker) return;
+        const dLat = t.lat - d.lat;
+        const dLng = t.lng - d.lng;
+        // Shortest-arc heading delta
+        let dH = ((t.heading - d.heading + 540) % 360) - 180;
+
+        const moved = Math.abs(dLat) > 1e-7 || Math.abs(dLng) > 1e-7;
+        const turned = Math.abs(dH) > 0.5;
+        if (!moved && !turned) return;
+
+        const newLat = d.lat + dLat * SMOOTH_POS;
+        const newLng = d.lng + dLng * SMOOTH_POS;
+        const newHeading = (d.heading + dH * SMOOTH_HEADING + 360) % 360;
+        displayRef.current[id] = { lat: newLat, lng: newLng, heading: newHeading };
+
+        marker.setPosition({ lat: newLat, lng: newLng });
+        if (turned) {
+          const base = markerIconRef.current[id];
+          if (base && Math.abs(((base.rotation ?? 0) - newHeading + 540) % 360 - 180) > 1) {
+            const next = { ...base, rotation: newHeading };
+            markerIconRef.current[id] = next;
+            marker.setIcon(next);
+          }
+        }
+        needsRedraw = true;
+      });
+      rafRef.current = requestAnimationFrame(step);
+      void needsRedraw;
+    };
+    rafRef.current = requestAnimationFrame(step);
+    return () => { if (rafRef.current != null) cancelAnimationFrame(rafRef.current); };
+  }, [mapReady]);
 
   // Keep open InfoWindow content up-to-date with latest vehicle data
   useEffect(() => {
