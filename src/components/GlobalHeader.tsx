@@ -1,4 +1,4 @@
-import { Home } from "lucide-react";
+import { Home, ArrowLeft, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,7 +10,7 @@ export const GlobalHeader = () => {
   const { user } = useAuth();
 
   // Don't show header on auth pages, landing page, or safe mode
-  const hideOnPaths = ["/auth", "/", "/safe", "/unauthorized", "/owner-pitch", "/why-join", "/dot-presentation"];
+  const hideOnPaths = ["/auth", "/", "/safe", "/unauthorized"];
   const shouldHide = hideOnPaths.some(path => 
     location.pathname === path || location.pathname.startsWith("/auth/") || location.pathname.startsWith("/track/")
   );
@@ -19,6 +19,13 @@ export const GlobalHeader = () => {
 
   const handleHomeClick = () => {
     navigate("/");
+  };
+  const handleBack = () => {
+    if (window.history.length > 1) navigate(-1);
+    else navigate("/");
+  };
+  const handleDashboard = () => {
+    navigate("/dashboard");
   };
 
   // Determine role from current path for search context
@@ -37,17 +44,40 @@ export const GlobalHeader = () => {
       {/* Fixed header */}
       <header className="fixed top-0 left-0 right-0 z-40 h-12 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto h-full flex items-center justify-between px-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBack}
+              className="flex items-center gap-1 hover:bg-primary/10 px-2"
+              aria-label="Go back"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Back</span>
+            </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleHomeClick}
-              className="flex items-center gap-2 hover:bg-primary/10"
+              className="flex items-center gap-1 hover:bg-primary/10 px-2"
+              aria-label="Home"
             >
               <Home className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
+              <span className="hidden md:inline">Home</span>
             </Button>
-            <span className="text-sm font-semibold text-primary">PoortLink</span>
+            {user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDashboard}
+                className="flex items-center gap-1 hover:bg-primary/10 px-2"
+                aria-label="Dashboard"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                <span className="hidden md:inline">Dashboard</span>
+              </Button>
+            )}
+            <span className="text-sm font-semibold text-primary ml-1 hidden sm:inline">PoortLink</span>
           </div>
           <div className="flex-1 max-w-md mx-4">
             <SearchCommand role={getRoleFromPath()} />
