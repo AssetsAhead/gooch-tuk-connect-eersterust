@@ -1,45 +1,55 @@
-# Leverage NTA Statement (5 June 2026) — Option C
+## Concept: "Drive-to-Own" Pathway
 
-Use the NTA media statement (passenger freedom of choice, no forced patronage, discipline against intimidation) in two places: a new public trust page, and as a citation block reused in partnership-facing materials.
+Moove's model (za.moove.io) gives drivers a vehicle with no credit check, then converts weekly earnings into instalments until they own the car. It works because Moove monitors telematics, enforces revenue share, and bundles maintenance.
 
-## 1. New public page: `/passenger-rights`
+We already have the ingredients Moove charges for: live GPS (`live_vehicle_locations`), driver reputation (`driver_reputation`), trip revenue (`trip_revenue`), maintenance (`maintenance_expenses`), infringements (`road_infringements`), clocking (`driver_clockings`), and fleet ownership (`fleet_vehicles`). What's missing is the **ownership pathway** that rewards exceptional drivers.
 
-Route added to `src/App.tsx` (public, no auth required — matches visibility policy for trust assets).
+### How our model improves on Moove
 
-Page content (`src/pages/PassengerRights.tsx`):
-- H1: "Passenger Freedom of Choice"
-- Lead paragraph framing PoortLink/MojaRide alignment with NTA's stated position.
-- Pull-quote card with the key NTA lines (freedom of choice, no forced patronage, intimidation = disciplinary action).
-- "What this means on our platform" — short bullet list:
-  - Passengers choose any operator; the app never coerces.
-  - Drivers/marshals who intimidate are flagged via the reputation system and reported.
-  - Cash and card trips are logged the same as digital — no penalty for choice of payment.
-- Source attribution: "National Taxi Alliance media statement, 5 June 2026."
-- SEO: title ≤60 chars, meta description ≤160 chars, single H1, canonical tag.
+| Lever | Moove | MojaRide Drive-to-Own |
+|---|---|---|
+| Eligibility | Application + ID | Earned via reputation score, compliance, clocking streak, digital-payment ratio |
+| Pricing | Fixed weekly deduction | Dynamic — discounts for AARTO-clean, biometric clock-in, low-noise driving |
+| Risk | Moove carries it alone | Association co-signs; revenue share funds the buffer |
+| Upside | Driver eventually owns car | Driver also earns equity in route slot + reputation NFT-style credential |
+| Exit | Default = repossession | Graduated: warning → mentor pairing → reassignment, repossession last |
 
-## 2. Reusable citation component
+### Build scope (Phase 1 — UI + data model only, no payments yet)
 
-`src/components/trust/NTAStatementCitation.tsx` — compact card with quote + source line. Drop-in for any page.
+**1. Database (one migration)**
+- `drive_to_own_programs` — tier definitions (Bronze/Silver/Gold/Platinum), weekly contribution %, months to ownership, eligibility thresholds.
+- `drive_to_own_enrollments` — driver_id, vehicle_id, program_tier, start_date, target_ownership_date, total_contributed, balance_remaining, status (eligible/active/paused/completed/exited).
+- `drive_to_own_milestones` — enrollment_id, milestone_type (10%, 25%, 50%, 75%, 100%), reached_at, bonus_awarded.
+- All with GRANTs + RLS (driver sees own; admin/owner sees all).
 
-Embed in existing partnership/owner-facing pages:
-- `src/pages/OwnerPitch.tsx` — under the trust/compliance section.
-- `src/pages/WhyJoin.tsx` — near the "what associations get" section.
+**2. Eligibility engine (DB function)**
+`calculate_drive_to_own_eligibility(driver_id)` returns tier + score using:
+- reputation score ≥ 80 (Bronze) / 90 (Gold) / 95 (Platinum)
+- 0 confirmed infringements in last 90 days
+- biometric clock-in ratio ≥ 70%
+- digital payment ratio ≥ 60%
+- minimum 6 months active
 
-Both embeds use the same component so future edits propagate once.
+**3. Pages**
+- `/drive-to-own` (driver-facing) — current eligibility, tier progress bars, projected ownership date, "what to improve" coaching list, leaderboard of enrolled drivers.
+- Owner/Admin tab in existing `OwnerDashboard` — manage program tiers, view enrolled drivers' contribution flow, approve graduations.
 
-## 3. Navigation / discoverability
+**4. Comparison page** — `/drive-to-own/vs-moove` static investor/driver comparison (Moove vs MojaRide) with the table above, for recruitment.
 
-- Add a link to `/passenger-rights` from `src/components/GlobalHeader.tsx` footer area or compliance menu (whichever pattern the header currently uses — will check on implementation).
-- Add the route to `src/components/search/searchRoutes.ts` so it surfaces in search.
+**5. Reputation hook** — extend `driver_reputation` reads in `EnhancedDriverIncentives` to show Drive-to-Own progress alongside existing achievements.
 
-## Out of scope
+### Out of scope for this phase (flag for later)
+- Actual payment collection / Yoco recurring debit
+- Legal agreement generation (covered by existing agreements roadmap)
+- Insurance bundling
+- Vehicle title transfer workflow
 
-- No changes to MTN-stream materials (per separation rule).
-- No DB changes; this is pure content/presentation.
-- No edits to the actual partnership agreement PDFs/legal docs — citation lives in the web-facing pitch pages only. Legal doc updates can be a separate pass if you want.
+### Files to add/edit
+- `supabase/migrations/...` (new) — tables, function, RLS, GRANTs
+- `src/pages/DriveToOwn.tsx` (new)
+- `src/pages/DriveToOwnVsMoove.tsx` (new)
+- `src/components/driver/DriveToOwnProgress.tsx` (new)
+- `src/components/dashboards/OwnerDashboard.tsx` (edit — add tab)
+- `src/App.tsx` (edit — routes)
 
-## Technical notes
-
-- Files created: `src/pages/PassengerRights.tsx`, `src/components/trust/NTAStatementCitation.tsx`.
-- Files edited: `src/App.tsx` (route), `src/pages/OwnerPitch.tsx`, `src/pages/WhyJoin.tsx`, `src/components/search/searchRoutes.ts`, possibly `src/components/GlobalHeader.tsx` for a nav entry.
-- Initiative-separation guard already in place will catch any accidental MTN references in the new files.
+Estimated effort: ~1 build pass. No new secrets, no edge functions, no costs.
