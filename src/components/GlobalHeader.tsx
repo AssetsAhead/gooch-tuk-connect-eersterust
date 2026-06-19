@@ -1,4 +1,4 @@
-import { Home } from "lucide-react";
+import { Home, ArrowLeft, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,7 +10,7 @@ export const GlobalHeader = () => {
   const { user } = useAuth();
 
   // Don't show header on auth pages, landing page, or safe mode
-  const hideOnPaths = ["/auth", "/", "/safe", "/unauthorized", "/owner-pitch", "/why-join", "/dot-presentation"];
+  const hideOnPaths = ["/auth", "/", "/safe", "/unauthorized"];
   const shouldHide = hideOnPaths.some(path => 
     location.pathname === path || location.pathname.startsWith("/auth/") || location.pathname.startsWith("/track/")
   );
@@ -19,6 +19,13 @@ export const GlobalHeader = () => {
 
   const handleHomeClick = () => {
     navigate("/");
+  };
+  const handleBack = () => {
+    if (window.history.length > 1) navigate(-1);
+    else navigate("/");
+  };
+  const handleDashboard = () => {
+    navigate("/dashboard");
   };
 
   // Determine role from current path for search context
