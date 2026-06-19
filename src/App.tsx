@@ -54,6 +54,8 @@ import WhyJoin from "./pages/WhyJoin";
 import OwnerPitch from "./pages/OwnerPitch";
 import LiveTrack from "./pages/LiveTrack";
 import PassengerRights from "./pages/PassengerRights";
+import DriveToOwn from "./pages/DriveToOwn";
+import DriveToOwnVsMoove from "./pages/DriveToOwnVsMoove";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { InitiativeSeparationGuard } from "./components/dev/InitiativeSeparationGuard";
@@ -168,6 +170,8 @@ const App = () => {
                 <Route path="/owner-pitch" element={<OwnerPitch />} />
                 <Route path="/track/:driverId" element={<LiveTrack />} />
                 <Route path="/passenger-rights" element={<PassengerRights />} />
+                <Route path="/drive-to-own" element={<DriveToOwn />} />
+                <Route path="/drive-to-own/vs-moove" element={<DriveToOwnVsMoove />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
