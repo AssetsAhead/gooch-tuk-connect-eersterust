@@ -497,6 +497,160 @@ export type Database = {
         }
         Relationships: []
       }
+      drive_to_own_enrollments: {
+        Row: {
+          balance_remaining_zar: number
+          created_at: string
+          driver_id: string
+          exit_reason: string | null
+          id: string
+          notes: string | null
+          owner_id: string | null
+          program_tier: string
+          start_date: string | null
+          status: string
+          target_ownership_date: string | null
+          total_contributed_zar: number
+          updated_at: string
+          vehicle_id: string | null
+          vehicle_price_zar: number
+        }
+        Insert: {
+          balance_remaining_zar?: number
+          created_at?: string
+          driver_id: string
+          exit_reason?: string | null
+          id?: string
+          notes?: string | null
+          owner_id?: string | null
+          program_tier: string
+          start_date?: string | null
+          status?: string
+          target_ownership_date?: string | null
+          total_contributed_zar?: number
+          updated_at?: string
+          vehicle_id?: string | null
+          vehicle_price_zar?: number
+        }
+        Update: {
+          balance_remaining_zar?: number
+          created_at?: string
+          driver_id?: string
+          exit_reason?: string | null
+          id?: string
+          notes?: string | null
+          owner_id?: string | null
+          program_tier?: string
+          start_date?: string | null
+          status?: string
+          target_ownership_date?: string | null
+          total_contributed_zar?: number
+          updated_at?: string
+          vehicle_id?: string | null
+          vehicle_price_zar?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drive_to_own_enrollments_program_tier_fkey"
+            columns: ["program_tier"]
+            isOneToOne: false
+            referencedRelation: "drive_to_own_programs"
+            referencedColumns: ["tier"]
+          },
+        ]
+      }
+      drive_to_own_milestones: {
+        Row: {
+          bonus_awarded_zar: number
+          created_at: string
+          enrollment_id: string
+          id: string
+          milestone_pct: number
+          notes: string | null
+          reached_at: string
+        }
+        Insert: {
+          bonus_awarded_zar?: number
+          created_at?: string
+          enrollment_id: string
+          id?: string
+          milestone_pct: number
+          notes?: string | null
+          reached_at?: string
+        }
+        Update: {
+          bonus_awarded_zar?: number
+          created_at?: string
+          enrollment_id?: string
+          id?: string
+          milestone_pct?: number
+          notes?: string | null
+          reached_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drive_to_own_milestones_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "drive_to_own_enrollments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      drive_to_own_programs: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_name: string
+          graduation_bonus_zar: number
+          id: string
+          is_active: boolean
+          min_biometric_pct: number
+          min_compliance_score: number
+          min_digital_payment_pct: number
+          min_months_active: number
+          min_reputation_score: number
+          months_to_ownership: number
+          tier: string
+          updated_at: string
+          weekly_contribution_pct: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_name: string
+          graduation_bonus_zar?: number
+          id?: string
+          is_active?: boolean
+          min_biometric_pct?: number
+          min_compliance_score?: number
+          min_digital_payment_pct?: number
+          min_months_active?: number
+          min_reputation_score?: number
+          months_to_ownership: number
+          tier: string
+          updated_at?: string
+          weekly_contribution_pct: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_name?: string
+          graduation_bonus_zar?: number
+          id?: string
+          is_active?: boolean
+          min_biometric_pct?: number
+          min_compliance_score?: number
+          min_digital_payment_pct?: number
+          min_months_active?: number
+          min_reputation_score?: number
+          months_to_ownership?: number
+          tier?: string
+          updated_at?: string
+          weekly_contribution_pct?: number
+        }
+        Relationships: []
+      }
       driver_clockings: {
         Row: {
           clocked_at: string | null
@@ -2995,6 +3149,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_drive_to_own_eligibility: {
+        Args: { _driver_id: string }
+        Returns: {
+          best_score: number
+          compliance_score: number
+          infringements_90d: number
+          qualifies_tier: string
+          reputation_score: number
+        }[]
+      }
       cleanup_expired_admin_sessions: { Args: never; Returns: number }
       cleanup_expired_sms_codes: { Args: never; Returns: undefined }
       create_admin_session: {
