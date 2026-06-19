@@ -54,6 +54,8 @@ import WhyJoin from "./pages/WhyJoin";
 import OwnerPitch from "./pages/OwnerPitch";
 import LiveTrack from "./pages/LiveTrack";
 import PassengerRights from "./pages/PassengerRights";
+import DriveToOwn from "./pages/DriveToOwn";
+import DriveToOwnVsMoove from "./pages/DriveToOwnVsMoove";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { InitiativeSeparationGuard } from "./components/dev/InitiativeSeparationGuard";
