@@ -3165,6 +3165,10 @@ export type Database = {
         Args: { _ip_address?: string; _user_agent?: string }
         Returns: string
       }
+      create_admin_session_whitelisted: {
+        Args: { _ip_address?: string; _user_agent?: string }
+        Returns: string
+      }
       create_notification: {
         Args: {
           _message: string
