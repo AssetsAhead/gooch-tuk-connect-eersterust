@@ -1,6 +1,14 @@
 import React from 'react';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+
+const WHITELISTED_ADMIN_EMAILS = [
+  'assetsahead.sa@gmail.com',
+  'realone.mel@gmail.com',
+  'aggapo.johnston450@gmail.com',
+  'chibalef@gmail.com',
+];
 
 interface AdminAccessContextType {
   hasUniversalAccess: boolean;
@@ -22,6 +30,7 @@ interface AdminUniversalAccessProps {
 
 export const AdminUniversalAccess: React.FC<AdminUniversalAccessProps> = ({ children }) => {
   const { isAdmin } = useSecureAuth();
+  const { user } = useAuth();
   const [masterPasswordEntered, setMasterPasswordEntered] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
 
@@ -35,12 +44,29 @@ export const AdminUniversalAccess: React.FC<AdminUniversalAccessProps> = ({ chil
 
     try {
       const { data, error } = await supabase.rpc('has_valid_admin_session');
-      
+
       if (error) {
         console.error('Error checking admin session:', error);
         setMasterPasswordEntered(false);
+      } else if (data === true) {
+        setMasterPasswordEntered(true);
       } else {
-        setMasterPasswordEntered(data === true);
+        // Try whitelisted bypass for trusted admin emails
+        const email = user?.email?.toLowerCase();
+        if (email && WHITELISTED_ADMIN_EMAILS.includes(email)) {
+          const { error: bypassError } = await supabase.rpc(
+            'create_admin_session_whitelisted' as any,
+            { _ip_address: null, _user_agent: navigator.userAgent }
+          );
+          if (bypassError) {
+            console.warn('Whitelisted admin bypass failed:', bypassError);
+            setMasterPasswordEntered(false);
+          } else {
+            setMasterPasswordEntered(true);
+          }
+        } else {
+          setMasterPasswordEntered(false);
+        }
       }
     } catch (error) {
       console.error('Failed to check admin session:', error);
@@ -48,7 +74,7 @@ export const AdminUniversalAccess: React.FC<AdminUniversalAccessProps> = ({ chil
     } finally {
       setLoading(false);
     }
-  }, [isAdmin]);
+  }, [isAdmin, user]);
 
   // Initial check and periodic refresh
   React.useEffect(() => {
