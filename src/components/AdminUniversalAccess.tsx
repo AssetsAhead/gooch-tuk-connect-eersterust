@@ -1,6 +1,14 @@
 import React from 'react';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+
+const WHITELISTED_ADMIN_EMAILS = [
+  'assetsahead.sa@gmail.com',
+  'realone.mel@gmail.com',
+  'aggapo.johnston450@gmail.com',
+  'chibalef@gmail.com',
+];
 
 interface AdminAccessContextType {
   hasUniversalAccess: boolean;
