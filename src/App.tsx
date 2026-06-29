@@ -173,6 +173,7 @@ const App = () => {
                 <Route path="/passenger-rights" element={<PassengerRights />} />
                 <Route path="/drive-to-own" element={<DriveToOwn />} />
                 <Route path="/drive-to-own/vs-moove" element={<DriveToOwnVsMoove />} />
+                <Route path="/marshal-radio" element={<MarshalRadio />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
