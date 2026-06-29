@@ -6,6 +6,7 @@ import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Camera as CapCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Device } from '@capacitor/device';
+import { sendEmergencyBroadcast } from '@/hooks/useMarshalRadio';
 
 export const GlobalPanicButton = () => {
   const [isPressed, setIsPressed] = useState(false);
@@ -187,6 +188,13 @@ export const GlobalPanicButton = () => {
     // Start instant recording if consent given
     if (recordingConsent) {
       await startInstantRecording();
+    }
+
+    // Marshal Radio emergency broadcast (best-effort, doesn't block UI)
+    if (user) {
+      sendEmergencyBroadcast({ userId: user.id }).catch((e) =>
+        console.warn('Marshal Radio broadcast failed', e)
+      );
     }
     
     // Start cooldown timer

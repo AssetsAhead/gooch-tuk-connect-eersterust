@@ -56,6 +56,7 @@ import LiveTrack from "./pages/LiveTrack";
 import PassengerRights from "./pages/PassengerRights";
 import DriveToOwn from "./pages/DriveToOwn";
 import DriveToOwnVsMoove from "./pages/DriveToOwnVsMoove";
+import MarshalRadio from "./pages/MarshalRadio";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { InitiativeSeparationGuard } from "./components/dev/InitiativeSeparationGuard";
@@ -172,6 +173,7 @@ const App = () => {
                 <Route path="/passenger-rights" element={<PassengerRights />} />
                 <Route path="/drive-to-own" element={<DriveToOwn />} />
                 <Route path="/drive-to-own/vs-moove" element={<DriveToOwnVsMoove />} />
+                <Route path="/marshal-radio" element={<MarshalRadio />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />

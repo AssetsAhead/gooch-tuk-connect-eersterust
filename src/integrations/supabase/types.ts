@@ -1471,6 +1471,56 @@ export type Database = {
           },
         ]
       }
+      marshal_radio_transmissions: {
+        Row: {
+          accuracy_m: number | null
+          audio_path: string | null
+          created_at: string
+          duration_ms: number | null
+          id: string
+          is_emergency: boolean
+          latitude: number | null
+          longitude: number | null
+          message: string | null
+          sender_id: string
+          zone_id: string | null
+        }
+        Insert: {
+          accuracy_m?: number | null
+          audio_path?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          is_emergency?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          message?: string | null
+          sender_id: string
+          zone_id?: string | null
+        }
+        Update: {
+          accuracy_m?: number | null
+          audio_path?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          is_emergency?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          message?: string | null
+          sender_id?: string
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marshal_radio_transmissions_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "loading_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       municipal_bills: {
         Row: {
           amount: number
