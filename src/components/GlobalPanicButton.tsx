@@ -189,6 +189,13 @@ export const GlobalPanicButton = () => {
     if (recordingConsent) {
       await startInstantRecording();
     }
+
+    // Marshal Radio emergency broadcast (best-effort, doesn't block UI)
+    if (user) {
+      sendEmergencyBroadcast({ userId: user.id }).catch((e) =>
+        console.warn('Marshal Radio broadcast failed', e)
+      );
+    }
     
     // Start cooldown timer
     const interval = setInterval(() => {
