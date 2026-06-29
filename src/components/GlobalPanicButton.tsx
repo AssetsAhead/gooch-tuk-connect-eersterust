@@ -6,6 +6,7 @@ import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Camera as CapCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Device } from '@capacitor/device';
+import { sendEmergencyBroadcast } from '@/hooks/useMarshalRadio';
 
 export const GlobalPanicButton = () => {
   const [isPressed, setIsPressed] = useState(false);
