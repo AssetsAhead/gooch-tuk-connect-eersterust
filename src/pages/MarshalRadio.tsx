@@ -101,12 +101,13 @@ export default function MarshalRadio() {
     (async () => {
       const { data } = await supabase
         .from("loading_zones")
-        .select("id,name")
+        .select("id,zone_name")
         .eq("is_active", true)
-        .order("name");
+        .order("zone_name");
       if (data) {
-        setZones(data as Zone[]);
-        if (data.length && !zoneId) setZoneId(data[0].id);
+        const mapped: Zone[] = data.map((r) => ({ id: r.id, name: r.zone_name }));
+        setZones(mapped);
+        if (mapped.length && !zoneId) setZoneId(mapped[0].id);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
