@@ -8,7 +8,8 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { GlobalHeader } from "@/components/GlobalHeader";
-import { Building2, ExternalLink, RotateCcw } from "lucide-react";
+import { Building2, ExternalLink, RotateCcw, FileText, Paperclip } from "lucide-react";
+
 
 interface Subtask {
   id: string;
