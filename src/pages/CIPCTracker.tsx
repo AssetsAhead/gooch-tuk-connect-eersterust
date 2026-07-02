@@ -117,6 +117,60 @@ export default function CIPCTracker() {
           </CardContent>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-primary" />
+              <div>
+                <CardTitle className="text-lg">Documents on File</CardTitle>
+                <CardDescription>
+                  Ready to email your attorney or upload to BizPortal / CIPC eServices.
+                  Right-click → "Save link as" to download, or open in a new tab.
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {[
+              { file: "MojaRide_IP_Attorney_Cover_Letter.pdf", purpose: "Attorney brief (PDF) — send with inventory", relates: "Attorney handoff" },
+              { file: "MojaRide_IP_Attorney_Cover_Letter.docx", purpose: "Attorney brief (Word) — editable version", relates: "Attorney handoff" },
+              { file: "MojaRide_IP_Asset_Inventory_v2.pdf", purpose: "IP Asset Inventory (PDF) — trademarks, domains, code, methods", relates: "Supports MOI drafting & TM filings" },
+              { file: "MojaRide_IP_Asset_Inventory_v2.docx", purpose: "IP Asset Inventory (Word)", relates: "Supports MOI drafting & TM filings" },
+              { file: "TM1_Poortlink_Prefilled.docx", purpose: "TM1 application — PoortLink (CIPC trademark)", relates: "Post-incorporation TM filing" },
+              { file: "TM1_TukConnect_Prefilled.docx", purpose: "TM1 application — TukConnect", relates: "Post-incorporation TM filing" },
+              { file: "TM2_Poortlink_Prefilled.docx", purpose: "TM2 authorisation — PoortLink", relates: "Attach to TM1" },
+              { file: "TM2_TukConnect_Prefilled.docx", purpose: "TM2 authorisation — TukConnect", relates: "Attach to TM1" },
+              { file: "PoortLink_Investor_Teaser.pdf", purpose: "1-page investor teaser", relates: "Reference only" },
+            ].map((d) => {
+              const mailto = `mailto:?subject=${encodeURIComponent(d.file)}&body=${encodeURIComponent(
+                `Attached: ${d.file}\nPurpose: ${d.purpose}\n\n(Attach the file from your local downloads before sending.)`
+              )}`;
+              return (
+                <div key={d.file} className="flex items-start justify-between gap-3 p-3 rounded-md border bg-muted/30">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-mono text-xs truncate">{d.file}</p>
+                    <p className="text-sm">{d.purpose}</p>
+                    <p className="text-xs text-muted-foreground">{d.relates}</p>
+                  </div>
+                  <div className="flex gap-1 shrink-0">
+                    <Button size="sm" variant="outline" asChild>
+                      <a href={mailto}>
+                        <Paperclip className="h-3 w-3 mr-1" /> Email
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+            <p className="text-xs text-muted-foreground pt-2">
+              Missing here: Name Reservation (CoR9.1), MOI (CoR15.1A), CoR14.1, certified director IDs, proof of address.
+              These are produced during the CIPC filing steps below and should be saved back to this folder as you generate them.
+            </p>
+          </CardContent>
+        </Card>
+
+
+
         <div className="space-y-3">
           {tasks.map((t) => (
             <Card key={t.id} className={t.done ? "bg-green-500/5 border-green-500/20" : ""}>
