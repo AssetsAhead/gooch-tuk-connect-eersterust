@@ -35,6 +35,8 @@ import { Compliance } from "./pages/Compliance";
 import { RegulatoryRegistration } from "./pages/RegulatoryRegistration";
 import OperatingLicenseApplication from "./pages/OperatingLicenseApplication";
 import Form9A from "./pages/Form9A";
+import CIPCTracker from "./pages/CIPCTracker";
+import InsuranceShortlist from "./pages/InsuranceShortlist";
 import CommunityAnnouncements from "./pages/CommunityAnnouncements";
 import FleetVehiclesDashboard from "./pages/FleetVehiclesDashboard";
 import DashcamDashboard from "./pages/DashcamDashboard";
@@ -144,6 +146,8 @@ const App = () => {
                 <Route path="/regulatory-registration" element={<RegulatoryRegistration />} />
                 <Route path="/operating-license-application" element={<OperatingLicenseApplication />} />
                 <Route path="/form-9a" element={<Form9A />} />
+                <Route path="/cipc-tracker" element={<CIPCTracker />} />
+                <Route path="/insurance-shortlist" element={<InsuranceShortlist />} />
                 <Route path="/community-announcements" element={<CommunityAnnouncements />} />
                 <Route path="/fleet-vehicles" element={<FleetVehiclesDashboard />} />
                 <Route path="/dashcam" element={<DashcamDashboard />} />
