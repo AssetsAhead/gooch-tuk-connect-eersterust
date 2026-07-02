@@ -35,6 +35,8 @@ import { Compliance } from "./pages/Compliance";
 import { RegulatoryRegistration } from "./pages/RegulatoryRegistration";
 import OperatingLicenseApplication from "./pages/OperatingLicenseApplication";
 import Form9A from "./pages/Form9A";
+import CIPCTracker from "./pages/CIPCTracker";
+import InsuranceShortlist from "./pages/InsuranceShortlist";
 import CommunityAnnouncements from "./pages/CommunityAnnouncements";
 import FleetVehiclesDashboard from "./pages/FleetVehiclesDashboard";
 import DashcamDashboard from "./pages/DashcamDashboard";
