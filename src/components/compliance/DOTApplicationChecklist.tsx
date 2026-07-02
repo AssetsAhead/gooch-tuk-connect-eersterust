@@ -36,17 +36,18 @@ const DOT_CHECKLIST: ChecklistItem[] = [
   {
     id: 'cipc',
     title: 'CIPC Company Registration',
-    description: 'MobilityOne Pty Ltd (2025/958631/07)',
-    status: 'complete',
+    description: 'Not started — open the tracker to work through remaining CIPC steps',
+    status: 'pending',
     required: true,
     category: 'registration',
+    link: '/cipc-tracker',
     externalLink: 'https://www.cipc.co.za'
   },
   {
     id: 'sars',
     title: 'SARS Tax Registration',
-    description: 'Tax Reference: 9065004328',
-    status: 'complete',
+    description: 'Depends on CIPC completion',
+    status: 'pending',
     required: true,
     category: 'registration'
   },
@@ -64,8 +65,8 @@ const DOT_CHECKLIST: ChecklistItem[] = [
   {
     id: 'form9a',
     title: 'Form 9A Application',
-    description: 'E-Hailing platform registration form',
-    status: 'in_progress',
+    description: 'Not started — draft the E-Hailing platform registration form',
+    status: 'pending',
     required: true,
     category: 'documents',
     link: '/form-9a'
@@ -73,10 +74,11 @@ const DOT_CHECKLIST: ChecklistItem[] = [
   {
     id: 'insurance',
     title: 'Public Liability Insurance',
-    description: 'Third-party insurance certificates',
+    description: 'Not started — shortlist insurers and log quotes',
     status: 'pending',
     required: true,
-    category: 'documents'
+    category: 'documents',
+    link: '/insurance-shortlist'
   },
   {
     id: 'popia',
