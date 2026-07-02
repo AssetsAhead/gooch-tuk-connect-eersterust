@@ -146,6 +146,8 @@ const App = () => {
                 <Route path="/regulatory-registration" element={<RegulatoryRegistration />} />
                 <Route path="/operating-license-application" element={<OperatingLicenseApplication />} />
                 <Route path="/form-9a" element={<Form9A />} />
+                <Route path="/cipc-tracker" element={<CIPCTracker />} />
+                <Route path="/insurance-shortlist" element={<InsuranceShortlist />} />
                 <Route path="/community-announcements" element={<CommunityAnnouncements />} />
                 <Route path="/fleet-vehicles" element={<FleetVehiclesDashboard />} />
                 <Route path="/dashcam" element={<DashcamDashboard />} />
