@@ -8,7 +8,8 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { GlobalHeader } from "@/components/GlobalHeader";
-import { Building2, ExternalLink, RotateCcw, FileText, Paperclip } from "lucide-react";
+import { Building2, ExternalLink, RotateCcw, FileText, Paperclip, CheckCircle2, Circle, Shield } from "lucide-react";
+import { Link } from "react-router-dom";
 
 
 interface Subtask {
@@ -116,6 +117,58 @@ export default function CIPCTracker() {
             )}
           </CardContent>
         </Card>
+
+        {/* CIPC workstream status: IP vs Company Incorporation */}
+        <Card className="border-primary/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              CIPC Workstream Status
+            </CardTitle>
+            <CardDescription>
+              CIPC covers two separate tracks. IP protection is done; the legal entity still needs to be incorporated before DOT will license it.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-3 md:grid-cols-2">
+            <div className="p-4 rounded-lg border border-green-500/30 bg-green-500/5 space-y-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-green-600" />
+                <p className="font-semibold">IP Filings — Complete</p>
+                <Badge className="ml-auto bg-green-500/10 text-green-700 border-green-500/30">Done</Badge>
+              </div>
+              <ul className="text-sm text-muted-foreground space-y-1 pl-7 list-disc">
+                <li>Provisional Patent: P1, P3, P5/P6, P26 prepared</li>
+                <li>Trademarks: TM1 + TM2 prefilled (PoortLink & TukConnect)</li>
+                <li>Fee calculations reviewed (incl. PCT sheet)</li>
+                <li>CIPC payment gateway wired for patent fees</li>
+              </ul>
+              <div className="pt-1">
+                <Button variant="ghost" size="sm" asChild className="h-7 px-2 text-xs">
+                  <Link to="/admin">Open IP Docs <ExternalLink className="h-3 w-3 ml-1" /></Link>
+                </Button>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-lg border border-amber-500/30 bg-amber-500/5 space-y-2">
+              <div className="flex items-center gap-2">
+                <Circle className="h-5 w-5 text-amber-600" />
+                <p className="font-semibold">Company Incorporation — Not Started</p>
+                <Badge className="ml-auto bg-amber-500/10 text-amber-700 border-amber-500/30">Blocking DOT</Badge>
+              </div>
+              <ul className="text-sm text-muted-foreground space-y-1 pl-7 list-disc">
+                <li>CoR9.1 Name Reservation</li>
+                <li>CoR15.1A MOI</li>
+                <li>CoR14.1 Incorporation + CoR14.3 Certificate</li>
+                <li>Beneficial Ownership, B-BBEE affidavit, bank account</li>
+              </ul>
+              <p className="text-xs text-muted-foreground pl-7">
+                Work through the checklist below to unblock the DOT operating licence.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+
 
         <Card>
           <CardHeader>
