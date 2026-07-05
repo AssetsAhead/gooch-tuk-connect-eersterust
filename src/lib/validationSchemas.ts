@@ -72,24 +72,18 @@ export const paymentAmountSchema = z.object({
     .max(200, "Description must be less than 200 characters")
     .transform(sanitizeString),
   
-  paymentType: z.enum(['ride', 'deposit', 'subscription'] as const, {
-    errorMap: () => ({ message: "Invalid payment type" })
-  })
+  paymentType: z.enum(['ride', 'deposit', 'subscription'] as const)
 });
 
 // Feedback schema
 export const feedbackSchema = z.object({
-  type: z.enum(['bug', 'feature', 'general', 'complaint'] as const, {
-    errorMap: () => ({ message: "Invalid feedback type" })
-  }),
+  type: z.enum(['bug', 'feature', 'general', 'complaint'] as const),
   
   category: z.string()
     .min(1, "Category is required")
     .max(50, "Category must be less than 50 characters"),
   
-  priority: z.enum(['low', 'medium', 'high', 'critical'] as const, {
-    errorMap: () => ({ message: "Invalid priority" })
-  }),
+  priority: z.enum(['low', 'medium', 'high', 'critical'] as const),
   
   rating: z.number()
     .min(1, "Rating must be between 1 and 5")
@@ -125,16 +119,12 @@ export const profileUpdateSchema = z.object({
     .optional()
     .or(z.literal('')),
   
-  preferredLanguage: z.enum(['en', 'af', 'zu', 'xh', 'st', 'tn', 'ss', 'nr', 've', 'ts', 'nd'] as const, {
-    errorMap: () => ({ message: "Invalid language selection" })
-  }).optional()
+  preferredLanguage: z.enum(['en', 'af', 'zu', 'xh', 'st', 'tn', 'ss', 'nr', 've', 'ts', 'nd'] as const).optional()
 });
 
 // Municipal services schema
 export const municipalServiceSchema = z.object({
-  serviceType: z.enum(['electricity', 'water', 'rates', 'refuse'] as const, {
-    errorMap: () => ({ message: "Invalid service type" })
-  }),
+  serviceType: z.enum(['electricity', 'water', 'rates', 'refuse'] as const),
   
   accountNumber: z.string()
     .trim()
