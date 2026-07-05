@@ -50,6 +50,7 @@ import LegalNDA from "./pages/LegalNDA";
 import LegalRevenueShareAgreement from "./pages/LegalRevenueShareAgreement";
 import DOTPresentation from "./pages/DOTPresentation";
 import InfringementMonitoring from "./pages/InfringementMonitoring";
+import TrafficBrain from "./pages/TrafficBrain";
 import CostBreakdown from "./pages/CostBreakdown";
 import IntelHub from "./pages/IntelHub";
 import WhyJoin from "./pages/WhyJoin";
