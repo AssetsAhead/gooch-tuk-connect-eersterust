@@ -26,6 +26,10 @@ export const AuthPage = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
 
+  // Preserve a same-origin `next` redirect target (used by the OAuth consent flow).
+  const nextParam = new URLSearchParams(window.location.search).get('next');
+  const safeNext = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : null;
+
   // If user is already authenticated, show sign-out option or redirect
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -33,6 +37,11 @@ export const AuthPage = () => {
   };
 
   if (user) {
+    // If the user came here from an OAuth consent flow, send them back immediately.
+    if (safeNext) {
+      window.location.replace(safeNext);
+      return null;
+    }
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-muted p-4 flex items-center justify-center">
         <Card className="w-full max-w-md p-6 text-center">
@@ -57,6 +66,7 @@ export const AuthPage = () => {
       </div>
     );
   }
+
 
   const onPhoneAuth = async () => {
     const formattedPhone = phone.startsWith('+27') ? phone : `+27${phone.replace(/^0/, '')}`;
