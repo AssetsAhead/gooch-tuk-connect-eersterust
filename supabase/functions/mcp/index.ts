@@ -32,7 +32,7 @@ var app_info_default = defineTool({
 // src/lib/mcp/tools/list_loading_zones.ts
 import { createClient } from "npm:@supabase/supabase-js@^2.50.5";
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.20.0";
-import { z } from "npm:zod@^3.23.8";
+import { z } from "npm:zod@^4.4.3";
 var list_loading_zones_default = defineTool2({
   name: "list_loading_zones",
   title: "List loading zones",

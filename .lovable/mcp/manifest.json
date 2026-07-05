@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "poortlink-mcp",
+      "version": "0.1.0",
+      "title": "PoortLink MCP"
+    },
+    "tools": [
+      {
+        "name": "app_info",
+        "title": "About PoortLink",
+        "description": "Return a brief description of the PoortLink / TukConnect platform, its brands and its capabilities.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_loading_zones",
+        "title": "List loading zones",
+        "description": "List active taxi loading zones (pickup areas) with location, radius, marshal status, and operating hours.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "municipality": {
+              "description": "Optional filter: municipality name (e.g. 'Tshwane').",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Maximum number of zones to return. Default 50.",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_drive_to_own_programs",
+        "title": "List Drive-to-Own programs",
+        "description": "List the active Drive-to-Own program tiers with eligibility thresholds, timelines and graduation bonuses.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
