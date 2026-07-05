@@ -97,7 +97,7 @@ export const PhoneNumberManager = () => {
       if (error instanceof z.ZodError) {
         toast({
           title: "Invalid Phone Number",
-          description: error.errors[0].message,
+          description: error.issues[0].message,
           variant: "destructive",
         });
       } else {

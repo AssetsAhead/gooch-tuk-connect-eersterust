@@ -121,7 +121,7 @@ export const PhoneRegistrationForm = ({ onRegistrationComplete }: PhoneRegistrat
       console.error('Registration error:', error);
       
       if (error instanceof z.ZodError) {
-        const firstError = error.errors[0];
+        const firstError = error.issues[0];
         toast({
           title: "Validation Error",
           description: firstError.message,

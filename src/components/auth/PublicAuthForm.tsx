@@ -33,7 +33,7 @@ export const PublicAuthForm: React.FC<PublicAuthFormProps> = ({
       if (error instanceof z.ZodError) {
         toast({ 
           title: "Invalid Phone Number", 
-          description: error.errors[0].message,
+          description: error.issues[0].message,
           variant: "destructive" 
         });
       }
@@ -50,7 +50,7 @@ export const PublicAuthForm: React.FC<PublicAuthFormProps> = ({
       if (error instanceof z.ZodError) {
         toast({ 
           title: "Invalid Email", 
-          description: error.errors[0].message,
+          description: error.issues[0].message,
           variant: "destructive" 
         });
       }
