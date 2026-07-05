@@ -3,7 +3,7 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
 
 // src/lib/mcp/tools/app_info.ts
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.0";
@@ -87,13 +87,172 @@ var list_drive_to_own_programs_default = defineTool3({
   }
 });
 
+// src/lib/mcp/tools/get_zone_availability.ts
+import { createClient as createClient3 } from "npm:@supabase/supabase-js@^2.50.5";
+import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { z as z2 } from "npm:zod@^4.4.3";
+function userClient(ctx) {
+  return createClient3(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_PUBLISHABLE_KEY,
+    {
+      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+      auth: { persistSession: false, autoRefreshToken: false }
+    }
+  );
+}
+var get_zone_availability_default = defineTool4({
+  name: "get_zone_availability",
+  title: "Zone availability (real-time)",
+  description: "Real-time hailing / booking availability for a loading zone: waiting drivers in the queue, next-in-line vehicle, live driver count within the zone radius, and estimated wait based on recent departures. Requires sign-in.",
+  inputSchema: {
+    zone_id: z2.string().uuid().optional().describe("Loading zone UUID. Provide this OR zone_name."),
+    zone_name: z2.string().optional().describe("Zone name (case-insensitive contains match). Ignored if zone_id is given.")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: false, openWorldHint: false },
+  handler: async ({ zone_id, zone_name }, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "Sign in required." }], isError: true };
+    }
+    if (!zone_id && !zone_name) {
+      return {
+        content: [{ type: "text", text: "Provide zone_id or zone_name." }],
+        isError: true
+      };
+    }
+    const sb = userClient(ctx);
+    let zoneQ = sb.from("loading_zones").select("id,zone_name,municipality,latitude,longitude,radius_meters,has_marshal,operating_hours,is_active").eq("is_active", true).limit(1);
+    zoneQ = zone_id ? zoneQ.eq("id", zone_id) : zoneQ.ilike("zone_name", `%${zone_name}%`);
+    const { data: zone, error: zoneErr } = await zoneQ.maybeSingle();
+    if (zoneErr) return { content: [{ type: "text", text: zoneErr.message }], isError: true };
+    if (!zone) return { content: [{ type: "text", text: "Zone not found." }], isError: true };
+    const { data: queue, error: qErr } = await sb.from("zone_queue").select("id,driver_id,vehicle_id,queue_position,status,joined_at,is_gps_verified,distance_from_zone").eq("zone_id", zone.id).eq("status", "waiting").order("queue_position", { ascending: true });
+    if (qErr) return { content: [{ type: "text", text: qErr.message }], isError: true };
+    const sinceIso = new Date(Date.now() - 60 * 60 * 1e3).toISOString();
+    const { data: recentDepartures } = await sb.from("zone_queue").select("id,departed_at,loading_started_at,joined_at").eq("zone_id", zone.id).not("departed_at", "is", null).gte("departed_at", sinceIso);
+    const departuresPerHour = recentDepartures?.length ?? 0;
+    const waiting = queue?.length ?? 0;
+    const estimatedWaitMinutes = departuresPerHour > 0 ? Math.round(waiting / departuresPerHour * 60) : null;
+    const summary = {
+      zone: {
+        id: zone.id,
+        name: zone.zone_name,
+        municipality: zone.municipality,
+        has_marshal: zone.has_marshal,
+        operating_hours: zone.operating_hours
+      },
+      availability: {
+        drivers_waiting: waiting,
+        gps_verified_waiting: (queue ?? []).filter((r) => r.is_gps_verified).length,
+        next_in_line: queue?.[0] ?? null,
+        departures_last_hour: departuresPerHour,
+        estimated_wait_minutes: estimatedWaitMinutes,
+        status: waiting === 0 ? "no_drivers_available" : waiting < 3 ? "limited" : "available"
+      },
+      queue: queue ?? [],
+      generated_at: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    return {
+      content: [{ type: "text", text: JSON.stringify(summary, null, 2) }],
+      structuredContent: summary
+    };
+  }
+});
+
+// src/lib/mcp/tools/list_my_fleet_vehicles.ts
+import { createClient as createClient4 } from "npm:@supabase/supabase-js@^2.50.5";
+import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.20.0";
+function userClient2(ctx) {
+  return createClient4(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_PUBLISHABLE_KEY,
+    {
+      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+      auth: { persistSession: false, autoRefreshToken: false }
+    }
+  );
+}
+var list_my_fleet_vehicles_default = defineTool5({
+  name: "list_my_fleet_vehicles",
+  title: "My fleet vehicles (owner)",
+  description: "List fleet vehicles owned by the signed-in user. Only rows the caller can see under RLS are returned \u2014 non-owners get an empty list.",
+  inputSchema: {},
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async (_input, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "Sign in required." }], isError: true };
+    }
+    const sb = userClient2(ctx);
+    const { data, error } = await sb.from("fleet_vehicles").select("id,e_number,registration,owner_name,driver_name,province,status,whatsapp_group_link,notes,created_at,updated_at").order("e_number", { ascending: true });
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return {
+      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      structuredContent: { vehicles: data ?? [], count: data?.length ?? 0 }
+    };
+  }
+});
+
+// src/lib/mcp/tools/get_my_driver_profile.ts
+import { createClient as createClient5 } from "npm:@supabase/supabase-js@^2.50.5";
+import { defineTool as defineTool6 } from "npm:@lovable.dev/mcp-js@0.20.0";
+function userClient3(ctx) {
+  return createClient5(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_PUBLISHABLE_KEY,
+    {
+      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+      auth: { persistSession: false, autoRefreshToken: false }
+    }
+  );
+}
+var get_my_driver_profile_default = defineTool6({
+  name: "get_my_driver_profile",
+  title: "My driver profile & reputation",
+  description: "Return the signed-in driver's profile row plus reputation score, compliance score, and infringement count. Requires a driver record for the caller.",
+  inputSchema: {},
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async (_input, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "Sign in required." }], isError: true };
+    }
+    const sb = userClient3(ctx);
+    const userId = ctx.getUserId();
+    const { data: driver, error: dErr } = await sb.from("drivers").select("*").eq("user_id", userId).maybeSingle();
+    if (dErr) return { content: [{ type: "text", text: dErr.message }], isError: true };
+    if (!driver) {
+      return {
+        content: [{ type: "text", text: "No driver record for the signed-in user." }],
+        isError: true
+      };
+    }
+    const { data: reputation } = await sb.from("driver_reputation").select("*").eq("driver_id", userId).maybeSingle();
+    const payload = { driver, reputation };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: payload
+    };
+  }
+});
+
 // src/lib/mcp/index.ts
+var projectRef = "iiompkhsodkztxllbvkm";
 var mcp_default = defineMcp({
   name: "poortlink-mcp",
   title: "PoortLink MCP",
-  version: "0.1.0",
-  instructions: "Tools for the PoortLink / MojaRide / TukConnect taxi platform. Use `app_info` for an overview, `list_loading_zones` to discover pickup zones (optionally filter by municipality), and `list_drive_to_own_programs` to inspect Drive-to-Own tier eligibility.",
-  tools: [app_info_default, list_loading_zones_default, list_drive_to_own_programs_default]
+  version: "0.2.0",
+  instructions: "Tools for the PoortLink / MojaRide / TukConnect taxi platform. Public tools: `app_info`, `list_loading_zones`, `list_drive_to_own_programs`. Signed-in tools: `get_zone_availability` (real-time driver availability at a loading zone), `list_my_fleet_vehicles` (owner-scoped fleet list), `get_my_driver_profile` (driver-scoped profile + reputation). Owner/driver tools return only rows the signed-in user is allowed to see under RLS.",
+  auth: auth.oauth.issuer({
+    issuer: `https://${projectRef}.supabase.co/auth/v1`,
+    acceptedAudiences: "authenticated"
+  }),
+  tools: [
+    app_info_default,
+    list_loading_zones_default,
+    list_drive_to_own_programs_default,
+    get_zone_availability_default,
+    list_my_fleet_vehicles_default,
+    get_my_driver_profile_default
+  ]
 });
 
 // lovable-mcp-supabase-entry.ts
