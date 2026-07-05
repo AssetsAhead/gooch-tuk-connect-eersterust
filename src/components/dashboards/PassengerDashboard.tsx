@@ -38,6 +38,7 @@ import { WhatsAppLocationShare } from "@/components/location/WhatsAppLocationSha
 import { PassengerLoyalty } from "@/components/incentives/PassengerLoyalty";
 import { FareEstimator } from "@/components/hailing/FareEstimator";
 import { SavedPlaces } from "@/components/hailing/SavedPlaces";
+import { ZoneAvailabilityWidget } from "@/components/hailing/ZoneAvailabilityWidget";
 
 export const PassengerDashboard = () => {
   const [pickup, setPickup] = useState("");
@@ -174,6 +175,7 @@ export const PassengerDashboard = () => {
 
           {/* Booking Tab */}
           <TabsContent value="booking" className="space-y-6">
+            <ZoneAvailabilityWidget />
             {/* Smart Hail Card - The Main Hailing Experience */}
             <SmartHailCard
               userId={user?.id}
