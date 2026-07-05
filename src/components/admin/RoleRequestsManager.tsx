@@ -64,7 +64,7 @@ export function RoleRequestsManager() {
       if (!validationResult.success) {
         toast({
           title: "Validation Error",
-          description: validationResult.error.errors[0].message,
+          description: validationResult.error.issues[0].message,
           variant: "destructive",
         });
         setProcessingId(null);
@@ -155,7 +155,7 @@ export function RoleRequestsManager() {
     if (!validationResult.success) {
       toast({
         title: "Validation Error",
-        description: validationResult.error.errors[0].message,
+        description: validationResult.error.issues[0].message,
         variant: "destructive",
       });
       return;

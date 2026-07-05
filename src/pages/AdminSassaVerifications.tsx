@@ -123,7 +123,7 @@ export const AdminSassaVerifications = () => {
       if (!validationResult.success) {
         toast({
           title: "Validation Error",
-          description: validationResult.error.errors[0].message,
+          description: validationResult.error.issues[0].message,
           variant: "destructive",
         });
         return;
@@ -175,7 +175,7 @@ export const AdminSassaVerifications = () => {
     if (!validationResult.success) {
       toast({
         title: "Validation Error",
-        description: validationResult.error.errors[0].message,
+        description: validationResult.error.issues[0].message,
         variant: "destructive",
       });
       return;

@@ -3,12 +3,16 @@
   "sdk_version": "0.20.0",
   "path": "/functions/v1/mcp",
   "auth": {
-    "type": "none"
+    "type": "oauth",
+    "issuer": "https://iiompkhsodkztxllbvkm.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
   },
   "mcp": {
     "server": {
       "name": "poortlink-mcp",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "PoortLink MCP"
     },
     "tools": [
@@ -59,6 +63,65 @@
         "name": "list_drive_to_own_programs",
         "title": "List Drive-to-Own programs",
         "description": "List the active Drive-to-Own program tiers with eligibility thresholds, timelines and graduation bonuses.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_zone_availability",
+        "title": "Zone availability (real-time)",
+        "description": "Real-time hailing / booking availability for a loading zone: waiting drivers in the queue, next-in-line vehicle, live driver count within the zone radius, and estimated wait based on recent departures. Requires sign-in.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "zone_id": {
+              "description": "Loading zone UUID. Provide this OR zone_name.",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "zone_name": {
+              "description": "Zone name (case-insensitive contains match). Ignored if zone_id is given.",
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_fleet_vehicles",
+        "title": "My fleet vehicles (owner)",
+        "description": "List fleet vehicles owned by the signed-in user. Only rows the caller can see under RLS are returned — non-owners get an empty list.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_driver_profile",
+        "title": "My driver profile & reputation",
+        "description": "Return the signed-in driver's profile row plus reputation score, compliance score, and infringement count. Requires a driver record for the caller.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,

@@ -59,6 +59,7 @@ import PassengerRights from "./pages/PassengerRights";
 import DriveToOwn from "./pages/DriveToOwn";
 import DriveToOwnVsMoove from "./pages/DriveToOwnVsMoove";
 import MarshalRadio from "./pages/MarshalRadio";
+import OAuthConsent from "./pages/OAuthConsent";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { InitiativeSeparationGuard } from "./components/dev/InitiativeSeparationGuard";
@@ -98,6 +99,7 @@ const App = () => {
                 <Route path="/payment-cancelled" element={<PaymentCancelled />} />
                 <Route path="/auth/:role" element={<RoleAuth />} />
                 <Route path="/safe" element={<SafeMode />} />
+                <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={
                   <ProtectedRoute>

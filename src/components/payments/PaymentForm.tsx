@@ -60,7 +60,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
       setShowPayment(true);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errorMessage = error.errors[0].message;
+        const errorMessage = error.issues[0].message;
         toast({ 
           title: "Validation Error", 
           description: errorMessage,

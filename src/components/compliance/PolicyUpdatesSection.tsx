@@ -29,21 +29,15 @@ const policyUpdateSchema = z.object({
     .trim()
     .min(1, "Title is required")
     .max(200, "Title must be less than 200 characters"),
-  category: z.enum(["AARTO", "SANTACO", "NLTAA", "Road Safety", "Licensing", "Other"], {
-    required_error: "Please select a category",
-  }),
-  impact_level: z.enum(["high", "medium", "low"], {
-    required_error: "Please select an impact level",
-  }),
+  category: z.enum(["AARTO", "SANTACO", "NLTAA", "Road Safety", "Licensing", "Other"] as const),
+  impact_level: z.enum(["high", "medium", "low"] as const),
   announcement_date: z.string()
     .min(1, "Announcement date is required")
     .refine((date) => !isNaN(Date.parse(date)), "Invalid date format"),
   effective_date: z.string()
     .optional()
     .refine((date) => !date || !isNaN(Date.parse(date)), "Invalid date format"),
-  status: z.enum(["announced", "active", "deferred", "cancelled"], {
-    required_error: "Please select a status",
-  }),
+  status: z.enum(["announced", "active", "deferred", "cancelled"] as const),
   summary: z.string()
     .trim()
     .min(1, "Summary is required")

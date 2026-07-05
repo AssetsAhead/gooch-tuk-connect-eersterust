@@ -26,9 +26,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Loader2 } from "lucide-react";
 
 const roleRequestSchema = z.object({
-  requestedRole: z.enum(["driver", "owner", "marshall", "councillor"], {
-    required_error: "Please select a role to request",
-  }),
+  requestedRole: z.enum(["driver", "owner", "marshall", "councillor"] as const),
   justification: z
     .string()
     .min(50, "Justification must be at least 50 characters")
