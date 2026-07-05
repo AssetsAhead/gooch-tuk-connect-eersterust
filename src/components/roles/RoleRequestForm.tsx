@@ -26,7 +26,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Loader2 } from "lucide-react";
 
 const roleRequestSchema = z.object({
-  requestedRole: z.enum(["driver", "owner", "marshall", "councillor"], {
+  requestedRole: z.enum(["driver", "owner", "marshall", "councillor"] as const, {
     required_error: "Please select a role to request",
   }),
   justification: z
