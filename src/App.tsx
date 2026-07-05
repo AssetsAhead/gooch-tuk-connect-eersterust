@@ -169,6 +169,11 @@ const App = () => {
                     <InfringementMonitoring />
                   </ProtectedRoute>
                 } />
+                <Route path="/traffic-brain" element={
+                  <ProtectedRoute requiredRole={['admin', 'marshall']}>
+                    <TrafficBrain />
+                  </ProtectedRoute>
+                } />
                 <Route path="/intel-hub" element={
                   <ProtectedRoute requiredRole={['admin', 'owner']}>
                     <IntelHub />
