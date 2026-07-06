@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Activity,
   AlertTriangle,
   Car,
@@ -15,7 +22,27 @@ import {
   Users,
   Waypoints,
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Circle,
+  Popup,
+  LayersControl,
+  LayerGroup,
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+// Fix default marker icons (Leaflet + bundlers)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 
 type SignalKind =
   | "queue"
@@ -33,6 +60,10 @@ interface Signal {
   severity: "info" | "warning" | "critical";
   ts: string;
   zone?: string | null;
+  table: string;
+  rowId: string;
+  raw: Record<string, unknown>;
+  coords?: { lat: number; lng: number } | null;
 }
 
 interface ZoneStatus {
@@ -41,6 +72,18 @@ interface ZoneStatus {
   depth: number;
   status: "healthy" | "congested" | "stalled" | "idle";
   lastMovementMin: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  radius_meters: number | null;
+}
+
+interface VehiclePoint {
+  id: string;
+  vehicle_id: string;
+  lat: number;
+  lng: number;
+  status: string | null;
+  updated_at: string;
 }
 
 const KIND_META: Record<
@@ -61,11 +104,34 @@ const severityVariant: Record<Signal["severity"], "default" | "secondary" | "des
   critical: "destructive",
 };
 
+// Robust coord extractor for varying `location` shapes: {lat,lng} | {latitude,longitude} | "lat,lng"
+function extractCoords(loc: unknown): { lat: number; lng: number } | null {
+  if (!loc) return null;
+  if (typeof loc === "string") {
+    const m = loc.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
+    if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+    try {
+      return extractCoords(JSON.parse(loc));
+    } catch {
+      return null;
+    }
+  }
+  if (typeof loc === "object") {
+    const o = loc as Record<string, unknown>;
+    const lat = Number(o.lat ?? o.latitude);
+    const lng = Number(o.lng ?? o.lon ?? o.longitude);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+  }
+  return null;
+}
+
 export default function TrafficBrain() {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [zones, setZones] = useState<ZoneStatus[]>([]);
+  const [vehicles, setVehicles] = useState<VehiclePoint[]>([]);
   const [filter, setFilter] = useState<SignalKind | "all">("all");
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<Signal | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -80,47 +146,49 @@ export default function TrafficBrain() {
       { data: panicRows },
       { data: locRows },
     ] = await Promise.all([
-      supabase.from("loading_zones").select("id, zone_name").eq("is_active", true),
+      supabase
+        .from("loading_zones")
+        .select("id, zone_name, latitude, longitude, radius_meters")
+        .eq("is_active", true),
       supabase
         .from("zone_queue")
-        .select("id, zone_id, driver_id, status, joined_at, loading_started_at, departed_at, queue_position")
+        .select("*")
         .gte("joined_at", since)
         .order("joined_at", { ascending: false })
         .limit(200),
       supabase
         .from("ai_incidents")
-        .select("id, incident_type, severity, description, created_at, location")
+        .select("*")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
         .limit(100),
       supabase
         .from("road_infringements")
-        .select("id, infringement_type, severity, status, created_at, location_description")
+        .select("*")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
         .limit(100),
       supabase
         .from("rides")
-        .select("id, pickup_location, destination, status, created_at, ride_type")
+        .select("*")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
         .limit(100),
       supabase
         .from("panic_alerts")
-        .select("id, alert_type, status, created_at, location")
+        .select("*")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
         .limit(50),
       supabase
         .from("live_vehicle_locations")
-        .select("id, vehicle_id, status, updated_at, latitude, longitude")
+        .select("*")
         .gte("updated_at", since)
         .order("updated_at", { ascending: false })
-        .limit(50),
+        .limit(100),
     ]);
 
-    const zoneMap = new Map((zoneRows ?? []).map((z: any) => [z.id, z.zone_name]));
-
+    const zoneMap = new Map((zoneRows ?? []).map((z: any) => [z.id, z]));
     const list: Signal[] = [];
 
     (queueRows ?? []).forEach((r: any) => {
@@ -131,14 +199,19 @@ export default function TrafficBrain() {
           : r.status === "loading"
           ? "Loading passengers"
           : `Joined queue at position #${r.queue_position}`;
+      const z = zoneMap.get(r.zone_id) as any;
       list.push({
         id: `q-${r.id}-${r.status}`,
         kind: "queue",
         title: label,
-        detail: zoneMap.get(r.zone_id) || "Unknown zone",
+        detail: z?.zone_name || "Unknown zone",
         severity: "info",
         ts,
-        zone: zoneMap.get(r.zone_id) as string | undefined,
+        zone: z?.zone_name,
+        table: "zone_queue",
+        rowId: r.id,
+        raw: r,
+        coords: z ? { lat: Number(z.latitude), lng: Number(z.longitude) } : null,
       });
     });
 
@@ -150,6 +223,10 @@ export default function TrafficBrain() {
         detail: r.description || "Detected by camera",
         severity: r.severity === "high" || r.severity === "critical" ? "critical" : "warning",
         ts: r.created_at,
+        table: "ai_incidents",
+        rowId: r.id,
+        raw: r,
+        coords: extractCoords(r.location),
       }),
     );
 
@@ -161,6 +238,10 @@ export default function TrafficBrain() {
         detail: `${r.location_description || "Unknown location"} • ${r.status}`,
         severity: r.severity === "critical" ? "critical" : "warning",
         ts: r.created_at,
+        table: "road_infringements",
+        rowId: r.id,
+        raw: r,
+        coords: extractCoords(r.location) ?? (r.latitude && r.longitude ? { lat: Number(r.latitude), lng: Number(r.longitude) } : null),
       }),
     );
 
@@ -172,6 +253,9 @@ export default function TrafficBrain() {
         detail: `${r.pickup_location} → ${r.destination}`,
         severity: "info",
         ts: r.created_at,
+        table: "rides",
+        rowId: r.id,
+        raw: r,
       }),
     );
 
@@ -183,6 +267,10 @@ export default function TrafficBrain() {
         detail: `Status ${r.status}`,
         severity: "critical",
         ts: r.created_at,
+        table: "panic_alerts",
+        rowId: r.id,
+        raw: r,
+        coords: extractCoords(r.location),
       }),
     );
 
@@ -194,11 +282,32 @@ export default function TrafficBrain() {
         detail: `${r.status || "moving"} @ ${Number(r.latitude).toFixed(3)}, ${Number(r.longitude).toFixed(3)}`,
         severity: "info",
         ts: r.updated_at,
+        table: "live_vehicle_locations",
+        rowId: r.id,
+        raw: r,
+        coords: { lat: Number(r.latitude), lng: Number(r.longitude) },
       }),
     );
 
     list.sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime());
     setSignals(list);
+
+    // Latest per vehicle for map
+    const seen = new Set<string>();
+    const vpts: VehiclePoint[] = [];
+    (locRows ?? []).forEach((r: any) => {
+      if (seen.has(r.vehicle_id)) return;
+      seen.add(r.vehicle_id);
+      vpts.push({
+        id: r.id,
+        vehicle_id: r.vehicle_id,
+        lat: Number(r.latitude),
+        lng: Number(r.longitude),
+        status: r.status,
+        updated_at: r.updated_at,
+      });
+    });
+    setVehicles(vpts);
 
     // Zone status derivation
     const byZone = new Map<string, { depth: number; lastMove: number | null }>();
@@ -227,6 +336,9 @@ export default function TrafficBrain() {
         depth: b.depth,
         lastMovementMin: b.lastMove,
         status,
+        latitude: z.latitude !== null ? Number(z.latitude) : null,
+        longitude: z.longitude !== null ? Number(z.longitude) : null,
+        radius_meters: z.radius_meters !== null ? Number(z.radius_meters) : null,
       };
     });
     setZones(zStatuses);
@@ -267,6 +379,16 @@ export default function TrafficBrain() {
   const criticalCount = signals.filter((s) => s.severity === "critical").length;
   const stalledZones = zones.filter((z) => z.status === "stalled").length;
 
+  // Map center — first zone with coords, else Pretoria/Eersterust default
+  const mapCenter = useMemo<[number, number]>(() => {
+    const z = zones.find((x) => x.latitude !== null && x.longitude !== null);
+    if (z) return [z.latitude!, z.longitude!];
+    return [-25.7297, 28.3187]; // Eersterust default
+  }, [zones]);
+
+  const incidentPoints = signals.filter((s) => s.kind === "incident" && s.coords);
+  const panicPoints = signals.filter((s) => s.kind === "panic" && s.coords);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-6 px-4 max-w-7xl space-y-6">
@@ -287,13 +409,140 @@ export default function TrafficBrain() {
           </Button>
         </header>
 
-        {/* Top stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <StatCard label="Signals (6h)" value={signals.length} icon={Activity} />
           <StatCard label="Critical" value={criticalCount} icon={AlertTriangle} tone="destructive" />
           <StatCard label="Active zones" value={zones.length} icon={Waypoints} />
           <StatCard label="Stalled zones" value={stalledZones} icon={Users} tone={stalledZones ? "warning" : "default"} />
         </div>
+
+        {/* Live map */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <MapPin className="h-4 w-4" /> Live map (6h window)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[420px] w-full rounded-lg overflow-hidden border">
+              <MapContainer
+                center={mapCenter}
+                zoom={13}
+                style={{ height: "100%", width: "100%" }}
+                scrollWheelZoom={false}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <LayersControl position="topright">
+                  <LayersControl.Overlay checked name="Loading zones">
+                    <LayerGroup>
+                      {zones
+                        .filter((z) => z.latitude !== null && z.longitude !== null)
+                        .map((z) => (
+                          <Circle
+                            key={z.id}
+                            center={[z.latitude!, z.longitude!]}
+                            radius={z.radius_meters ?? 100}
+                            pathOptions={{
+                              color:
+                                z.status === "stalled"
+                                  ? "#ef4444"
+                                  : z.status === "congested"
+                                  ? "#f59e0b"
+                                  : z.status === "healthy"
+                                  ? "#10b981"
+                                  : "#6b7280",
+                              fillOpacity: 0.15,
+                              weight: 2,
+                            }}
+                          >
+                            <Popup>
+                              <div className="text-xs">
+                                <div className="font-semibold">{z.name}</div>
+                                <div>Status: {z.status}</div>
+                                <div>Depth: {z.depth}</div>
+                                <div>
+                                  Last move:{" "}
+                                  {z.lastMovementMin === null
+                                    ? "—"
+                                    : `${Math.round(z.lastMovementMin)}m ago`}
+                                </div>
+                              </div>
+                            </Popup>
+                          </Circle>
+                        ))}
+                    </LayerGroup>
+                  </LayersControl.Overlay>
+
+                  <LayersControl.Overlay checked name="Fleet vehicles">
+                    <LayerGroup>
+                      {vehicles.map((v) => (
+                        <Marker key={v.id} position={[v.lat, v.lng]}>
+                          <Popup>
+                            <div className="text-xs">
+                              <div className="font-semibold">Vehicle {v.vehicle_id.slice(0, 8)}</div>
+                              <div>Status: {v.status || "—"}</div>
+                              <div>Updated: {formatDistanceToNow(new Date(v.updated_at), { addSuffix: true })}</div>
+                            </div>
+                          </Popup>
+                        </Marker>
+                      ))}
+                    </LayerGroup>
+                  </LayersControl.Overlay>
+
+                  <LayersControl.Overlay checked name="AI incidents">
+                    <LayerGroup>
+                      {incidentPoints.map((s) => (
+                        <Circle
+                          key={s.id}
+                          center={[s.coords!.lat, s.coords!.lng]}
+                          radius={150}
+                          pathOptions={{ color: "#f59e0b", fillOpacity: 0.25, weight: 1 }}
+                          eventHandlers={{ click: () => setSelected(s) }}
+                        >
+                          <Popup>
+                            <div className="text-xs">
+                              <div className="font-semibold">{s.title}</div>
+                              <div>{s.detail}</div>
+                              <div>{format(new Date(s.ts), "PPpp")}</div>
+                            </div>
+                          </Popup>
+                        </Circle>
+                      ))}
+                    </LayerGroup>
+                  </LayersControl.Overlay>
+
+                  <LayersControl.Overlay checked name="Panic alerts">
+                    <LayerGroup>
+                      {panicPoints.map((s) => (
+                        <Circle
+                          key={s.id}
+                          center={[s.coords!.lat, s.coords!.lng]}
+                          radius={250}
+                          pathOptions={{ color: "#ef4444", fillOpacity: 0.3, weight: 2 }}
+                          eventHandlers={{ click: () => setSelected(s) }}
+                        >
+                          <Popup>
+                            <div className="text-xs">
+                              <div className="font-semibold text-red-600">{s.title}</div>
+                              <div>{s.detail}</div>
+                              <div>{format(new Date(s.ts), "PPpp")}</div>
+                            </div>
+                          </Popup>
+                        </Circle>
+                      ))}
+                    </LayerGroup>
+                  </LayersControl.Overlay>
+                </LayersControl>
+              </MapContainer>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              Zone rings colored by status. Amber = AI incidents (150m). Red = panic (250m). Click any item for details.
+            </p>
+          </CardContent>
+        </Card>
 
         {/* Zone strip */}
         <Card>
@@ -306,10 +555,7 @@ export default function TrafficBrain() {
                 <p className="text-sm text-muted-foreground">No active loading zones.</p>
               )}
               {zones.map((z) => (
-                <div
-                  key={z.id}
-                  className="min-w-[180px] rounded-lg border p-3 flex-shrink-0"
-                >
+                <div key={z.id} className="min-w-[180px] rounded-lg border p-3 flex-shrink-0">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium truncate">{z.name}</span>
                     <ZoneBadge status={z.status} />
@@ -319,9 +565,7 @@ export default function TrafficBrain() {
                   </div>
                   <div className="text-xs text-muted-foreground">
                     Last movement:{" "}
-                    {z.lastMovementMin === null
-                      ? "—"
-                      : `${Math.round(z.lastMovementMin)}m ago`}
+                    {z.lastMovementMin === null ? "—" : `${Math.round(z.lastMovementMin)}m ago`}
                   </div>
                 </div>
               ))}
@@ -329,7 +573,7 @@ export default function TrafficBrain() {
           </CardContent>
         </Card>
 
-        {/* Unified timeline */}
+        {/* Timeline */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Fused timeline</CardTitle>
@@ -363,25 +607,29 @@ export default function TrafficBrain() {
                           <span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-background border">
                             <Icon className={`h-3.5 w-3.5 ${meta.color}`} />
                           </span>
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className="font-medium text-sm">{s.title}</span>
-                                <Badge variant={severityVariant[s.severity]} className="text-[10px] py-0">
-                                  {s.severity}
-                                </Badge>
-                                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                                  {meta.label}
-                                </span>
+                          <button
+                            type="button"
+                            onClick={() => setSelected(s)}
+                            className="w-full text-left rounded-md p-2 -m-2 hover:bg-muted/50 transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="font-medium text-sm">{s.title}</span>
+                                  <Badge variant={severityVariant[s.severity]} className="text-[10px] py-0">
+                                    {s.severity}
+                                  </Badge>
+                                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                                    {meta.label}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-0.5 truncate">{s.detail}</p>
                               </div>
-                              <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                                {s.detail}
-                              </p>
+                              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                {formatDistanceToNow(new Date(s.ts), { addSuffix: true })}
+                              </span>
                             </div>
-                            <span className="text-xs text-muted-foreground whitespace-nowrap">
-                              {formatDistanceToNow(new Date(s.ts), { addSuffix: true })}
-                            </span>
-                          </div>
+                          </button>
                         </li>
                       );
                     })}
@@ -391,52 +639,102 @@ export default function TrafficBrain() {
             </Tabs>
           </CardContent>
         </Card>
-
-        {/* Spec */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">MVP spec</CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm space-y-4 leading-relaxed">
-            <section>
-              <h3 className="font-semibold mb-1">Data sources (live)</h3>
-              <ul className="list-disc pl-5 text-muted-foreground space-y-0.5">
-                <li><code>zone_queue</code> + <code>loading_zones</code> — queue depth, movement</li>
-                <li><code>ai_incidents</code> — camera-detected events</li>
-                <li><code>road_infringements</code> — AARTO-mapped violations</li>
-                <li><code>rides</code> + <code>ride_updates</code> — booking + hailing state</li>
-                <li><code>panic_alerts</code> + <code>emergency_messages</code> — safety</li>
-                <li><code>live_vehicle_locations</code> + <code>fleet_vehicles</code> — telemetry</li>
-              </ul>
-            </section>
-            <section>
-              <h3 className="font-semibold mb-1">Model outputs (v0 — rules)</h3>
-              <ul className="list-disc pl-5 text-muted-foreground space-y-0.5">
-                <li>Per-zone status: <em>idle · healthy · congested · stalled</em></li>
-                <li>Anomaly flags: queue stalled &gt;30 min with depth ≥3; panic near zone; incident on active route</li>
-                <li>Demand signal: rides requested vs queue depth (15 min window)</li>
-              </ul>
-            </section>
-            <section>
-              <h3 className="font-semibold mb-1">First user roles</h3>
-              <ul className="list-disc pl-5 text-muted-foreground space-y-0.5">
-                <li><strong>Admin</strong> — full fused view</li>
-                <li><strong>Marshall</strong> — zone-scoped operational view</li>
-                <li><em>Owner read-only view — phase 2</em></li>
-                <li><em>Government portal — deferred (north-star)</em></li>
-              </ul>
-            </section>
-            <section>
-              <h3 className="font-semibold mb-1">Out of scope for MVP</h3>
-              <p className="text-muted-foreground">
-                ML forecasting, cross-modal orchestration, automated evidence packs,
-                government API push, Tsinglink DVR fusion (pilot-dependent).
-              </p>
-            </section>
-          </CardContent>
-        </Card>
       </div>
+
+      <SignalDetailDialog signal={selected} onOpenChange={(o) => !o && setSelected(null)} />
     </div>
+  );
+}
+
+function SignalDetailDialog({
+  signal,
+  onOpenChange,
+}: {
+  signal: Signal | null;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const timestampFields = [
+    "created_at",
+    "updated_at",
+    "joined_at",
+    "loading_started_at",
+    "departed_at",
+    "resolved_at",
+    "confirmed_at",
+    "detected_at",
+    "occurred_at",
+  ];
+
+  return (
+    <Dialog open={!!signal} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
+        {signal && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                {signal.title}
+                <Badge variant={severityVariant[signal.severity]} className="text-[10px]">
+                  {signal.severity}
+                </Badge>
+              </DialogTitle>
+              <DialogDescription>
+                Source table: <code className="text-xs">{signal.table}</code> · row{" "}
+                <code className="text-xs">{signal.rowId}</code>
+              </DialogDescription>
+            </DialogHeader>
+
+            <ScrollArea className="flex-1 pr-3">
+              <div className="space-y-4">
+                <section>
+                  <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">
+                    Timestamps
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {timestampFields
+                      .filter((k) => signal.raw[k])
+                      .map((k) => (
+                        <div key={k} className="rounded border p-2">
+                          <div className="text-muted-foreground">{k}</div>
+                          <div className="font-mono">
+                            {format(new Date(signal.raw[k] as string), "yyyy-MM-dd HH:mm:ss")}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground">
+                            {formatDistanceToNow(new Date(signal.raw[k] as string), {
+                              addSuffix: true,
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </section>
+
+                {signal.coords && (
+                  <section>
+                    <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">
+                      Location
+                    </h4>
+                    <div className="text-xs font-mono">
+                      {signal.coords.lat.toFixed(6)}, {signal.coords.lng.toFixed(6)}
+                    </div>
+                  </section>
+                )}
+
+                <section>
+                  <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">
+                    Underlying row
+                  </h4>
+                  <div className="rounded-md border bg-muted/30 p-3 overflow-x-auto">
+                    <pre className="text-[11px] leading-relaxed whitespace-pre-wrap break-all font-mono">
+                      {JSON.stringify(signal.raw, null, 2)}
+                    </pre>
+                  </div>
+                </section>
+              </div>
+            </ScrollArea>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -471,12 +769,19 @@ function StatCard({
 }
 
 function ZoneBadge({ status }: { status: ZoneStatus["status"] }) {
-  const map: Record<ZoneStatus["status"], { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  const map: Record<
+    ZoneStatus["status"],
+    { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+  > = {
     idle: { label: "idle", variant: "outline" },
     healthy: { label: "healthy", variant: "secondary" },
     congested: { label: "congested", variant: "default" },
     stalled: { label: "stalled", variant: "destructive" },
   };
   const m = map[status];
-  return <Badge variant={m.variant} className="text-[10px] py-0">{m.label}</Badge>;
+  return (
+    <Badge variant={m.variant} className="text-[10px] py-0">
+      {m.label}
+    </Badge>
+  );
 }
