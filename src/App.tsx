@@ -104,7 +104,9 @@ const App = () => {
                 <Route path="/safe" element={<SafeMode />} />
                 <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
                 <Route path="/" element={<Index />} />
+                <Route path="/ride" element={<RideGuest />} />
                 <Route path="/dashboard" element={
+
                   <ProtectedRoute>
                     <RoleBasedRedirect />
                   </ProtectedRoute>
