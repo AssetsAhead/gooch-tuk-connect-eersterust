@@ -241,28 +241,11 @@ export const AuthPage = () => {
             </div>
 
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="phone">Phone Number (Primary Method)</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="0XX XXX XXXX"
-                  onKeyDown={(e) => e.key === 'Enter' && onPhoneAuth()}
-                />
-                <div className="text-xs text-muted-foreground mt-1">
-                  We'll send you a code via SMS - just like WhatsApp verification
-                </div>
-              </div>
+              {/* Phone-first: near-invisible verification (auto-fill + auto-submit) */}
+              <SmsOtpAuth
+                onSuccess={() => window.location.replace(safeNext || '/dashboard')}
+              />
 
-              <Button 
-                onClick={onPhoneAuth}
-                disabled={smsLoading || !phone}
-                className="w-full bg-sa-green hover:bg-sa-green-light text-white"
-              >
-                {smsLoading ? "Sending..." : "Send SMS Code"}
-              </Button>
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
