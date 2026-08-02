@@ -12,6 +12,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 import { useSmsOtp } from '@/hooks/useSmsOtp';
+import { SmsOtpAuth } from '@/components/auth/SmsOtpAuth';
+
 
 export const AuthPage = () => {
   const { role } = useParams<{ role?: string }>();
