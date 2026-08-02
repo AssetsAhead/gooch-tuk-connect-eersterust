@@ -17,11 +17,45 @@ interface SmsOtpResult {
   };
 }
 
+const FN_URL = 'https://iiompkhsodkztxllbvkm.supabase.co/functions/v1/sms-otp';
+const FN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlpb21wa2hzb2RrenR4bGxidmttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzNzQ2NjcsImV4cCI6MjA2Njk1MDY2N30.GgqF-D88r5HJcZ9qOAyfXhJUjFIRWyQncYUx2SVs9bY';
+
+/**
+ * Calls the sms-otp edge function. Uses supabase.functions.invoke first and
+ * falls back to a plain fetch when the SDK request fails at the network layer
+ * (seen on some mobile browsers / restrictive mobile networks).
+ */
+async function callSmsOtp(body: Record<string, unknown>): Promise<SmsOtpResult> {
+  try {
+    const { data, error } = await supabase.functions.invoke<SmsOtpResult>('sms-otp', { body });
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    return data as SmsOtpResult;
+  } catch (primaryError: any) {
+    console.warn('functions.invoke failed, retrying with direct fetch:', primaryError?.message);
+    const res = await fetch(FN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: FN_KEY,
+        Authorization: `Bearer ${FN_KEY}`,
+      },
+      body: JSON.stringify(body),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json?.error) {
+      throw new Error(json?.error || primaryError?.message || 'Request failed');
+    }
+    return json as SmsOtpResult;
+  }
+}
+
 export const useSmsOtp = () => {
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [phone, setPhone] = useState('');
   const { toast } = useToast();
+
 
   const sendOtp = async (phoneNumber: string): Promise<boolean> => {
     if (!phoneNumber) {
