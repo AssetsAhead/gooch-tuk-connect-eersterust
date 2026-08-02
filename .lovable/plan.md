@@ -1,55 +1,43 @@
-## Concept: "Drive-to-Own" Pathway
+## Goal
 
-Moove's model (za.moove.io) gives drivers a vehicle with no credit check, then converts weekly earnings into instalments until they own the car. It works because Moove monitors telematics, enforces revenue share, and bundles maintenance.
+Keep verification (so nobody can impersonate a driver by typing their number) while making sure an elderly passenger never touches an OTP screen, and a driver/marshal sees a code roughly once a quarter at most.
 
-We already have the ingredients Moove charges for: live GPS (`live_vehicle_locations`), driver reputation (`driver_reputation`), trip revenue (`trip_revenue`), maintenance (`maintenance_expenses`), infringements (`road_infringements`), clocking (`driver_clockings`), and fleet ownership (`fleet_vehicles`). What's missing is the **ownership pathway** that rewards exceptional drivers.
+Two parts: **passengers stop needing accounts**, and **staff-role OTP becomes near-invisible with 90-day sessions**.
 
-### How our model improves on Moove
+---
 
-| Lever | Moove | MojaRide Drive-to-Own |
-|---|---|---|
-| Eligibility | Application + ID | Earned via reputation score, compliance, clocking streak, digital-payment ratio |
-| Pricing | Fixed weekly deduction | Dynamic — discounts for AARTO-clean, biometric clock-in, low-noise driving |
-| Risk | Moove carries it alone | Association co-signs; revenue share funds the buffer |
-| Upside | Driver eventually owns car | Driver also earns equity in route slot + reputation NFT-style credential |
-| Exit | Default = repossession | Graduated: warning → mentor pairing → reassignment, repossession last |
+## Part 1 — Passengers skip accounts entirely
 
-### Build scope (Phase 1 — UI + data model only, no payments yet)
+- Turn the passenger entry point into a no-login browsing experience: fare estimator, zone availability, driver map and passenger rights are all viewable without signing in.
+- A hail/booking that needs an identity prompts sign-in only at that moment ("continue as guest" stays available for cash/card riders).
+- Add a **marshal-side trip logging panel** on the Marshall dashboard: marshal picks the zone, vehicle/driver from the queue, passenger count and payment method (cash / card / app), and logs the trip. This is what captures the fare data for riders with no phone or no account — reusing the existing queue and revenue tables rather than new ones.
+- Passenger-facing copy changes from "Login" to "Browse rides" so the aged aren't confronted with an auth wall.
 
-**1. Database (one migration)**
-- `drive_to_own_programs` — tier definitions (Bronze/Silver/Gold/Platinum), weekly contribution %, months to ownership, eligibility thresholds.
-- `drive_to_own_enrollments` — driver_id, vehicle_id, program_tier, start_date, target_ownership_date, total_contributed, balance_remaining, status (eligible/active/paused/completed/exited).
-- `drive_to_own_milestones` — enrollment_id, milestone_type (10%, 25%, 50%, 75%, 100%), reached_at, bonus_awarded.
-- All with GRANTs + RLS (driver sees own; admin/owner sees all).
+## Part 2 — Near-invisible OTP for driver / owner / marshal / admin
 
-**2. Eligibility engine (DB function)**
-`calculate_drive_to_own_eligibility(driver_id)` returns tier + score using:
-- reputation score ≥ 80 (Bronze) / 90 (Gold) / 95 (Platinum)
-- 0 confirmed infringements in last 90 days
-- biometric clock-in ratio ≥ 70%
-- digital payment ratio ≥ 60%
-- minimum 6 months active
+- **Auto-fill the code.** Add `autocomplete="one-time-code"` and the browser WebOTP API (`navigator.credentials.get({ otp: ... })`) on the code screen. On Android/Chrome the code drops into the field by itself the moment the SMS lands — no switching apps, no typing. Silent no-op on browsers that don't support it.
+- **Auto-submit** once six digits are present, so there is no "now press Verify" step.
+- **Format the SMS** so the code is at the front and the message carries the WebOTP binding line, which is what makes auto-fill work.
+- **One number field.** Consolidate the sign-in screen to a single large phone input with the `+27` prefix already shown, big touch targets, and no competing email / Google / "forgot password" options crowding it. Email and Google move behind a small "other ways to sign in" link.
+- **Stay signed in.** Persist the session in `localStorage` (already the case) and stop treating a returning user as unauthenticated — the app should route them straight to their dashboard rather than back to the phone screen.
+- **Trusted-device memory**: remember the last used number on the device so a returning user just taps "Send code to •••• 0673" rather than re-typing it.
 
-**3. Pages**
-- `/drive-to-own` (driver-facing) — current eligibility, tier progress bars, projected ownership date, "what to improve" coaching list, leaderboard of enrolled drivers.
-- Owner/Admin tab in existing `OwnerDashboard` — manage program tiers, view enrolled drivers' contribution flow, approve graduations.
+## Part 3 — 90-day sessions (one manual step)
 
-**4. Comparison page** — `/drive-to-own/vs-moove` static investor/driver comparison (Moove vs MojaRide) with the table above, for recruitment.
+Session lifetime is enforced by Supabase, not app code. In your Supabase dashboard under Authentication → Sessions, set the **inactivity timeout / refresh-token expiry to 90 days** and leave refresh-token rotation on. The app already auto-refreshes tokens, so once that's set a signed-in driver stops seeing OTP screens for 90 days of regular use. I'll flag exactly where to click; I can't change external-Supabase auth settings from here.
 
-**5. Reputation hook** — extend `driver_reputation` reads in `EnhancedDriverIncentives` to show Drive-to-Own progress alongside existing achievements.
+---
 
-### Out of scope for this phase (flag for later)
-- Actual payment collection / Yoco recurring debit
-- Legal agreement generation (covered by existing agreements roadmap)
-- Insurance bundling
-- Vehicle title transfer workflow
+## Technical notes
 
-### Files to add/edit
-- `supabase/migrations/...` (new) — tables, function, RLS, GRANTs
-- `src/pages/DriveToOwn.tsx` (new)
-- `src/pages/DriveToOwnVsMoove.tsx` (new)
-- `src/components/driver/DriveToOwnProgress.tsx` (new)
-- `src/components/dashboards/OwnerDashboard.tsx` (edit — add tab)
-- `src/App.tsx` (edit — routes)
+- Edit `src/components/auth/SmsOtpAuth.tsx` (WebOTP, auto-submit, single-field layout) and `src/pages/Auth.tsx` (de-emphasise email/Google, remove the redundant second phone form and the password-reset entry for phone-first users).
+- `src/hooks/useSmsOtp.ts` gains a "remember last number" helper; the existing invoke + direct-fetch fallback stays as-is.
+- SMS body change in `supabase/functions/sms-otp/index.ts` to add the WebOTP `@domain #code` binding line.
+- New `src/components/marshal/MarshalTripLogger.tsx` mounted on `MarshallDashboard.tsx`, writing through existing queue/revenue tables.
+- Passenger route guard relaxed so the passenger view renders for anonymous visitors; only booking actions require a session.
 
-Estimated effort: ~1 build pass. No new secrets, no edge functions, no costs.
+## Not doing
+
+- Number-only login with no verification — it would let anyone sign in as any driver and read earnings, panic alerts and AARTO records.
+- Biometrics or PINs as a replacement for OTP.
+- Any change to admin whitelist behaviour.
