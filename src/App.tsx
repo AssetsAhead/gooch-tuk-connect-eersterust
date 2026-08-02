@@ -40,6 +40,8 @@ import InsuranceShortlist from "./pages/InsuranceShortlist";
 import CommunityAnnouncements from "./pages/CommunityAnnouncements";
 import FleetVehiclesDashboard from "./pages/FleetVehiclesDashboard";
 import DashcamDashboard from "./pages/DashcamDashboard";
+import RideGuest from "./pages/RideGuest";
+
 import InvestorPortal from "./pages/InvestorPortal";
 import InvestorR2MFleet from "./pages/InvestorR2MFleet";
 import InvestorHardwareOnly from "./pages/InvestorHardwareOnly";
@@ -102,7 +104,9 @@ const App = () => {
                 <Route path="/safe" element={<SafeMode />} />
                 <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
                 <Route path="/" element={<Index />} />
+                <Route path="/ride" element={<RideGuest />} />
                 <Route path="/dashboard" element={
+
                   <ProtectedRoute>
                     <RoleBasedRedirect />
                   </ProtectedRoute>
