@@ -110,14 +110,10 @@ export const useSmsOtp = () => {
     setLoading(true);
     try {
       console.log('Verifying OTP for phone:', phone);
-      const { data, error } = await supabase.functions.invoke<SmsOtpResult>('sms-otp', {
-        body: { phone, action: 'verify', code },
-      });
+      const data = await callSmsOtp({ phone, action: 'verify', code });
 
-      console.log('Verify OTP response:', data, error);
+      console.log('Verify OTP response:', data);
 
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
 
       if (data?.verified && data?.session) {
         // Set the session directly from the edge function response
