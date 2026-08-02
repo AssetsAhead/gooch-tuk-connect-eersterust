@@ -70,14 +70,10 @@ export const useSmsOtp = () => {
     setLoading(true);
     try {
       console.log('Sending OTP to:', phoneNumber);
-      const { data, error } = await supabase.functions.invoke<SmsOtpResult>('sms-otp', {
-        body: { phone: phoneNumber, action: 'send' },
-      });
+      const data = await callSmsOtp({ phone: phoneNumber, action: 'send' });
 
-      console.log('Send OTP response:', data, error);
+      console.log('Send OTP response:', data);
 
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
 
       setPhone(phoneNumber);
       setOtpSent(true);
