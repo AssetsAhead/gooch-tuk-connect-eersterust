@@ -2784,9 +2784,11 @@ export type Database = {
           dropoff_location: string | null
           fare_amount: number
           id: string
+          logged_by: string | null
           notes: string | null
           owner_id: string
           owner_share: number | null
+          passenger_count: number
           payment_method: string
           pickup_location: string | null
           platform_fee: number | null
@@ -2804,9 +2806,11 @@ export type Database = {
           dropoff_location?: string | null
           fare_amount?: number
           id?: string
+          logged_by?: string | null
           notes?: string | null
           owner_id: string
           owner_share?: number | null
+          passenger_count?: number
           payment_method?: string
           pickup_location?: string | null
           platform_fee?: number | null
@@ -2824,9 +2828,11 @@ export type Database = {
           dropoff_location?: string | null
           fare_amount?: number
           id?: string
+          logged_by?: string | null
           notes?: string | null
           owner_id?: string
           owner_share?: number | null
+          passenger_count?: number
           payment_method?: string
           pickup_location?: string | null
           platform_fee?: number | null
