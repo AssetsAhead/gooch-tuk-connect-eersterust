@@ -58,16 +58,20 @@ export const MarshallDashboard = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="queue" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="queue" className="flex items-center">
+          <TabsList className="flex w-full overflow-x-auto justify-start">
+            <TabsTrigger value="queue" className="flex items-center shrink-0">
               <Users className="mr-2 h-4 w-4" />
               Queue Management
             </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center">
+            <TabsTrigger value="log-trip" className="flex items-center shrink-0">
+              <ClipboardCheck className="mr-2 h-4 w-4" />
+              Log Trip
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="flex items-center shrink-0">
               <AlertTriangle className="mr-2 h-4 w-4" />
               Reports
             </TabsTrigger>
-            <TabsTrigger value="summary" className="flex items-center">
+            <TabsTrigger value="summary" className="flex items-center shrink-0">
               <FileText className="mr-2 h-4 w-4" />
               Summary
             </TabsTrigger>
@@ -77,6 +81,12 @@ export const MarshallDashboard = () => {
           <TabsContent value="queue" className="space-y-6">
             <ZoneQueueManager isMarshal={true} />
           </TabsContent>
+
+          {/* Manual trip logging for cash/card passengers without accounts */}
+          <TabsContent value="log-trip" className="space-y-6">
+            <MarshalTripLogger />
+          </TabsContent>
+
 
           {/* Reports Tab */}
           <TabsContent value="reports" className="space-y-6">
