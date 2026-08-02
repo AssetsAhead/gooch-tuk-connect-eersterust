@@ -3237,6 +3237,20 @@ export type Database = {
         Returns: string
       }
       get_next_queue_position: { Args: { _zone_id: string }; Returns: number }
+      get_public_zone_availability: {
+        Args: never
+        Returns: {
+          address: string
+          departures_last_hour: number
+          drivers_waiting: number
+          estimated_wait_minutes: number
+          has_marshal: boolean
+          municipality: string
+          zone_id: string
+          zone_name: string
+          zone_type: string
+        }[]
+      }
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
       has_role_text: {
         Args: { p_role_text: string; p_user_id: string }
