@@ -2,7 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Car, User, Settings, Users, AlertTriangle, FileText } from "lucide-react";
+import { MapPin, Car, User, Settings, Users, AlertTriangle, FileText, ClipboardCheck } from "lucide-react";
+import { MarshalTripLogger } from "@/components/marshal/MarshalTripLogger";
+
 import { useState } from "react";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { ZoneQueueManager } from "@/components/queue/ZoneQueueManager";
