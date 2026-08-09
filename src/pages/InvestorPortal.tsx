@@ -10,6 +10,27 @@ import { Link } from "react-router-dom";
 
 const proposals = [
   {
+    title: "R2,000 Bare-Minimum Runway",
+    subtitle: "Keep-the-lights-on — one month at a time",
+    ask: "R2,000/mo",
+    equity: "0%",
+    roi: "Platform stays live",
+    payback: "Cancel anytime",
+    color: "text-slate-700",
+    bgColor: "bg-slate-50/50 border-slate-200",
+    badgeColor: "bg-slate-700",
+    icon: Clock,
+    href: "/investor/bare-minimum",
+    highlights: [
+      "Verified burn of R1,551/month",
+      "R4,417/month of discretionary spend already cut",
+      "Clears outstanding Resend arrears",
+      "Buys 30 days for CIPC, insurance & DOT Form 9A",
+    ],
+    description:
+      "The smallest possible cheque: hosting, database, SMS and email only. No equity, no lock-in — survival capital while regulatory work completes.",
+  },
+  {
     title: "R2M Fleet POC",
     subtitle: "Electric Vehicle Fleet — Proof of Concept",
     ask: "R2,000,000",
