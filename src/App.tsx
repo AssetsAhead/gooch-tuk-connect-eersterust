@@ -47,6 +47,7 @@ import InvestorR2MFleet from "./pages/InvestorR2MFleet";
 import InvestorHardwareOnly from "./pages/InvestorHardwareOnly";
 import InvestorScaleFunding from "./pages/InvestorScaleFunding";
 import InvestorHybridFunding from "./pages/InvestorHybridFunding";
+import InvestorBareMinimum from "./pages/InvestorBareMinimum";
 import InvestorEswatini from "./pages/InvestorEswatini";
 import LegalNDA from "./pages/LegalNDA";
 import LegalRevenueShareAgreement from "./pages/LegalRevenueShareAgreement";
