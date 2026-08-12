@@ -124,9 +124,6 @@ export default function CIPCTracker() {
           </CardContent>
         </Card>
 
-        {/* CIPC workstream status: IP vs Company Incorporation */}
-        <Card className="border-primary/20">
-          <CardHeader className="pb-3">
         {/* Where IP docs actually get lodged */}
         <Card className="border-amber-500/30 bg-amber-500/5">
           <CardHeader className="pb-2">
