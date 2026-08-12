@@ -91,16 +91,22 @@ export default function CIPCTracker() {
                   </CardDescription>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button variant="outline" size="sm" asChild>
                   <a href="https://www.bizportal.gov.za" target="_blank" rel="noreferrer">
                     BizPortal <ExternalLink className="h-3 w-3 ml-1" />
+                  </a>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <a href="https://eservices.cipc.co.za" target="_blank" rel="noreferrer">
+                    eServices (IP filing) <ExternalLink className="h-3 w-3 ml-1" />
                   </a>
                 </Button>
                 <Button variant="ghost" size="sm" onClick={reset}>
                   <RotateCcw className="h-4 w-4 mr-1" /> Reset
                 </Button>
               </div>
+
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
