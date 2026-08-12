@@ -127,7 +127,36 @@ export default function CIPCTracker() {
         {/* CIPC workstream status: IP vs Company Incorporation */}
         <Card className="border-primary/20">
           <CardHeader className="pb-3">
+        {/* Where IP docs actually get lodged */}
+        <Card className="border-amber-500/30 bg-amber-500/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Where to lodge trademark & patent docs</CardTitle>
+            <CardDescription>
+              BizPortal only handles company/entity services — it has no IP lodgement. Trademarks and patents
+              are filed on CIPC eServices (or via an attorney / patent agent).
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <p>
+              <span className="font-medium">Trademarks (TM1/TM2):</span> eServices → Trade Marks → New Application.
+              Customer code + deposit account required before filing.
+            </p>
+            <p>
+              <span className="font-medium">Patents (P1/P3/P6/P26):</span> eServices → Patents, or lodge by hand/post at
+              CIPC Pretoria. Complete (non-provisional) specifications must be filed by a registered patent attorney.
+            </p>
+            <p className="text-muted-foreground">
+              No CIPC customer code yet? Register at eServices first, then load funds — filings cannot be submitted
+              from a zero-balance account.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* CIPC workstream status: IP vs Company Incorporation */}
+        <Card className="border-primary/20">
+          <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
+
               <Shield className="h-5 w-5 text-primary" />
               CIPC Workstream Status
             </CardTitle>
