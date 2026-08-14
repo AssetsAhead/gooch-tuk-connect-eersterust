@@ -64,6 +64,7 @@ import DriveToOwn from "./pages/DriveToOwn";
 import DriveToOwnVsMoove from "./pages/DriveToOwnVsMoove";
 import MarshalRadio from "./pages/MarshalRadio";
 import OAuthConsent from "./pages/OAuthConsent";
+import PatentStateMachineDisclosure from "./pages/PatentStateMachineDisclosure";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
 import { GlobalHeader } from "./components/GlobalHeader";
 import { InitiativeSeparationGuard } from "./components/dev/InitiativeSeparationGuard";
@@ -155,6 +156,8 @@ const App = () => {
                 <Route path="/operating-license-application" element={<OperatingLicenseApplication />} />
                 <Route path="/form-9a" element={<Form9A />} />
                 <Route path="/cipc-tracker" element={<CIPCTracker />} />
+                <Route path="/patent-state-machine" element={<PatentStateMachineDisclosure />} />
+
                 <Route path="/insurance-shortlist" element={<InsuranceShortlist />} />
                 <Route path="/community-announcements" element={<CommunityAnnouncements />} />
                 <Route path="/fleet-vehicles" element={<FleetVehiclesDashboard />} />
