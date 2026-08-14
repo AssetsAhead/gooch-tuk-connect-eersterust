@@ -1,5 +1,4 @@
-import { useMemo } from "react";
-import { Helmet } from "react-helmet-async";
+import { useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -158,6 +157,17 @@ export default function PatentStateMachineDisclosure() {
     isGenerating,
   } = useReportGeneration();
 
+  useEffect(() => {
+    document.title = "Patent State-Machine Disclosure | Incident Escalation";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) {
+      desc.setAttribute(
+        "content",
+        "Structured, attorney-ready disclosure of the confidence-qualified incident escalation state machine: states, transitions, and offline connectivity behaviour."
+      );
+    }
+  }, []);
+
   const asciiDiagram = useMemo(
     () =>
       [
@@ -231,15 +241,6 @@ export default function PatentStateMachineDisclosure() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <Helmet>
-        <title>Patent State-Machine Disclosure | Incident Escalation</title>
-        <meta
-          name="description"
-          content="Structured, attorney-ready disclosure of the confidence-qualified incident escalation state machine: states, transitions, and offline connectivity behaviour."
-        />
-        <link rel="canonical" href="/patent-state-machine" />
-      </Helmet>
-
       <header className="mb-6">
         <div className="flex items-center gap-2 mb-2">
           <Workflow className="h-6 w-6 text-primary" />
