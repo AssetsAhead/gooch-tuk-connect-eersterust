@@ -10,8 +10,30 @@ import autoTable from "jspdf-autotable";
 import {
   ShieldCheck, MapPin, Fingerprint, Camera, AlertTriangle, FileDown,
   Users, TrendingDown, Landmark, GraduationCap, ArrowLeft, CheckCircle2,
-  Info, Globe,
+  Info, Globe, Scale,
 } from "lucide-react";
+
+const priorArt = [
+  {
+    ref: "US 11113775 (2021)",
+    owner: "Allstate",
+    scope: "Telematics-based assessment of a new driver against a state licensing standard, with communication to the licensing authority.",
+    posture: "Closest reference. US-only; no South African equivalent identified. Relevant only if a US filing is ever pursued.",
+  },
+  {
+    ref: "Graduated licensing telematics patents",
+    owner: "Various insurers / OEMs",
+    scope: "Monitoring of learner and probationary drivers, coaching feedback, and parental or supervisor reporting.",
+    posture: "Broadly disclosed. The platform uses conventional, widely published telematics techniques in this area.",
+  },
+  {
+    ref: "Driver behaviour scoring and event detection",
+    owner: "Fleet telematics sector",
+    scope: "Harsh braking, speeding, cornering and camera-based event capture with scoring.",
+    posture: "Commodity technology. No exclusivity claimed or required for the pilot.",
+  },
+];
+
 
 const PAGE_TITLE = "Road Competency Pilot — DOT Concept Proposal";
 const PAGE_DESC =
