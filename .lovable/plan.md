@@ -21,6 +21,8 @@ A public-facing, DOT-presentation page with the following sections:
 - **Interactive Dashboard Mockup:** A simulated "Competency Pilot Dashboard" showing a sample driver profile, hours accrued, safety events, route trace, mentor sign-off status, and a pending DOT review status. Use static mock data only.
 - **National Scale Vision:** A forward-looking section explaining how biometric login could eventually turn the pilot into a national driver-competency layer for all South African drivers — not just the unlicensed cohort. This is framed as Phase 2, after the pilot proves safety and compliance outcomes.
 - **Benefits to DOT:** Safer roads, real-time enforcement insight, reduced illegal driving, formalised path to legitimacy, employment enablement, and a future national digital driver record anchored by biometric identity.
+- **Cost-Saving Angle:** Highlight quantified or directional cost reductions — fewer traffic-stop enforcement hours, lower accident-related emergency response, reduced court/admin burden from unlicensed-driver prosecutions, less K53 rebooking, and cheaper compliance monitoring than roadside stop-and-check operations.
+- **Stakeholder Map:** A two-column view of (a) who benefits and (b) who may be displaced or reshaped. For the displaced group, note their possible new function if one exists, or mark them as "no future role" for reference.
 - **Risks & Mitigation:** Legal risk (requires DOT/RTMC framework), supervision liability, data privacy (POPIA), public perception — with mitigation notes for each.
 - **Call to Action:** Download a DOT PDF proposal and a link back to the main DOT presentation.
 
