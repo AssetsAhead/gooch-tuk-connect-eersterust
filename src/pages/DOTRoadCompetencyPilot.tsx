@@ -658,6 +658,46 @@ const DOTRoadCompetencyPilot = () => {
         </div>
       </section>
 
+      {/* Prior Art & IP Position */}
+      <section className="py-14 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
+            <Scale className="h-7 w-7 text-primary" /> Prior Art and IP Position
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-3xl">
+            Telematics-based driver assessment is well documented in patent literature. We have reviewed the
+            closest references and state our position openly: this pilot claims no exclusivity over the
+            underlying techniques.
+          </p>
+          <div className="grid md:grid-cols-3 gap-5 mb-8">
+            {priorArt.map((p) => (
+              <Card key={p.ref}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">{p.ref}</CardTitle>
+                  <CardDescription>{p.owner}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">{p.scope}</p>
+                  <p className="text-sm">{p.posture}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertTitle>No proprietary lock-in</AlertTitle>
+            <AlertDescription>
+              No exclusivity is claimed over telematics-based driver training or competency assessment. The
+              techniques used here are widely published and freely practised. The value of this pilot lies in
+              the regulatory framework and operational delivery, not in patent protection — the Department of
+              Transport would not be locked into a single supplier.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </section>
+
+
+
       {/* Risks */}
       <section className="py-14 px-4 bg-muted/40">
         <div className="max-w-6xl mx-auto">
