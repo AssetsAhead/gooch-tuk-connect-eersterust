@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import {
   Shield, CheckCircle2, Car, MapPin, Users, TrendingUp, Zap,
   FileText, AlertTriangle, Eye, Radio, Fingerprint, Camera,
-  Scale, Globe, Target, ArrowRight, Building2, FileDown
+  Scale, Globe, Target, ArrowRight, Building2, FileDown, GraduationCap
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import jsPDF from "jspdf";
@@ -242,6 +242,11 @@ const DOTPresentation = () => {
               <FileDown className="mr-2 h-4 w-4" /> Download DOT Proposal PDF
             </Button>
             <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
+              <Link to="/dot-road-competency-pilot">
+                <GraduationCap className="mr-2 h-4 w-4" /> Road Competency Pilot Concept
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
               <Link to="/fleet-vehicles">
                 <Eye className="mr-2 h-4 w-4" /> View Live Fleet Demo
               </Link>
@@ -375,6 +380,11 @@ const DOTPresentation = () => {
           <div className="flex flex-wrap gap-4 justify-center">
             <Button size="lg" onClick={generateDOTPDF} className="bg-yellow-500 text-black hover:bg-yellow-400">
               <FileDown className="mr-2 h-4 w-4" /> Download Full Proposal
+            </Button>
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
+              <Link to="/dot-road-competency-pilot">
+                <GraduationCap className="mr-2 h-4 w-4" /> Road Competency Pilot Concept
+              </Link>
             </Button>
             <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
               <Link to="/investor">

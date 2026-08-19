@@ -37,6 +37,7 @@ export const ALL_SEARCHABLE_ITEMS: SearchableItem[] = [
   { id: 'operating-license', title: 'Operating License Application', subtitle: 'DOT operating license application form', category: 'Compliance', keywords: ['operating', 'license', 'dot', 'application', 'permit', 'transport', 'department'], path: '/operating-license-application' },
   { id: 'form-9a', title: 'DOT Form 9A', subtitle: 'Official DOT application form', category: 'Compliance', keywords: ['form', '9a', 'dot', 'application', 'official', 'department', 'transport'], path: '/form-9a' },
   { id: 'dot-presentation', title: 'DOT Presentation', subtitle: 'Department of Transport pitch deck', category: 'Compliance', keywords: ['dot', 'presentation', 'pitch', 'deck', 'department', 'transport', 'slides'], path: '/dot-presentation' },
+  { id: 'dot-road-competency-pilot', title: 'Road Competency Pilot (DOT Concept)', subtitle: 'Telematics-verified driver competency proposal', category: 'Compliance', keywords: ['road', 'competency', 'pilot', 'licence', 'license', 'learner', 'k53', 'driver', 'training', 'biometric', 'dot', 'rtmc', 'amnesty', 'unlicensed'], path: '/dot-road-competency-pilot' },
 
   // ── Fleet & Vehicles ──
   { id: 'fleet-vehicles', title: 'Fleet Vehicles Dashboard', subtitle: 'All fleet vehicles, registrations, e-numbers', category: 'Fleet', keywords: ['fleet', 'vehicles', 'registration', 'e-number', 'car', 'taxi', 'minibus', 'status', 'kitting'], path: '/fleet-vehicles' },
