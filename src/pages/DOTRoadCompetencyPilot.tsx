@@ -312,7 +312,35 @@ const DOTRoadCompetencyPilot = () => {
     ].forEach((l, i) => doc.text(l, margin, y + i * 6));
 
     y += 80;
-    y = header("8. RISKS AND MITIGATION", y);
+    y = header("8. PRIOR ART AND IP POSITION", y);
+    autoTable(doc, {
+      startY: y,
+      head: [["Reference", "Owner", "Scope", "Position"]],
+      body: priorArt.map((p) => [p.ref, p.owner, p.scope, p.posture]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 8, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 32 }, 1: { cellWidth: 26 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    doc.text(
+      doc.splitTextToSize(
+        "No exclusivity is claimed over telematics-based driver training or competency assessment. " +
+          "The techniques used in this pilot are widely published and freely practised. The pilot depends on a " +
+          "regulatory framework and operational delivery, not on patent protection, and nothing in this proposal " +
+          "creates a proprietary lock-in for the Department of Transport.",
+        pageWidth - margin * 2,
+      ),
+      margin,
+      y,
+    );
+
+    y += 30;
+    y = header("9. RISKS AND MITIGATION", y);
+
     autoTable(doc, {
       startY: y,
       head: [["Risk", "Mitigation"]],
