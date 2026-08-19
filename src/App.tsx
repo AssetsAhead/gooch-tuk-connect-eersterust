@@ -52,6 +52,7 @@ import InvestorEswatini from "./pages/InvestorEswatini";
 import LegalNDA from "./pages/LegalNDA";
 import LegalRevenueShareAgreement from "./pages/LegalRevenueShareAgreement";
 import DOTPresentation from "./pages/DOTPresentation";
+import DOTRoadCompetencyPilot from "./pages/DOTRoadCompetencyPilot";
 import InfringementMonitoring from "./pages/InfringementMonitoring";
 import TrafficBrain from "./pages/TrafficBrain";
 import CostBreakdown from "./pages/CostBreakdown";
@@ -173,6 +174,7 @@ const App = () => {
                 <Route path="/legal/nda" element={<LegalNDA />} />
                 <Route path="/legal/revenue-share" element={<LegalRevenueShareAgreement />} />
                 <Route path="/dot-presentation" element={<DOTPresentation />} />
+                <Route path="/dot-road-competency-pilot" element={<DOTRoadCompetencyPilot />} />
                 <Route path="/cost-breakdown" element={<CostBreakdown />} />
                 <Route path="/infringement-monitoring" element={
                   <ProtectedRoute requiredRole={['admin', 'owner', 'police', 'marshall']}>
