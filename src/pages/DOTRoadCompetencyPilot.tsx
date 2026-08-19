@@ -342,7 +342,7 @@ const DOTRoadCompetencyPilot = () => {
             <Button size="lg" variant="secondary" onClick={generatePDF}>
               <FileDown className="mr-2 h-4 w-4" /> Download Concept Proposal (PDF)
             </Button>
-            <Button size="lg" variant="outline" className="border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10" asChild>
+            <Button size="lg" variant="outline" className="bg-transparent border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground" asChild>
               <Link to="/dot-presentation">View Full DOT Presentation</Link>
             </Button>
           </div>
