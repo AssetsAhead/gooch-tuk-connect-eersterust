@@ -19,7 +19,8 @@ A public-facing, DOT-presentation page with the following sections:
 - **How the Technology Works:** Reuse the existing live stack (real-time GPS, AI incident detection, driver biometric authentication, panic button, dashcam evidence chain) to prove the concept is operationally ready today, not a roadmap.
 - **Pilot Phases:** Enrolment → Supervised hours accrual → Mentor sign-off → DOT/RTMC review → Graduated licence referral / scale.
 - **Interactive Dashboard Mockup:** A simulated "Competency Pilot Dashboard" showing a sample driver profile, hours accrued, safety events, route trace, mentor sign-off status, and a pending DOT review status. Use static mock data only.
-- **Benefits to DOT:** Safer roads, real-time enforcement insight, reduced illegal driving, formalised path to legitimacy, employment enablement.
+- **National Scale Vision:** A forward-looking section explaining how biometric login could eventually turn the pilot into a national driver-competency layer for all South African drivers — not just the unlicensed cohort. This is framed as Phase 2, after the pilot proves safety and compliance outcomes.
+- **Benefits to DOT:** Safer roads, real-time enforcement insight, reduced illegal driving, formalised path to legitimacy, employment enablement, and a future national digital driver record anchored by biometric identity.
 - **Risks & Mitigation:** Legal risk (requires DOT/RTMC framework), supervision liability, data privacy (POPIA), public perception — with mitigation notes for each.
 - **Call to Action:** Download a DOT PDF proposal and a link back to the main DOT presentation.
 
