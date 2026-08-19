@@ -382,6 +382,11 @@ const DOTPresentation = () => {
               <FileDown className="mr-2 h-4 w-4" /> Download Full Proposal
             </Button>
             <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
+              <Link to="/dot-road-competency-pilot">
+                <GraduationCap className="mr-2 h-4 w-4" /> Road Competency Pilot Concept
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
               <Link to="/investor">
                 <TrendingUp className="mr-2 h-4 w-4" /> View Investment Details
               </Link>
