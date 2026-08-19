@@ -10,8 +10,30 @@ import autoTable from "jspdf-autotable";
 import {
   ShieldCheck, MapPin, Fingerprint, Camera, AlertTriangle, FileDown,
   Users, TrendingDown, Landmark, GraduationCap, ArrowLeft, CheckCircle2,
-  Info, Globe,
+  Info, Globe, Scale,
 } from "lucide-react";
+
+const priorArt = [
+  {
+    ref: "US 11113775 (2021)",
+    owner: "Allstate",
+    scope: "Telematics-based assessment of a new driver against a state licensing standard, with communication to the licensing authority.",
+    posture: "Closest reference. US-only; no South African equivalent identified. Relevant only if a US filing is ever pursued.",
+  },
+  {
+    ref: "Graduated licensing telematics patents",
+    owner: "Various insurers / OEMs",
+    scope: "Monitoring of learner and probationary drivers, coaching feedback, and parental or supervisor reporting.",
+    posture: "Broadly disclosed. The platform uses conventional, widely published telematics techniques in this area.",
+  },
+  {
+    ref: "Driver behaviour scoring and event detection",
+    owner: "Fleet telematics sector",
+    scope: "Harsh braking, speeding, cornering and camera-based event capture with scoring.",
+    posture: "Commodity technology. No exclusivity claimed or required for the pilot.",
+  },
+];
+
 
 const PAGE_TITLE = "Road Competency Pilot — DOT Concept Proposal";
 const PAGE_DESC =
@@ -290,7 +312,35 @@ const DOTRoadCompetencyPilot = () => {
     ].forEach((l, i) => doc.text(l, margin, y + i * 6));
 
     y += 80;
-    y = header("8. RISKS AND MITIGATION", y);
+    y = header("8. PRIOR ART AND IP POSITION", y);
+    autoTable(doc, {
+      startY: y,
+      head: [["Reference", "Owner", "Scope", "Position"]],
+      body: priorArt.map((p) => [p.ref, p.owner, p.scope, p.posture]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 8, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 32 }, 1: { cellWidth: 26 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    doc.text(
+      doc.splitTextToSize(
+        "No exclusivity is claimed over telematics-based driver training or competency assessment. " +
+          "The techniques used in this pilot are widely published and freely practised. The pilot depends on a " +
+          "regulatory framework and operational delivery, not on patent protection, and nothing in this proposal " +
+          "creates a proprietary lock-in for the Department of Transport.",
+        pageWidth - margin * 2,
+      ),
+      margin,
+      y,
+    );
+
+    y += 30;
+    y = header("9. RISKS AND MITIGATION", y);
+
     autoTable(doc, {
       startY: y,
       head: [["Risk", "Mitigation"]],
@@ -607,6 +657,46 @@ const DOTRoadCompetencyPilot = () => {
           </Card>
         </div>
       </section>
+
+      {/* Prior Art & IP Position */}
+      <section className="py-14 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
+            <Scale className="h-7 w-7 text-primary" /> Prior Art and IP Position
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-3xl">
+            Telematics-based driver assessment is well documented in patent literature. We have reviewed the
+            closest references and state our position openly: this pilot claims no exclusivity over the
+            underlying techniques.
+          </p>
+          <div className="grid md:grid-cols-3 gap-5 mb-8">
+            {priorArt.map((p) => (
+              <Card key={p.ref}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">{p.ref}</CardTitle>
+                  <CardDescription>{p.owner}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">{p.scope}</p>
+                  <p className="text-sm">{p.posture}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertTitle>No proprietary lock-in</AlertTitle>
+            <AlertDescription>
+              No exclusivity is claimed over telematics-based driver training or competency assessment. The
+              techniques used here are widely published and freely practised. The value of this pilot lies in
+              the regulatory framework and operational delivery, not in patent protection — the Department of
+              Transport would not be locked into a single supplier.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </section>
+
+
 
       {/* Risks */}
       <section className="py-14 px-4 bg-muted/40">
