@@ -76,18 +76,6 @@ const BusinessPortal = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Back Button - navigates to dashboard for logged-in users */}
-      <div className="fixed top-4 left-4 z-50">
-        <Link to="/dashboard">
-          <Button
-            variant="outline"
-            className="bg-background/90 backdrop-blur-sm"
-            aria-label="Back to dashboard"
-          >
-            ← Back to Dashboard
-          </Button>
-        </Link>
-      </div>
       {/* Quick Home FAB - navigates to dashboard */}
       <div className="fixed bottom-4 right-4 z-50">
         <Link to="/dashboard">
@@ -97,7 +85,16 @@ const BusinessPortal = () => {
         </Link>
       </div>
 
-      <div className="container mx-auto px-4 py-8 pt-20">
+      <div className="container mx-auto px-4 py-8">
+        {/* Back Button - inline so it never covers the global header */}
+        <div className="mb-6">
+          <Link to="/dashboard">
+            <Button variant="outline" aria-label="Back to dashboard">
+              ← Back to Dashboard
+            </Button>
+          </Link>
+        </div>
+
         {/* Hero Section */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">

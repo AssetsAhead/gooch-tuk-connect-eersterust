@@ -34,6 +34,33 @@ const priorArt = [
   },
 ];
 
+const theoryModes = [
+  {
+    title: "Stationary micro-assessments",
+    body: "Short randomised question sets are unlocked only when the vehicle is confirmed stationary — GPS speed at zero and the vehicle in a parked state — for example at a loading zone between trips. A session is a few questions at a time, accumulated over days.",
+  },
+  {
+    title: "Live situational recognition",
+    body: "Voice-prompted questions tied to what the road actually presents — sign recognition, right of way, following distance — answered verbally with the accredited mentor or examiner present. The dashcam records both the road scene and the answer, and scoring is done afterwards from the clip, never live.",
+  },
+];
+
+const theoryControls = [
+  "Biometric login binds every answer to the candidate, not to a device or a phone number.",
+  "Question sets are randomised per session and drawn from a bank held by the authority, not by the operator.",
+  "GPS, dashcam footage and server timestamps form a tamper-resistant audit trail for each answered item.",
+  "A registered mentor or examiner co-signs each session before it is submitted.",
+  "No question is ever presented to a driver in motion; motion cancels an open session.",
+];
+
+const theoryOpenQuestions = [
+  "The legal status of a distributed theory assessment under the current regulations.",
+  "Accreditation route for mentors and examiners supervising in-vehicle sessions.",
+  "Distraction and safety rules governing any in-cab interaction, including the voice mode.",
+  "Custody, versioning and confidentiality of the question bank.",
+];
+
+
 
 const PAGE_TITLE = "Road Competency Pilot — DOT Concept Proposal";
 const PAGE_DESC =
@@ -338,8 +365,63 @@ const DOTRoadCompetencyPilot = () => {
       y,
     );
 
-    y += 30;
-    y = header("9. RISKS AND MITIGATION", y);
+    // Page 6 — in-vehicle theory assessment concept
+    doc.addPage();
+    y = 20;
+    y = header("9. RETHINKING THE WRITTEN TEST: IN-VEHICLE THEORY ASSESSMENT", y);
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+    const intro = doc.splitTextToSize(
+      "Concept for the Department's consideration only; not an approved assessment method. The written test " +
+        "currently requires a booking, a queue and a trip to a testing station. Slots are scarce and every " +
+        "re-booking multiplies cost for the candidate and the state. This section proposes delivering the theory " +
+        "component in the real driving environment, so that one supervised programme evidences both knowledge " +
+        "and control. No question is ever presented to a driver in motion.",
+      pageWidth - margin * 2,
+    );
+    doc.text(intro, margin, y);
+    y += intro.length * 5 + 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Delivery mode", "How it works"]],
+      body: theoryModes.map((m) => [m.title, m.body]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 45 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    y = header("Integrity controls", y);
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    theoryControls.forEach((c) => {
+      const lines = doc.splitTextToSize(`• ${c}`, pageWidth - margin * 2 - 4);
+      doc.text(lines, margin + 2, y);
+      y += lines.length * 5;
+    });
+    y += 6;
+
+    y = header("Scope, savings and open questions", y);
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    const closing = doc.splitTextToSize(
+      "It would replace the booked classroom sitting of the theory component. It does not replace the " +
+        "Department's authority to set, mark or certify the standard — the platform submits an evidence pack and " +
+        "the Department issues the outcome. Expected effects: fewer station visits, fewer no-shows and " +
+        "re-bookings, less testing-centre congestion, and reach into areas far from a testing centre. " +
+        "Open questions: " +
+        theoryOpenQuestions.join(" "),
+      pageWidth - margin * 2,
+    );
+    doc.text(closing, margin, y);
+
+    doc.addPage();
+    y = 20;
+    y = header("10. RISKS AND MITIGATION", y);
+
 
     autoTable(doc, {
       startY: y,
@@ -655,6 +737,101 @@ const DOTRoadCompetencyPilot = () => {
               </p>
             </CardContent>
           </Card>
+        </div>
+      </section>
+
+      {/* Rethinking the Written Test */}
+      <section className="py-14 px-4">
+        <div className="max-w-6xl mx-auto">
+          <Badge variant="secondary" className="mb-3">Concept for DOT consideration</Badge>
+          <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
+            <GraduationCap className="h-7 w-7 text-primary" /> Rethinking the Written Test: In-Vehicle Theory Assessment
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-3xl">
+            The learner's written test currently forces a booking, a queue and a trip to a testing station.
+            Slots are scarce, and every re-booking multiplies cost for the candidate and for the state. We put
+            forward — for the Department's consideration, not as an approved method — a way to deliver the
+            theory component in the real driving environment, so that one supervised programme evidences both
+            knowledge and control: a "double physical" assessment.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-5 mb-8">
+            {theoryModes.map((m) => (
+              <Card key={m.title}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">{m.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">{m.body}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5 mb-8">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-primary" /> Integrity controls
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {theoryControls.map((c) => (
+                    <li key={c} className="flex gap-2 text-sm text-muted-foreground">
+                      <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <span>{c}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <TrendingDown className="h-4 w-4 text-primary" /> Savings and access
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                  Fewer station visits per candidate, fewer no-shows, and fewer re-bookings — which in turn
+                  eases congestion at testing centres for the applicants who must still attend in person.
+                </p>
+                <p>
+                  It also reaches candidates who live far from a testing centre, where the trip itself, not the
+                  test, is the real barrier.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="mb-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">What this replaces — and what it does not</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
+              <p>
+                It would replace the booked classroom sitting of the theory component with a distributed,
+                supervised equivalent.
+              </p>
+              <p>
+                It does not replace the Department's authority to set, mark or certify the standard. The
+                platform submits an evidence pack; the Department issues the outcome.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Alert>
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Open questions we cannot answer alone</AlertTitle>
+            <AlertDescription>
+              <ul className="mt-2 space-y-1 list-disc pl-5">
+                {theoryOpenQuestions.map((q) => (
+                  <li key={q}>{q}</li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
         </div>
       </section>
 
