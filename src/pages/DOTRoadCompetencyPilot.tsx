@@ -685,6 +685,101 @@ const DOTRoadCompetencyPilot = () => {
         </div>
       </section>
 
+      {/* Rethinking the Written Test */}
+      <section className="py-14 px-4">
+        <div className="max-w-6xl mx-auto">
+          <Badge variant="secondary" className="mb-3">Concept for DOT consideration</Badge>
+          <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
+            <GraduationCap className="h-7 w-7 text-primary" /> Rethinking the Written Test: In-Vehicle Theory Assessment
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-3xl">
+            The learner's written test currently forces a booking, a queue and a trip to a testing station.
+            Slots are scarce, and every re-booking multiplies cost for the candidate and for the state. We put
+            forward — for the Department's consideration, not as an approved method — a way to deliver the
+            theory component in the real driving environment, so that one supervised programme evidences both
+            knowledge and control: a "double physical" assessment.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-5 mb-8">
+            {theoryModes.map((m) => (
+              <Card key={m.title}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">{m.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">{m.body}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5 mb-8">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-primary" /> Integrity controls
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {theoryControls.map((c) => (
+                    <li key={c} className="flex gap-2 text-sm text-muted-foreground">
+                      <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <span>{c}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <TrendingDown className="h-4 w-4 text-primary" /> Savings and access
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                  Fewer station visits per candidate, fewer no-shows, and fewer re-bookings — which in turn
+                  eases congestion at testing centres for the applicants who must still attend in person.
+                </p>
+                <p>
+                  It also reaches candidates who live far from a testing centre, where the trip itself, not the
+                  test, is the real barrier.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="mb-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">What this replaces — and what it does not</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
+              <p>
+                It would replace the booked classroom sitting of the theory component with a distributed,
+                supervised equivalent.
+              </p>
+              <p>
+                It does not replace the Department's authority to set, mark or certify the standard. The
+                platform submits an evidence pack; the Department issues the outcome.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Alert>
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Open questions we cannot answer alone</AlertTitle>
+            <AlertDescription>
+              <ul className="mt-2 space-y-1 list-disc pl-5">
+                {theoryOpenQuestions.map((q) => (
+                  <li key={q}>{q}</li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        </div>
+      </section>
+
       {/* Prior Art & IP Position */}
       <section className="py-14 px-4">
         <div className="max-w-6xl mx-auto">
