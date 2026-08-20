@@ -34,6 +34,33 @@ const priorArt = [
   },
 ];
 
+const theoryModes = [
+  {
+    title: "Stationary micro-assessments",
+    body: "Short randomised question sets are unlocked only when the vehicle is confirmed stationary — GPS speed at zero and the vehicle in a parked state — for example at a loading zone between trips. A session is a few questions at a time, accumulated over days.",
+  },
+  {
+    title: "Live situational recognition",
+    body: "Voice-prompted questions tied to what the road actually presents — sign recognition, right of way, following distance — answered verbally with the accredited mentor or examiner present. The dashcam records both the road scene and the answer, and scoring is done afterwards from the clip, never live.",
+  },
+];
+
+const theoryControls = [
+  "Biometric login binds every answer to the candidate, not to a device or a phone number.",
+  "Question sets are randomised per session and drawn from a bank held by the authority, not by the operator.",
+  "GPS, dashcam footage and server timestamps form a tamper-resistant audit trail for each answered item.",
+  "A registered mentor or examiner co-signs each session before it is submitted.",
+  "No question is ever presented to a driver in motion; motion cancels an open session.",
+];
+
+const theoryOpenQuestions = [
+  "The legal status of a distributed theory assessment under the current regulations.",
+  "Accreditation route for mentors and examiners supervising in-vehicle sessions.",
+  "Distraction and safety rules governing any in-cab interaction, including the voice mode.",
+  "Custody, versioning and confidentiality of the question bank.",
+];
+
+
 
 const PAGE_TITLE = "Road Competency Pilot — DOT Concept Proposal";
 const PAGE_DESC =
