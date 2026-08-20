@@ -365,8 +365,63 @@ const DOTRoadCompetencyPilot = () => {
       y,
     );
 
-    y += 30;
-    y = header("9. RISKS AND MITIGATION", y);
+    // Page 6 — in-vehicle theory assessment concept
+    doc.addPage();
+    y = 20;
+    y = header("9. RETHINKING THE WRITTEN TEST: IN-VEHICLE THEORY ASSESSMENT", y);
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+    const intro = doc.splitTextToSize(
+      "Concept for the Department's consideration only; not an approved assessment method. The written test " +
+        "currently requires a booking, a queue and a trip to a testing station. Slots are scarce and every " +
+        "re-booking multiplies cost for the candidate and the state. This section proposes delivering the theory " +
+        "component in the real driving environment, so that one supervised programme evidences both knowledge " +
+        "and control. No question is ever presented to a driver in motion.",
+      pageWidth - margin * 2,
+    );
+    doc.text(intro, margin, y);
+    y += intro.length * 5 + 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Delivery mode", "How it works"]],
+      body: theoryModes.map((m) => [m.title, m.body]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 45 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    y = header("Integrity controls", y);
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    theoryControls.forEach((c) => {
+      const lines = doc.splitTextToSize(`• ${c}`, pageWidth - margin * 2 - 4);
+      doc.text(lines, margin + 2, y);
+      y += lines.length * 5;
+    });
+    y += 6;
+
+    y = header("Scope, savings and open questions", y);
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    const closing = doc.splitTextToSize(
+      "It would replace the booked classroom sitting of the theory component. It does not replace the " +
+        "Department's authority to set, mark or certify the standard — the platform submits an evidence pack and " +
+        "the Department issues the outcome. Expected effects: fewer station visits, fewer no-shows and " +
+        "re-bookings, less testing-centre congestion, and reach into areas far from a testing centre. " +
+        "Open questions: " +
+        theoryOpenQuestions.join(" "),
+      pageWidth - margin * 2,
+    );
+    doc.text(closing, margin, y);
+
+    doc.addPage();
+    y = 20;
+    y = header("10. RISKS AND MITIGATION", y);
+
 
     autoTable(doc, {
       startY: y,
