@@ -1,53 +1,39 @@
-# DOT Road Competency Pilot Page
+# Fix header overlap + add "In-Vehicle Theory Test" concept
 
-## Goal
-Create a new, standalone DOT-facing page that sells the concept of a **sanctioned, supervised road-competency pilot** for South African drivers who currently operate without a valid licence. The page should present the idea as a Department of Transport partnership, leveraging the existing GPS, dashcam, and biometric tech stack already in the app. No insurer angle; pure safety, compliance, and enforcement-visibility case.
+## 1. Rendering overlap fix (Business Heroes Portal)
 
-## Requirements (from clarifying questions)
-- **Deliverable format:** New standalone page
-- **Legal framing:** Sanctioned DOT pilot with amnesty
-- **Insurer angle:** No — DOT/safety only
+The screenshot shows the "← Back to Dashboard" button sitting on top of the global app header (brand name, search bar), hiding them.
 
-## What we will build
+Cause (verified in code): `src/pages/BusinessPortal.tsx` renders its own back button as `fixed top-4 left-4 z-50`, while `src/components/GlobalHeader.tsx` is `fixed top-0 ... h-12 z-40`. The page button floats over the header.
 
-### 1. New page: `src/pages/DOTRoadCompetencyPilot.tsx`
-A public-facing, DOT-presentation page with the following sections:
+Fix:
+- Remove the floating fixed back button from `BusinessPortal.tsx` and place it inline at the top of the page container (normal document flow, above the hero), so it can never cover the header.
+- Keep the existing top padding so content still clears the fixed header.
+- Leave the bottom-right "Dashboard" button as is (it does not collide).
+- Sweep other pages for the same `fixed top-4 ... z-50` back-button pattern and apply the same inline treatment where found, so the category of bug is fixed rather than just this instance.
 
-- **Hero:** DOT-style header, headline, and one-sentence value proposition.
-- **The Problem:** The gap between K53 classroom testing and real-world competence; the number of unlicensed drivers already on the road; the enforcement burden.
-- **The Proposed Pilot:** A limited, sanctioned amnesty programme where enrolled drivers drive under supervision while the platform continuously records GPS, telematics events, dashcam evidence, and biometric identity. Driving hours and behaviour become an auditable competency record.
-- **How the Technology Works:** Reuse the existing live stack (real-time GPS, AI incident detection, driver biometric authentication, panic button, dashcam evidence chain) to prove the concept is operationally ready today, not a roadmap.
-- **Pilot Phases:** Enrolment → Supervised hours accrual → Mentor sign-off → DOT/RTMC review → Graduated licence referral / scale.
-- **Interactive Dashboard Mockup:** A simulated "Competency Pilot Dashboard" showing a sample driver profile, hours accrued, safety events, route trace, mentor sign-off status, and a pending DOT review status. Use static mock data only.
-- **National Scale Vision:** A forward-looking section explaining how biometric login could eventually turn the pilot into a national driver-competency layer for all South African drivers — not just the unlicensed cohort. This is framed as Phase 2, after the pilot proves safety and compliance outcomes.
-- **Benefits to DOT:** Safer roads, real-time enforcement insight, reduced illegal driving, formalised path to legitimacy, employment enablement, and a future national digital driver record anchored by biometric identity.
-- **Cost-Saving Angle:** Highlight quantified or directional cost reductions — fewer traffic-stop enforcement hours, lower accident-related emergency response, reduced court/admin burden from unlicensed-driver prosecutions, less K53 rebooking, and cheaper compliance monitoring than roadside stop-and-check operations.
-- **Stakeholder Map:** A two-column view of (a) who benefits and (b) who may be displaced or reshaped. For the displaced group, note their possible new function if one exists, or mark them as "no future role" for reference.
-- **Risks & Mitigation:** Legal risk (requires DOT/RTMC framework), supervision liability, data privacy (POPIA), public perception — with mitigation notes for each.
-- **Call to Action:** Download a DOT PDF proposal and a link back to the main DOT presentation.
+## 2. Re-thinking the written (theory) exam — new page section
 
-### 2. PDF export
-Use `jsPDF` + `jspdf-autotable` (already used in `DOTPresentation.tsx`) to generate a 3–4 page PDF from the same content, titled appropriately for DOT circulation.
+Add a new section to `src/pages/DOTRoadCompetencyPilot.tsx` titled **"Rethinking the Written Test: In-Vehicle Theory Assessment"**, presented as a concept for DOT consideration (not a claim of approval).
 
-### 3. Route and navigation
-- Register `/dot-road-competency-pilot` in `src/App.tsx`.
-- Add a prominent link from `/dot-presentation` to the new page, so the DOT presentation can point to this deeper pilot concept.
-- Use the existing `GlobalHeader` for back/home navigation; no new navigation shell needed.
+Concept content:
+- **Problem:** the K53 written test forces booking, queueing and trips to a testing station; slots are scarce and re-bookings multiply cost for both the candidate and the state.
+- **Proposal — a "double physical" test:** the theory component is delivered through the platform in the real driving environment rather than in a classroom, so one supervised session evidences both knowledge and control.
+- **Two safe delivery modes** (explicitly never while the candidate is driving):
+  1. *Stationary micro-assessments* — short question sets triggered when the vehicle is confirmed stationary (GPS speed zero, handbrake/parked state), e.g. at a loading zone between trips.
+  2. *Live situational recognition* — voice-prompted questions answered verbally, tied to what the road actually presents (sign recognition, right-of-way, following distance), captured by the dashcam and scored afterwards from the recorded clip, with the mentor/examiner present.
+- **Integrity controls:** biometric login binds every answer to the candidate; question sets are randomised per session; GPS, dashcam and timestamps form the audit trail; a registered mentor/examiner co-signs each session.
+- **What it replaces vs what it does not:** replaces the booked classroom sitting; does not replace DOT's authority to set, mark or certify the standard — the platform submits an evidence pack, DOT issues the outcome.
+- **Savings and access:** fewer station visits, fewer no-shows and re-bookings, less testing-station congestion, and reach into areas far from a testing centre.
+- **Open questions for DOT** (stated honestly): legal status of a distributed theory assessment, examiner accreditation, distraction/safety rules, and question-bank custody.
 
-### 4. Design and code constraints
-- Use the project’s semantic design tokens and shadcn components (no hardcoded colours).
-- Keep the page responsive and accessible.
-- Set a real, app-specific `<title>` and `<meta name="description">` via the existing page-level metadata approach.
-- No Supabase schema changes or backend work; this is a presentation/mockup only.
-- Respect the MTN initiative separation constraint: no MTN references anywhere in the new page or PDF.
+Also extend the page's existing PDF generator with a matching section so the printed proposal stays in sync, and keep the existing non-infringement / unsolicited-concept disclaimers applying to this section too.
+
+## Technical notes
+- Files touched: `src/pages/BusinessPortal.tsx` (layout only), `src/pages/DOTRoadCompetencyPilot.tsx` (new content section + PDF section), plus any other page found with the same overlapping fixed back button.
+- Semantic design tokens and existing shadcn Card/Alert/Badge patterns only; no new colours.
+- No database, backend or route changes; content and presentation only.
 
 ## Out of scope
-- Real driver competency tracking database or API.
-- Integration with RTMC/DoT systems.
-- Insurance underwriting logic.
-- Legal/legislative drafting beyond the proposal text.
-
-## Verification
-- Run the dev build to confirm the route renders and no TypeScript errors.
-- Open the page in the preview, take a screenshot, and confirm the PDF download button works.
-- Check that the link from `/dot-presentation` is visible and navigates correctly.
+- Building an actual question bank, scoring engine or exam runtime.
+- Any integration with DOT/RTMC systems.
