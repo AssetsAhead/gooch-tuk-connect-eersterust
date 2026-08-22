@@ -917,6 +917,83 @@ const DOTRoadCompetencyPilot = () => {
         </div>
       </section>
 
+      {/* Mentor & Vehicle Access Marketplace */}
+      <section className="py-14 px-4 bg-muted/40">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
+            <Users className="h-7 w-7 text-primary" /> Mentor and Vehicle Access
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-3xl">
+            Every supervised-hour model in the world assumes the candidate has a car and a licensed supervisor
+            to sit beside them. In the target areas, most have neither. The pilot closes that gap by
+            accrediting owner-mentors who rent out supervised hours — mentor time plus a compliant vehicle — at
+            a regulator-agreed tariff, turning the constraint into a small-enterprise opportunity.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-5 mb-8">
+            {mentorPrecedents.map((p) => (
+              <Card key={p.place}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-primary" /> {p.place}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">{p.body}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5 mb-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">How the marketplace works</CardTitle>
+                <CardDescription>Design principles, not a live service</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <dl className="space-y-3">
+                  {mentorEconomics.map((m) => (
+                    <div key={m.k}>
+                      <dt className="text-sm font-medium">{m.k}</dt>
+                      <dd className="text-sm text-muted-foreground">{m.v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-primary" /> Mentor accreditation criteria
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {mentorAccreditation.map((c) => (
+                    <li key={c} className="flex gap-2 text-sm text-muted-foreground">
+                      <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <span>{c}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Alert>
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Why accreditation and a tariff cap are non-negotiable</AlertTitle>
+            <AlertDescription>
+              Unvetted mentors and uncapped pricing would turn vehicle access into the pilot's weakest link —
+              both a falsification channel and a way to extract rent from the people the programme is meant to
+              help. Accreditation, biometric mentor binding and a published tariff band are proposed as
+              conditions of participation, set by the Department rather than by the operator.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </section>
+
       {/* Prior Art & IP Position */}
       <section className="py-14 px-4">
         <div className="max-w-6xl mx-auto">
