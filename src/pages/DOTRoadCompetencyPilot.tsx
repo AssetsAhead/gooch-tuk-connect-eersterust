@@ -60,6 +60,38 @@ const theoryOpenQuestions = [
   "Custody, versioning and confidentiality of the question bank.",
 ];
 
+const mentorlessRequirements = [
+  { k: "Accredit the vehicle, not the person", v: "A certified training vehicle carries the tamper-evident kit: GPS/IMU logger, forward and cabin dashcam, and a sealed unit whose removal or interference voids the session. Certification is issued to the vehicle, renewed at inspection, and can be suspended remotely." },
+  { k: "Identity is machine-checked", v: "Candidate biometrics at ignition plus periodic in-session liveness checks from the cabin camera. Only the face bound to the learner record can accumulate hours; a mismatch or an empty seat ends the session." },
+  { k: "Occupancy and control are proven", v: "Cabin camera confirms who is behind the wheel and that no second person is driving on the candidate's behalf; seat/belt state and steering-side view close the obvious substitution loophole." },
+  { k: "Scoring is done off-vehicle", v: "The kit only records. Event detection and competency scoring run server-side on the uploaded evidence, so nothing on board can be gamed to produce a pass." },
+  { k: "Evidence is sealed at source", v: "Clips and tracks are hashed and signed on the device before upload; the state machine promotes them to protected evidence, and gaps in the chain invalidate the hours rather than being silently accepted." },
+  { k: "Owner is a supplier, not an assessor", v: "The vehicle owner rents access to a certified vehicle at a capped tariff. They sign nothing, score nothing and cannot influence the outcome — which is precisely what removes the integrity problem." },
+];
+
+const mentorlessGates = [
+  "Hours only count inside a geofenced, speed-limited practice envelope agreed with the Department for the unlicensed phase.",
+  "Daily and total hour caps per candidate, with mandatory rest gaps, to stop hour-farming.",
+  "Automatic session invalidation on kit tamper, camera obstruction, biometric mismatch or GPS dropout beyond a set tolerance.",
+  "A final in-person practical remains with the Department — the platform never certifies competency, it only evidences accrual.",
+  "Amnesty for the unlicensed practice phase is conditional on an active, certified session; outside a session the ordinary law applies.",
+];
+
+const remoteMentorModel = [
+  { k: "What the remote mentor sees", v: "A live low-bandwidth feed of road view, cabin view, speed and position from the certified kit — the same stream the war room already uses for fleet monitoring." },
+  { k: "What they do", v: "Voice coaching over the in-cab audio channel, session start/stop authority, and a co-sign on the accrued hours. One mentor can supervise several sessions in sequence, not simultaneously." },
+  { k: "Why the Department may prefer it", v: "It keeps a human accountable for every logged hour while removing the requirement that the human be physically present in a car the candidate cannot access." },
+  { k: "Fallback when signal drops", v: "The session continues in recorded mode with a hard hour cap; the mentor reviews and co-signs the clip afterwards, and unreviewed hours expire rather than count." },
+  { k: "Who qualifies", v: "Registered instructors and vetted accredited mentors, biometrically clocked into each session, with their own audit trail of sessions supervised and outcomes." },
+  { k: "Cost effect", v: "Mentor time is unbundled from vehicle time, so the candidate pays for a certified vehicle nearby and a mentor anywhere in the country — the remote-farm case the in-person model cannot serve." },
+];
+
+const supervisionTiers = [
+  { tier: "Tier 1 — In-person mentor", human: "Mentor in the vehicle", strength: "Highest assurance; matches international practice and is the easiest to defend to a regulator.", weakness: "Requires a car and a supervisor on the scene; unavailable to most of the target population." },
+  { tier: "Tier 2 — Remote mentor", human: "Mentor on a live feed, co-signs hours", strength: "Human accountability retained; mentor supply no longer geographically bound; strongest candidate for DOT buy-in.", weakness: "Depends on connectivity and on mentor-to-session ratios being enforced." },
+  { tier: "Tier 3 — Mentorless certified vehicle", human: "None during the drive; Department reviews evidence", strength: "Simplest and cheapest; nothing depends on a human's integrity; reaches remote areas immediately.", weakness: "Needs the strongest tamper, identity and envelope controls, and the largest regulatory concession." },
+];
+
 
 const mentorPrecedents = [
   {
