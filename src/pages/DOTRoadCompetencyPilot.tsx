@@ -1026,7 +1026,111 @@ const DOTRoadCompetencyPilot = () => {
         </div>
       </section>
 
+      {/* Supervision tiers: remote and mentorless */}
+      <section className="py-14 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
+            <Fingerprint className="h-7 w-7 text-primary" /> Removing the Human from the Loop
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-3xl">
+            Requiring a physically present mentor reintroduces the two things the pilot is meant to solve: access
+            and integrity. A youngster on a remote farm should be able to start accruing hours the moment a
+            certified vehicle is on the scene. Three supervision tiers are therefore proposed, so the Department
+            can choose how much human involvement it wants — and reduce it as the evidence record proves itself.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-5 mb-10">
+            {supervisionTiers.map((t) => (
+              <Card key={t.tier}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">{t.tier}</CardTitle>
+                  <CardDescription>{t.human}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">Strength: </span>{t.strength}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">Trade-off: </span>{t.weakness}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5 mb-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Camera className="h-4 w-4 text-primary" /> Mentorless mode: what it would take
+                </CardTitle>
+                <CardDescription>Certify the vehicle, machine-check the human</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <dl className="space-y-3">
+                  {mentorlessRequirements.map((m) => (
+                    <div key={m.k}>
+                      <dt className="text-sm font-medium">{m.k}</dt>
+                      <dd className="text-sm text-muted-foreground">{m.v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Users className="h-4 w-4 text-primary" /> Remote mentoring
+                </CardTitle>
+                <CardDescription>Keeps a human accountable without a human in the car</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <dl className="space-y-3">
+                  {remoteMentorModel.map((m) => (
+                    <div key={m.k}>
+                      <dt className="text-sm font-medium">{m.k}</dt>
+                      <dd className="text-sm text-muted-foreground">{m.v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="mb-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-primary" /> Hard gates that make mentorless hours credible
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2">
+                {mentorlessGates.map((g) => (
+                  <li key={g} className="flex gap-2 text-sm text-muted-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                    <span>{g}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertTitle>Recommended sequencing</AlertTitle>
+            <AlertDescription>
+              Start the pilot on Tier 2 remote mentoring, where a registered human still co-signs every hour and
+              buy-in is easiest to obtain. Run Tier 3 mentorless sessions in parallel as a shadow cohort whose
+              hours are scored but not yet credited. If the evidence record from the shadow cohort holds up
+              against the mentored cohort, the Department has a measured basis for crediting mentorless hours —
+              rather than being asked to take it on trust up front.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </section>
+
       {/* Prior Art & IP Position */}
+
       <section className="py-14 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
