@@ -60,6 +60,38 @@ const theoryOpenQuestions = [
   "Custody, versioning and confidentiality of the question bank.",
 ];
 
+const mentorlessRequirements = [
+  { k: "Accredit the vehicle, not the person", v: "A certified training vehicle carries the tamper-evident kit: GPS/IMU logger, forward and cabin dashcam, and a sealed unit whose removal or interference voids the session. Certification is issued to the vehicle, renewed at inspection, and can be suspended remotely." },
+  { k: "Identity is machine-checked", v: "Candidate biometrics at ignition plus periodic in-session liveness checks from the cabin camera. Only the face bound to the learner record can accumulate hours; a mismatch or an empty seat ends the session." },
+  { k: "Occupancy and control are proven", v: "Cabin camera confirms who is behind the wheel and that no second person is driving on the candidate's behalf; seat/belt state and steering-side view close the obvious substitution loophole." },
+  { k: "Scoring is done off-vehicle", v: "The kit only records. Event detection and competency scoring run server-side on the uploaded evidence, so nothing on board can be gamed to produce a pass." },
+  { k: "Evidence is sealed at source", v: "Clips and tracks are hashed and signed on the device before upload; the state machine promotes them to protected evidence, and gaps in the chain invalidate the hours rather than being silently accepted." },
+  { k: "Owner is a supplier, not an assessor", v: "The vehicle owner rents access to a certified vehicle at a capped tariff. They sign nothing, score nothing and cannot influence the outcome — which is precisely what removes the integrity problem." },
+];
+
+const mentorlessGates = [
+  "Hours only count inside a geofenced, speed-limited practice envelope agreed with the Department for the unlicensed phase.",
+  "Daily and total hour caps per candidate, with mandatory rest gaps, to stop hour-farming.",
+  "Automatic session invalidation on kit tamper, camera obstruction, biometric mismatch or GPS dropout beyond a set tolerance.",
+  "A final in-person practical remains with the Department — the platform never certifies competency, it only evidences accrual.",
+  "Amnesty for the unlicensed practice phase is conditional on an active, certified session; outside a session the ordinary law applies.",
+];
+
+const remoteMentorModel = [
+  { k: "What the remote mentor sees", v: "A live low-bandwidth feed of road view, cabin view, speed and position from the certified kit — the same stream the war room already uses for fleet monitoring." },
+  { k: "What they do", v: "Voice coaching over the in-cab audio channel, session start/stop authority, and a co-sign on the accrued hours. One mentor can supervise several sessions in sequence, not simultaneously." },
+  { k: "Why the Department may prefer it", v: "It keeps a human accountable for every logged hour while removing the requirement that the human be physically present in a car the candidate cannot access." },
+  { k: "Fallback when signal drops", v: "The session continues in recorded mode with a hard hour cap; the mentor reviews and co-signs the clip afterwards, and unreviewed hours expire rather than count." },
+  { k: "Who qualifies", v: "Registered instructors and vetted accredited mentors, biometrically clocked into each session, with their own audit trail of sessions supervised and outcomes." },
+  { k: "Cost effect", v: "Mentor time is unbundled from vehicle time, so the candidate pays for a certified vehicle nearby and a mentor anywhere in the country — the remote-farm case the in-person model cannot serve." },
+];
+
+const supervisionTiers = [
+  { tier: "Tier 1 — In-person mentor", human: "Mentor in the vehicle", strength: "Highest assurance; matches international practice and is the easiest to defend to a regulator.", weakness: "Requires a car and a supervisor on the scene; unavailable to most of the target population." },
+  { tier: "Tier 2 — Remote mentor", human: "Mentor on a live feed, co-signs hours", strength: "Human accountability retained; mentor supply no longer geographically bound; strongest candidate for DOT buy-in.", weakness: "Depends on connectivity and on mentor-to-session ratios being enforced." },
+  { tier: "Tier 3 — Mentorless certified vehicle", human: "None during the drive; Department reviews evidence", strength: "Simplest and cheapest; nothing depends on a human's integrity; reaches remote areas immediately.", weakness: "Needs the strongest tamper, identity and envelope controls, and the largest regulatory concession." },
+];
+
 
 const mentorPrecedents = [
   {
@@ -502,7 +534,90 @@ const DOTRoadCompetencyPilot = () => {
 
     doc.addPage();
     y = 20;
-    y = header("11. RISKS AND MITIGATION", y);
+    y = header("11. SUPERVISION TIERS: REMOTE AND MENTORLESS", y);
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+    const sIntro = doc.splitTextToSize(
+      "Requiring a physically present mentor reintroduces both barriers the pilot exists to remove: access to a " +
+        "vehicle and reliance on a person's integrity. Three supervision tiers are proposed so the Department can " +
+        "choose the level of human involvement and reduce it as the evidence record proves itself.",
+      pageWidth - margin * 2,
+    );
+    doc.text(sIntro, margin, y);
+    y += sIntro.length * 5 + 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Tier", "Human role", "Strength", "Trade-off"]],
+      body: supervisionTiers.map((t) => [t.tier, t.human, t.strength, t.weakness]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 8, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 32 }, 1: { cellWidth: 32 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Mentorless mode requirement", "Detail"]],
+      body: mentorlessRequirements.map((m) => [m.k, m.v]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 45 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Remote mentoring", "Detail"]],
+      body: remoteMentorModel.map((m) => [m.k, m.v]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 45 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    if (y > 240) {
+      doc.addPage();
+      y = 20;
+    }
+    y = header("Hard gates for mentorless hours", y);
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    mentorlessGates.forEach((g) => {
+      const lines = doc.splitTextToSize(`• ${g}`, pageWidth - margin * 2 - 4);
+      if (y > 265) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(lines, margin + 2, y);
+      y += lines.length * 5;
+    });
+    y += 4;
+    if (y > 250) {
+      doc.addPage();
+      y = 20;
+    }
+    const seq = doc.splitTextToSize(
+      "Recommended sequencing: begin on Tier 2 remote mentoring, where a registered human co-signs every hour. " +
+        "Run Tier 3 mentorless sessions in parallel as a shadow cohort whose hours are scored but not credited. " +
+        "If the shadow cohort's evidence holds up against the mentored cohort, the Department has a measured " +
+        "basis for crediting mentorless hours rather than being asked to accept them on trust.",
+      pageWidth - margin * 2,
+    );
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+    doc.text(seq, margin, y);
+
+    doc.addPage();
+    y = 20;
+    y = header("12. RISKS AND MITIGATION", y);
+
 
 
     autoTable(doc, {
@@ -994,7 +1109,111 @@ const DOTRoadCompetencyPilot = () => {
         </div>
       </section>
 
+      {/* Supervision tiers: remote and mentorless */}
+      <section className="py-14 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
+            <Fingerprint className="h-7 w-7 text-primary" /> Removing the Human from the Loop
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-3xl">
+            Requiring a physically present mentor reintroduces the two things the pilot is meant to solve: access
+            and integrity. A youngster on a remote farm should be able to start accruing hours the moment a
+            certified vehicle is on the scene. Three supervision tiers are therefore proposed, so the Department
+            can choose how much human involvement it wants — and reduce it as the evidence record proves itself.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-5 mb-10">
+            {supervisionTiers.map((t) => (
+              <Card key={t.tier}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">{t.tier}</CardTitle>
+                  <CardDescription>{t.human}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">Strength: </span>{t.strength}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">Trade-off: </span>{t.weakness}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5 mb-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Camera className="h-4 w-4 text-primary" /> Mentorless mode: what it would take
+                </CardTitle>
+                <CardDescription>Certify the vehicle, machine-check the human</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <dl className="space-y-3">
+                  {mentorlessRequirements.map((m) => (
+                    <div key={m.k}>
+                      <dt className="text-sm font-medium">{m.k}</dt>
+                      <dd className="text-sm text-muted-foreground">{m.v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Users className="h-4 w-4 text-primary" /> Remote mentoring
+                </CardTitle>
+                <CardDescription>Keeps a human accountable without a human in the car</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <dl className="space-y-3">
+                  {remoteMentorModel.map((m) => (
+                    <div key={m.k}>
+                      <dt className="text-sm font-medium">{m.k}</dt>
+                      <dd className="text-sm text-muted-foreground">{m.v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="mb-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-primary" /> Hard gates that make mentorless hours credible
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2">
+                {mentorlessGates.map((g) => (
+                  <li key={g} className="flex gap-2 text-sm text-muted-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                    <span>{g}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertTitle>Recommended sequencing</AlertTitle>
+            <AlertDescription>
+              Start the pilot on Tier 2 remote mentoring, where a registered human still co-signs every hour and
+              buy-in is easiest to obtain. Run Tier 3 mentorless sessions in parallel as a shadow cohort whose
+              hours are scored but not yet credited. If the evidence record from the shadow cohort holds up
+              against the mentored cohort, the Department has a measured basis for crediting mentorless hours —
+              rather than being asked to take it on trust up front.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </section>
+
       {/* Prior Art & IP Position */}
+
       <section className="py-14 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
