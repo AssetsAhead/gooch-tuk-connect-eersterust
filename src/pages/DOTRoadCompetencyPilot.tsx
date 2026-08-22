@@ -92,8 +92,7 @@ const mentorEconomics = [
   { k: "Evidence produced", v: "Each session yields a signed, timestamped record: candidate biometric, mentor biometric, GPS track, dashcam clip and event scoring." },
   { k: "Platform role", v: "Matching, accreditation records, evidence custody and tariff enforcement. The Department certifies the outcome." },
 ];
-
-
+const PAGE_TITLE = "Road Competency Pilot — DOT Concept Proposal";
 const PAGE_DESC =
   "A supervised, telematics-verified road competency pathway proposed to the South African Department of Transport, using GPS, dashcam and biometric driver identity.";
 
