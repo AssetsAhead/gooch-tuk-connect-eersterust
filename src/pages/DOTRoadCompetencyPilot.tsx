@@ -450,7 +450,59 @@ const DOTRoadCompetencyPilot = () => {
 
     doc.addPage();
     y = 20;
-    y = header("10. RISKS AND MITIGATION", y);
+    y = header("10. MENTOR AND VEHICLE ACCESS", y);
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+    const mIntro = doc.splitTextToSize(
+      "Supervised-hour models assume the candidate has access to a car and a licensed supervisor. Most " +
+        "candidates in the target areas have neither. The pilot therefore accredits owner-mentors who rent out " +
+        "supervised hours — mentor time together with a compliant vehicle — at a regulator-agreed tariff. This " +
+        "creates a small-enterprise opportunity while keeping the evidence chain intact.",
+      pageWidth - margin * 2,
+    );
+    doc.text(mIntro, margin, y);
+    y += mIntro.length * 5 + 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["International precedent", "Practice"]],
+      body: mentorPrecedents.map((p) => [p.place, p.body]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 45 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Marketplace design", "Detail"]],
+      body: mentorEconomics.map((m) => [m.k, m.v]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 45 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    y = header("Mentor accreditation criteria", y);
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    mentorAccreditation.forEach((c) => {
+      const lines = doc.splitTextToSize(`• ${c}`, pageWidth - margin * 2 - 4);
+      if (y > 265) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(lines, margin + 2, y);
+      y += lines.length * 5;
+    });
+
+    doc.addPage();
+    y = 20;
+    y = header("11. RISKS AND MITIGATION", y);
 
 
     autoTable(doc, {
