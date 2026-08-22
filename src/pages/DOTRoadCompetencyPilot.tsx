@@ -61,7 +61,37 @@ const theoryOpenQuestions = [
 ];
 
 
+const mentorPrecedents = [
+  {
+    place: "Australia (NSW, Queensland)",
+    body: "120 supervised hours logged by an accredited supervising driver, increasingly captured in a digital logbook app rather than on paper.",
+  },
+  {
+    place: "United Kingdom",
+    body: "Private practice with any qualified supervising driver is legal and expected, alongside paid instruction from an ADI-registered instructor.",
+  },
+  {
+    place: "United States (most states)",
+    body: "Graduated licensing with a parent- or guardian-certified hour log; several states now accept app-based logs.",
+  },
+];
 
+const mentorAccreditation = [
+  "Valid licence held for a defined minimum period, with a demerit-free record over that window.",
+  "Vetting against AARTO and criminal record checks before accreditation is issued.",
+  "Vehicle roadworthy, insured for supervised training use, and fitted with the pilot's GPS and dashcam hardware.",
+  "Mentor identity biometrically bound to every session — the mentor clocks in the same way the candidate does.",
+  "Capped session tariff published up front, so access to a vehicle cannot become rent-seeking on the poor.",
+  "Accreditation suspended automatically on any falsification finding or serious infringement.",
+];
+
+const mentorEconomics = [
+  { k: "Who supplies", v: "Accredited owner-mentors: fleet owners, driving schools extending into mentoring, and individual licensed drivers with a compliant vehicle." },
+  { k: "What is sold", v: "Supervised in-vehicle hours — mentor time plus vehicle access — booked by the session through the platform." },
+  { k: "Price control", v: "A regulator-agreed tariff band per hour, displayed before booking, with no surge or off-platform cash side-deals recognised as valid hours." },
+  { k: "Evidence produced", v: "Each session yields a signed, timestamped record: candidate biometric, mentor biometric, GPS track, dashcam clip and event scoring." },
+  { k: "Platform role", v: "Matching, accreditation records, evidence custody and tariff enforcement. The Department certifies the outcome." },
+];
 const PAGE_TITLE = "Road Competency Pilot — DOT Concept Proposal";
 const PAGE_DESC =
   "A supervised, telematics-verified road competency pathway proposed to the South African Department of Transport, using GPS, dashcam and biometric driver identity.";
@@ -420,7 +450,59 @@ const DOTRoadCompetencyPilot = () => {
 
     doc.addPage();
     y = 20;
-    y = header("10. RISKS AND MITIGATION", y);
+    y = header("10. MENTOR AND VEHICLE ACCESS", y);
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+    const mIntro = doc.splitTextToSize(
+      "Supervised-hour models assume the candidate has access to a car and a licensed supervisor. Most " +
+        "candidates in the target areas have neither. The pilot therefore accredits owner-mentors who rent out " +
+        "supervised hours — mentor time together with a compliant vehicle — at a regulator-agreed tariff. This " +
+        "creates a small-enterprise opportunity while keeping the evidence chain intact.",
+      pageWidth - margin * 2,
+    );
+    doc.text(mIntro, margin, y);
+    y += mIntro.length * 5 + 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["International precedent", "Practice"]],
+      body: mentorPrecedents.map((p) => [p.place, p.body]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 45 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Marketplace design", "Detail"]],
+      body: mentorEconomics.map((m) => [m.k, m.v]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 45 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    y = header("Mentor accreditation criteria", y);
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    mentorAccreditation.forEach((c) => {
+      const lines = doc.splitTextToSize(`• ${c}`, pageWidth - margin * 2 - 4);
+      if (y > 265) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(lines, margin + 2, y);
+      y += lines.length * 5;
+    });
+
+    doc.addPage();
+    y = 20;
+    y = header("11. RISKS AND MITIGATION", y);
 
 
     autoTable(doc, {
@@ -830,6 +912,83 @@ const DOTRoadCompetencyPilot = () => {
                   <li key={q}>{q}</li>
                 ))}
               </ul>
+            </AlertDescription>
+          </Alert>
+        </div>
+      </section>
+
+      {/* Mentor & Vehicle Access Marketplace */}
+      <section className="py-14 px-4 bg-muted/40">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
+            <Users className="h-7 w-7 text-primary" /> Mentor and Vehicle Access
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-3xl">
+            Every supervised-hour model in the world assumes the candidate has a car and a licensed supervisor
+            to sit beside them. In the target areas, most have neither. The pilot closes that gap by
+            accrediting owner-mentors who rent out supervised hours — mentor time plus a compliant vehicle — at
+            a regulator-agreed tariff, turning the constraint into a small-enterprise opportunity.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-5 mb-8">
+            {mentorPrecedents.map((p) => (
+              <Card key={p.place}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-primary" /> {p.place}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">{p.body}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5 mb-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">How the marketplace works</CardTitle>
+                <CardDescription>Design principles, not a live service</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <dl className="space-y-3">
+                  {mentorEconomics.map((m) => (
+                    <div key={m.k}>
+                      <dt className="text-sm font-medium">{m.k}</dt>
+                      <dd className="text-sm text-muted-foreground">{m.v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-primary" /> Mentor accreditation criteria
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {mentorAccreditation.map((c) => (
+                    <li key={c} className="flex gap-2 text-sm text-muted-foreground">
+                      <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <span>{c}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Alert>
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Why accreditation and a tariff cap are non-negotiable</AlertTitle>
+            <AlertDescription>
+              Unvetted mentors and uncapped pricing would turn vehicle access into the pilot's weakest link —
+              both a falsification channel and a way to extract rent from the people the programme is meant to
+              help. Accreditation, biometric mentor binding and a published tariff band are proposed as
+              conditions of participation, set by the Department rather than by the operator.
             </AlertDescription>
           </Alert>
         </div>
