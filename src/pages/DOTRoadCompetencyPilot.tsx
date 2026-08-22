@@ -61,8 +61,39 @@ const theoryOpenQuestions = [
 ];
 
 
+const mentorPrecedents = [
+  {
+    place: "Australia (NSW, Queensland)",
+    body: "120 supervised hours logged by an accredited supervising driver, increasingly captured in a digital logbook app rather than on paper.",
+  },
+  {
+    place: "United Kingdom",
+    body: "Private practice with any qualified supervising driver is legal and expected, alongside paid instruction from an ADI-registered instructor.",
+  },
+  {
+    place: "United States (most states)",
+    body: "Graduated licensing with a parent- or guardian-certified hour log; several states now accept app-based logs.",
+  },
+];
 
-const PAGE_TITLE = "Road Competency Pilot — DOT Concept Proposal";
+const mentorAccreditation = [
+  "Valid licence held for a defined minimum period, with a demerit-free record over that window.",
+  "Vetting against AARTO and criminal record checks before accreditation is issued.",
+  "Vehicle roadworthy, insured for supervised training use, and fitted with the pilot's GPS and dashcam hardware.",
+  "Mentor identity biometrically bound to every session — the mentor clocks in the same way the candidate does.",
+  "Capped session tariff published up front, so access to a vehicle cannot become rent-seeking on the poor.",
+  "Accreditation suspended automatically on any falsification finding or serious infringement.",
+];
+
+const mentorEconomics = [
+  { k: "Who supplies", v: "Accredited owner-mentors: fleet owners, driving schools extending into mentoring, and individual licensed drivers with a compliant vehicle." },
+  { k: "What is sold", v: "Supervised in-vehicle hours — mentor time plus vehicle access — booked by the session through the platform." },
+  { k: "Price control", v: "A regulator-agreed tariff band per hour, displayed before booking, with no surge or off-platform cash side-deals recognised as valid hours." },
+  { k: "Evidence produced", v: "Each session yields a signed, timestamped record: candidate biometric, mentor biometric, GPS track, dashcam clip and event scoring." },
+  { k: "Platform role", v: "Matching, accreditation records, evidence custody and tariff enforcement. The Department certifies the outcome." },
+];
+
+
 const PAGE_DESC =
   "A supervised, telematics-verified road competency pathway proposed to the South African Department of Transport, using GPS, dashcam and biometric driver identity.";
 
