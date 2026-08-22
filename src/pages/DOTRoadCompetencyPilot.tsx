@@ -534,7 +534,90 @@ const DOTRoadCompetencyPilot = () => {
 
     doc.addPage();
     y = 20;
-    y = header("11. RISKS AND MITIGATION", y);
+    y = header("11. SUPERVISION TIERS: REMOTE AND MENTORLESS", y);
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+    const sIntro = doc.splitTextToSize(
+      "Requiring a physically present mentor reintroduces both barriers the pilot exists to remove: access to a " +
+        "vehicle and reliance on a person's integrity. Three supervision tiers are proposed so the Department can " +
+        "choose the level of human involvement and reduce it as the evidence record proves itself.",
+      pageWidth - margin * 2,
+    );
+    doc.text(sIntro, margin, y);
+    y += sIntro.length * 5 + 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Tier", "Human role", "Strength", "Trade-off"]],
+      body: supervisionTiers.map((t) => [t.tier, t.human, t.strength, t.weakness]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 8, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 32 }, 1: { cellWidth: 32 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Mentorless mode requirement", "Detail"]],
+      body: mentorlessRequirements.map((m) => [m.k, m.v]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 45 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Remote mentoring", "Detail"]],
+      body: remoteMentorModel.map((m) => [m.k, m.v]),
+      theme: "striped",
+      headStyles: { fillColor: [30, 64, 175] },
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 45 } },
+    });
+    y = (doc as any).lastAutoTable.finalY + 8;
+
+    if (y > 240) {
+      doc.addPage();
+      y = 20;
+    }
+    y = header("Hard gates for mentorless hours", y);
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    mentorlessGates.forEach((g) => {
+      const lines = doc.splitTextToSize(`• ${g}`, pageWidth - margin * 2 - 4);
+      if (y > 265) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(lines, margin + 2, y);
+      y += lines.length * 5;
+    });
+    y += 4;
+    if (y > 250) {
+      doc.addPage();
+      y = 20;
+    }
+    const seq = doc.splitTextToSize(
+      "Recommended sequencing: begin on Tier 2 remote mentoring, where a registered human co-signs every hour. " +
+        "Run Tier 3 mentorless sessions in parallel as a shadow cohort whose hours are scored but not credited. " +
+        "If the shadow cohort's evidence holds up against the mentored cohort, the Department has a measured " +
+        "basis for crediting mentorless hours rather than being asked to accept them on trust.",
+      pageWidth - margin * 2,
+    );
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+    doc.text(seq, margin, y);
+
+    doc.addPage();
+    y = 20;
+    y = header("12. RISKS AND MITIGATION", y);
+
 
 
     autoTable(doc, {
