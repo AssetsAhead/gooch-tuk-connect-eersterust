@@ -247,6 +247,11 @@ const DOTPresentation = () => {
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
+              <Link to="/franchise-options">
+                <FileDown className="mr-2 h-4 w-4" /> Franchise Options Menu
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
               <Link to="/fleet-vehicles">
                 <Eye className="mr-2 h-4 w-4" /> View Live Fleet Demo
               </Link>
