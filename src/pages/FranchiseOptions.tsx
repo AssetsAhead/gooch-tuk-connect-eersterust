@@ -79,8 +79,6 @@ const SUPPORT_PER_100 = 1800; // local support & training per 100 vehicles / mon
 
 type TierId = keyof typeof PER_VEHICLE;
 
-const rand = () => Math.random();
-
 const FranchiseOptions = () => {
   const [tier, setTier] = useState<TierId>("association");
   const [vehicles, setVehicles] = useState(120);
