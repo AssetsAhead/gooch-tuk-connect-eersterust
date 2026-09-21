@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GlobalHeader } from "@/components/GlobalHeader";
+import { InsuranceBrokerBrief } from "@/components/compliance/InsuranceBrokerBrief";
 import { Shield, Plus, Trash2, Phone, Mail, ExternalLink } from "lucide-react";
 
 type Status = "to_contact" | "awaiting_quote" | "quoted" | "declined" | "shortlisted" | "bound";
