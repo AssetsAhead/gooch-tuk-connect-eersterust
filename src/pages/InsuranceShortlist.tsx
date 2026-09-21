@@ -100,6 +100,7 @@ export default function InsuranceShortlist() {
     <>
       <GlobalHeader />
       <div className="container mx-auto max-w-5xl px-4 py-6 space-y-6">
+        <InsuranceBrokerBrief />
         <Card>
           <CardHeader>
             <div className="flex items-start justify-between gap-3 flex-wrap">
