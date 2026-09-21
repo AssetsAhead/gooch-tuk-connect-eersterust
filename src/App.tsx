@@ -65,6 +65,7 @@ import PassengerRights from "./pages/PassengerRights";
 import DriveToOwn from "./pages/DriveToOwn";
 import DriveToOwnVsMoove from "./pages/DriveToOwnVsMoove";
 import MarshalRadio from "./pages/MarshalRadio";
+import EersterustPilot from "./pages/EersterustPilot";
 import OAuthConsent from "./pages/OAuthConsent";
 import PatentStateMachineDisclosure from "./pages/PatentStateMachineDisclosure";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
@@ -200,6 +201,7 @@ const App = () => {
                 <Route path="/drive-to-own" element={<DriveToOwn />} />
                 <Route path="/drive-to-own/vs-moove" element={<DriveToOwnVsMoove />} />
                 <Route path="/marshal-radio" element={<MarshalRadio />} />
+                <Route path="/pilot" element={<EersterustPilot />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="*" element={<NotFound />} />
