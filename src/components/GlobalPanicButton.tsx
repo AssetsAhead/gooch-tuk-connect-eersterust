@@ -267,6 +267,13 @@ export const GlobalPanicButton = () => {
             </Button>
           </div>
           <p className="text-sm">Help is on the way. Stay safe!</p>
+          <a
+            href="tel:112"
+            className="mt-2 flex items-center justify-center gap-2 rounded bg-white text-danger font-bold py-2 text-sm"
+          >
+            <Phone className="h-4 w-4" />
+            Call 112 now — free, no airtime needed
+          </a>
           {isRecording && (
             <div className="flex items-center space-x-1 text-xs bg-white/20 rounded px-2 py-1 mt-2">
               <Mic className="h-3 w-3 animate-pulse" />
@@ -322,6 +329,19 @@ export const GlobalPanicButton = () => {
                 {isLawEnforcement() && <li>• Trigger law enforcement protocols</li>}
                 <li>• Broadcast emergency signal to security networks</li>
               </ul>
+
+              {/* National emergency number — works without airtime or data */}
+              <a
+                href="tel:112"
+                className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-danger text-white font-bold py-3 text-base"
+              >
+                <Phone className="h-5 w-5" />
+                Call 112 — National Emergency
+              </a>
+              <p className="mt-1 text-xs text-muted-foreground text-center">
+                Free from any phone on any network, even with no airtime or data. Routes to the
+                nearest police, ambulance or fire service.
+              </p>
 
               {/* TMPD Metro Police Complaint Numbers */}
               <div className="mt-3 p-3 bg-muted rounded border border-border">
