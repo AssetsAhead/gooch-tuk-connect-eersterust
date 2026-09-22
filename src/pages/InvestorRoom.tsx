@@ -282,6 +282,95 @@ const InvestorRoom = () => {
             </div>
           </section>
 
+          {/* Founder and market context */}
+          <section className="border-b bg-muted/20 px-4 py-12 md:py-16">
+            <div className="mx-auto max-w-6xl">
+              <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] lg:gap-16">
+                <div>
+                  <Badge variant="outline" className="mb-4">
+                    Why this exists
+                  </Badge>
+                  <h2 className="max-w-3xl text-2xl font-bold leading-tight md:text-4xl">
+                    Built from inside the transport problem, not from outside the market
+                  </h2>
+                  <div className="mt-6 max-w-3xl space-y-4 text-base leading-relaxed text-muted-foreground">
+                    <p>
+                      Malcolm Johnston was a tuk-tuk driver and owner in Eersterust before he became
+                      the platform&apos;s founder. On the road, and later while managing drivers, he saw
+                      the same failures from every side: owners losing sight of vehicles once they
+                      left in the morning, passengers lacking reliable information, drivers working
+                      without a trusted record, and associations managing essential services with
+                      fragmented data.
+                    </p>
+                    <p>
+                      Those observations became his 2022 research project, <em>The Impact of Digital
+                      Technology on the Mini Taxi Industry</em>. The study examined asset control,
+                      driver conduct, passenger safety, the cost of finding fares, and the absence of
+                      dependable driver and vehicle records. TukConnect is the practical development
+                      of that work: research translated into operating infrastructure.
+                    </p>
+                  </div>
+                </div>
+
+                <aside className="border-l-4 border-primary pl-6 lg:self-center">
+                  <p className="text-lg font-semibold leading-relaxed text-foreground">
+                    “The opportunity was visible from the driver&apos;s seat: a vital national service
+                    was moving millions of people without the shared information needed to protect
+                    passengers, owners, good drivers or the public interest.”
+                  </p>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    Founder perspective — grounded in Eersterust operations and academic research
+                  </p>
+                </aside>
+              </div>
+
+              <div className="mt-12 border-y">
+                <div className="grid md:grid-cols-3">
+                  <div className="py-7 md:pr-7">
+                    <p className="mb-2 text-xs font-semibold uppercase text-primary">The local reality</p>
+                    <h3 className="text-lg font-bold">Essential, but exposed</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      Minibus taxis carry much of South Africa&apos;s daily workforce. When disputes,
+                      intimidation or shutdowns interrupt routes, the effect reaches employers,
+                      schools, clinics and the wider economy. These practices do not define the many
+                      legitimate operators serving their communities, but weak visibility allows
+                      harmful conduct to carry disproportionate power.
+                    </p>
+                  </div>
+                  <div className="border-t py-7 md:border-l md:border-t-0 md:px-7">
+                    <p className="mb-2 text-xs font-semibold uppercase text-primary">The mechanism</p>
+                    <h3 className="text-lg font-bold">Replace opacity with evidence</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      Digital queues, trip records, live vehicle positions, panic and incident
+                      signals, driver histories and regulator-ready reports create an auditable
+                      operating picture. Passenger choice remains protected, while owners,
+                      associations and government gain earlier warning and clearer accountability.
+                    </p>
+                  </div>
+                  <div className="border-t py-7 md:border-l md:border-t-0 md:pl-7">
+                    <p className="mb-2 text-xs font-semibold uppercase text-primary">The opportunity</p>
+                    <h3 className="text-lg font-bold">Infrastructure that can compound</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      One useful local tool can become a national operating layer: recurring software,
+                      hardware, payments, compliance and mobility-intelligence revenue across a vast
+                      under-digitised market. The ambition is category-defining value creation—not a
+                      promise of returns, but a credible route to exceptional scale if execution and
+                      public-sector alignment are achieved.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-7 max-w-4xl text-sm leading-relaxed text-muted-foreground">
+                Technology cannot settle political or labour disputes by itself. It can reduce the
+                information vacuum in which disruption thrives, reward responsible operators, give
+                passengers safer choices and provide authorities with facts before a local problem
+                becomes a national one. The numbered review below shows how that thesis becomes an
+                investable, governable system.
+              </p>
+            </div>
+          </section>
+
           {/* Sections */}
           <section className="py-12 px-4">
             <div className="max-w-6xl mx-auto space-y-12">
