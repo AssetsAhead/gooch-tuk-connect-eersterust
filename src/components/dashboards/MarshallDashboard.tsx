@@ -46,12 +46,15 @@ export const MarshallDashboard = () => {
                   {currentShift ? "You're currently managing queue operations" : "Start your shift to begin queue monitoring"}
                 </p>
               </div>
-              <Button 
-                onClick={() => setCurrentShift(!currentShift)}
-                className={currentShift ? "bg-destructive hover:bg-destructive/90" : "bg-success hover:bg-success/90"}
-              >
-                {currentShift ? "End Shift" : "Start Shift"}
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Call112Button />
+                <Button
+                  onClick={() => setCurrentShift(!currentShift)}
+                  className={currentShift ? "bg-destructive hover:bg-destructive/90" : "bg-success hover:bg-success/90"}
+                >
+                  {currentShift ? "End Shift" : "Start Shift"}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

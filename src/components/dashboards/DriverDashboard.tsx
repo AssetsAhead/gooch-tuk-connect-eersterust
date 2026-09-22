@@ -6,6 +6,7 @@ import { MapPin, Car, User, Settings, Trophy, Wallet } from "lucide-react";
 import { MapsButton } from "@/components/MapsButton";
 import { useState, useEffect } from "react";
 import { PanicButton } from "@/components/PanicButton";
+import { Call112Button } from "@/components/emergency/Call112Button";
 import { ReputationSystem } from "@/components/ReputationSystem";
 import { CrimeMap } from "@/components/CrimeMap";
 import { FinancialServices } from "@/components/FinancialServices";
