@@ -1,0 +1,1 @@
+DELETE FROM public.investor_nda_acceptances WHERE email = 'james@example.co.uk';
