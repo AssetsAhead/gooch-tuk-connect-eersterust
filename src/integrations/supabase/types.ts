@@ -1283,6 +1283,66 @@ export type Database = {
         }
         Relationships: []
       }
+      investor_access_codes: {
+        Row: {
+          code: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          label: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string | null
+        }
+        Relationships: []
+      }
+      investor_nda_acceptances: {
+        Row: {
+          accepted_at: string
+          access_code: string | null
+          company: string | null
+          email: string
+          full_name: string
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          accepted_at?: string
+          access_code?: string | null
+          company?: string | null
+          email: string
+          full_name: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          accepted_at?: string
+          access_code?: string | null
+          company?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       live_vehicle_locations: {
         Row: {
           accuracy_m: number | null
