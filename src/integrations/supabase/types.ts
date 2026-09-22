@@ -1287,26 +1287,95 @@ export type Database = {
         Row: {
           code: string
           created_at: string
+          created_by: string | null
           expires_at: string | null
           id: string
+          investor_email: string | null
+          investor_name: string | null
           is_active: boolean
           label: string | null
+          last_used_at: string | null
+          max_uses: number
+          used_count: number
         }
         Insert: {
           code: string
           created_at?: string
+          created_by?: string | null
           expires_at?: string | null
           id?: string
+          investor_email?: string | null
+          investor_name?: string | null
           is_active?: boolean
           label?: string | null
+          last_used_at?: string | null
+          max_uses?: number
+          used_count?: number
         }
         Update: {
           code?: string
           created_at?: string
+          created_by?: string | null
           expires_at?: string | null
           id?: string
+          investor_email?: string | null
+          investor_name?: string | null
           is_active?: boolean
           label?: string | null
+          last_used_at?: string | null
+          max_uses?: number
+          used_count?: number
+        }
+        Relationships: []
+      }
+      investor_access_requests: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          ip_address: string | null
+          issued_code: string | null
+          message: string | null
+          phone: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          ip_address?: string | null
+          issued_code?: string | null
+          message?: string | null
+          phone?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          ip_address?: string | null
+          issued_code?: string | null
+          message?: string | null
+          phone?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
         }
         Relationships: []
       }
