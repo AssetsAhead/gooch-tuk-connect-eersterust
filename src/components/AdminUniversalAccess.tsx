@@ -8,6 +8,7 @@ const WHITELISTED_ADMIN_EMAILS = [
   'realone.mel@gmail.com',
   'aggapo.johnston450@gmail.com',
   'chibalef@gmail.com',
+  '27826370673@phone.tukconnect.app',
 ];
 
 interface AdminAccessContextType {
