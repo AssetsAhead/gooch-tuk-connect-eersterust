@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowRight, Zap, FileText, Wrench, TrendingUp, Target,
   CheckCircle2, Car, Users, DollarSign, Smartphone, Globe, Shield, Repeat,
-  Handshake, Lock, Clock, AlertTriangle, Rocket, BarChart3
+  Handshake, Lock, Clock, AlertTriangle, Rocket, BarChart3, PlayCircle, Download
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import investorPitchVideo from "@/assets/TukConnect_Investor_Pitch.mp4.asset.json";
+import investorPitchPoster from "@/assets/TukConnect_Investor_Pitch_poster.jpg.asset.json";
 
 const proposals = [
   {
@@ -142,6 +144,43 @@ const InvestorPortal = () => {
             Three investment pathways — choose the one that matches your risk
             appetite and vision.
           </p>
+        </div>
+      </section>
+
+      {/* Investor pitch film */}
+      <section className="border-y bg-muted/30 px-4 py-10 md:py-14">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-6 text-center">
+            <Badge variant="outline" className="mb-3">
+              <PlayCircle className="mr-1 h-3 w-3" /> 2-minute overview
+            </Badge>
+            <h2 className="mb-2 text-2xl font-bold md:text-3xl">TukConnect Investor Pitch</h2>
+            <p className="mx-auto max-w-2xl text-muted-foreground">
+              See the market opportunity, operating model and national scale potential in one concise presentation.
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+            <video
+              className="block aspect-video w-full bg-muted object-contain"
+              controls
+              playsInline
+              preload="metadata"
+              poster={investorPitchPoster.url}
+              aria-label="TukConnect investor pitch video"
+            >
+              <source src={investorPitchVideo.url} type="video/mp4" />
+              Your browser does not support embedded video playback.
+            </video>
+          </div>
+
+          <div className="mt-4 flex justify-center">
+            <Button variant="outline" asChild>
+              <a href={investorPitchVideo.url} download="TukConnect_Investor_Pitch.mp4">
+                <Download className="mr-2 h-4 w-4" /> Download pitch video
+              </a>
+            </Button>
+          </div>
         </div>
       </section>
 
