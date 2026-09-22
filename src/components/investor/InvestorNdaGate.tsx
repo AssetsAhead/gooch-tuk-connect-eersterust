@@ -78,8 +78,46 @@ export const InvestorNdaGate = ({ children }: Props) => {
   });
 
   useEffect(() => {
-    setSession(readInvestorSession());
-    setChecked(true);
+    let cancelled = false;
+
+    const init = async () => {
+      const existing = readInvestorSession();
+      if (existing) {
+        if (!cancelled) {
+          setSession(existing);
+          setChecked(true);
+        }
+        return;
+      }
+
+      // Owner/admin bypass: signed-in admins never need a code
+      try {
+        const { data: auth } = await supabase.auth.getUser();
+        const user = auth?.user;
+        if (user) {
+          const { data: isAdmin } = await supabase.rpc("is_current_user_admin");
+          if (isAdmin === true && !cancelled) {
+            setSession({
+              fullName: user.email ?? "Administrator",
+              company: "MobilityOne (Pty) Ltd",
+              email: user.email ?? "",
+              acceptedAt: new Date().toISOString(),
+            });
+            setChecked(true);
+            return;
+          }
+        }
+      } catch {
+        // fall through to the code gate
+      }
+
+      if (!cancelled) setChecked(true);
+    };
+
+    init();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
