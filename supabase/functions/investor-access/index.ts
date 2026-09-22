@@ -28,11 +28,13 @@ const alertOwner = async (subject: string, lines: string[]) => {
   const waTo = Deno.env.get("INVESTOR_ALERT_WHATSAPP");
   const sid = Deno.env.get("TWILIO_ACCOUNT_SID");
   const token = Deno.env.get("TWILIO_AUTH_TOKEN");
+  const smsFrom = Deno.env.get("TWILIO_PHONE_NUMBER");
+
   if (waTo && sid && token) {
-    try {
+    const sendTwilio = async (from: string, to: string) => {
       const form = new URLSearchParams();
-      form.append("From", "whatsapp:+14155238886");
-      form.append("To", waTo.startsWith("whatsapp:") ? waTo : `whatsapp:${waTo}`);
+      form.append("From", from);
+      form.append("To", to);
       form.append("Body", text.slice(0, 1400));
       const res = await fetch(
         `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`,
@@ -45,11 +47,20 @@ const alertOwner = async (subject: string, lines: string[]) => {
           body: form,
         },
       );
-      if (!res.ok) console.error("whatsapp alert failed", res.status);
+      if (!res.ok) console.error("twilio alert failed", from, res.status, await res.text());
+      return res.ok;
+    };
+
+    const plain = waTo.replace(/^whatsapp:/, "");
+    try {
+      const waOk = await sendTwilio("whatsapp:+14155238886", `whatsapp:${plain}`);
+      // WhatsApp needs a joined sandbox/approved sender; fall back to SMS so the alert always lands.
+      if (!waOk && smsFrom) await sendTwilio(smsFrom, plain);
     } catch (e) {
       console.error("whatsapp alert error", e instanceof Error ? e.message : e);
     }
   }
+
 
   const mailTo = Deno.env.get("INVESTOR_ALERT_EMAIL");
   const resendKey = Deno.env.get("RESEND_API_KEY");
