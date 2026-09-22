@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMarshalRadio, type Transmission } from "@/hooks/useMarshalRadio";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { Call112Button } from "@/components/emergency/Call112Button";
 
 type Zone = { id: string; name: string };
 
@@ -205,6 +206,7 @@ export default function MarshalRadio() {
               >
                 <AlertTriangle className="h-4 w-4" /> Emergency broadcast + GPS
               </Button>
+              <Call112Button variant="outline" size="sm" label="Call 112 (free, all networks)" />
             </div>
           </CardContent>
         </Card>
