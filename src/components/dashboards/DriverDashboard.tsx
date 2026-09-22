@@ -430,7 +430,10 @@ export const DriverDashboard = () => {
           </TabsContent>
 
           <TabsContent value="emergency">
-            <PanicButton userType="driver" userId="TT001" currentLocation="Denlyn Mall" />
+            <div className="space-y-4">
+              <Call112Button size="lg" className="w-full font-bold" />
+              <PanicButton userType="driver" userId="TT001" currentLocation="Denlyn Mall" />
+            </div>
           </TabsContent>
 
           <TabsContent value="compliance" className="space-y-6">

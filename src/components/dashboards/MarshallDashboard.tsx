@@ -9,6 +9,7 @@ import { useState } from "react";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { ZoneQueueManager } from "@/components/queue/ZoneQueueManager";
 import { HailRideCard } from "@/components/hailing/HailRideCard";
+import { Call112Button } from "@/components/emergency/Call112Button";
 export const MarshallDashboard = () => {
   const [currentShift, setCurrentShift] = useState(false);
 
