@@ -90,3 +90,6 @@ verify_jwt = true
 
 [functions.verify-face]
 verify_jwt = false
+
+[functions.investor-access]
+verify_jwt = false

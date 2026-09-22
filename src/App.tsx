@@ -43,6 +43,7 @@ import DashcamDashboard from "./pages/DashcamDashboard";
 import RideGuest from "./pages/RideGuest";
 
 import InvestorPortal from "./pages/InvestorPortal";
+import InvestorRoom from "./pages/InvestorRoom";
 import InvestorR2MFleet from "./pages/InvestorR2MFleet";
 import InvestorHardwareOnly from "./pages/InvestorHardwareOnly";
 import InvestorScaleFunding from "./pages/InvestorScaleFunding";
@@ -165,6 +166,7 @@ const App = () => {
                 <Route path="/community-announcements" element={<CommunityAnnouncements />} />
                 <Route path="/fleet-vehicles" element={<FleetVehiclesDashboard />} />
                 <Route path="/dashcam" element={<DashcamDashboard />} />
+                <Route path="/investor-room" element={<InvestorRoom />} />
                 <Route path="/investor" element={<InvestorPortal />} />
                 <Route path="/investor/r2m-fleet" element={<InvestorR2MFleet />} />
                 <Route path="/investor/hardware-only" element={<InvestorHardwareOnly />} />
