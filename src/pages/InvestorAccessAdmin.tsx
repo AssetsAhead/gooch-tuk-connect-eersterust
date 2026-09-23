@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
   KeyRound,
@@ -72,6 +74,9 @@ export default function InvestorAccessAdmin() {
   const [requests, setRequests] = useState<AccessRequest[]>([]);
   const [codes, setCodes] = useState<AccessCode[]>([]);
   const [acceptances, setAcceptances] = useState<Acceptance[]>([]);
+  const [newName, setNewName] = useState("");
+  const [newCompany, setNewCompany] = useState("");
+  const [newEmail, setNewEmail] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -186,6 +191,44 @@ export default function InvestorAccessAdmin() {
     load();
   };
 
+  const issueDirect = async () => {
+    if (!user) return;
+    const name = newName.trim();
+    const email = newEmail.trim().toLowerCase();
+    if (name.length < 2) {
+      toast.error("Please enter their full name");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    setBusyId("direct");
+    const code = makeCode();
+    const { error } = await supabase.from("investor_access_codes").insert({
+      code,
+      label: `${name}${newCompany.trim() ? ` — ${newCompany.trim()}` : ""}`,
+      investor_name: name,
+      investor_email: email,
+      max_uses: 1,
+      used_count: 0,
+      is_active: true,
+      expires_at: new Date(Date.now() + 14 * 86400000).toISOString(),
+      created_by: user.id,
+    });
+    if (error) {
+      toast.error("Could not create the code");
+      setBusyId(null);
+      return;
+    }
+    await copyInvite(code, name);
+    setNewName("");
+    setNewCompany("");
+    setNewEmail("");
+    setBusyId(null);
+    load();
+  };
+
   const pending = requests.filter((r) => r.status === "pending");
   const reviewed = requests.filter((r) => r.status !== "pending");
 
@@ -271,6 +314,56 @@ export default function InvestorAccessAdmin() {
                 </div>
               </div>
             ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Hand out a code yourself</CardTitle>
+            <CardDescription>
+              For someone you are meeting who has not asked through the site. The code works once,
+              only for their email address, and expires in 14 days.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="new-name">Full name</Label>
+                <Input
+                  id="new-name"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  placeholder="James Whitmore"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-company">Company (optional)</Label>
+                <Input
+                  id="new-company"
+                  value={newCompany}
+                  onChange={(e) => setNewCompany(e.target.value)}
+                  placeholder="Whitmore Capital"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-email">Email address</Label>
+                <Input
+                  id="new-email"
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="name@company.com"
+                />
+              </div>
+            </div>
+            <Button onClick={issueDirect} disabled={busyId === "direct" || !user}>
+              {busyId === "direct" ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <KeyRound className="mr-2 h-4 w-4" />
+              )}
+              Create code and copy invitation
+            </Button>
           </CardContent>
         </Card>
 
