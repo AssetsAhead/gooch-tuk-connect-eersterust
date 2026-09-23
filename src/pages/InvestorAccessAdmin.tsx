@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
   KeyRound,
@@ -72,6 +74,9 @@ export default function InvestorAccessAdmin() {
   const [requests, setRequests] = useState<AccessRequest[]>([]);
   const [codes, setCodes] = useState<AccessCode[]>([]);
   const [acceptances, setAcceptances] = useState<Acceptance[]>([]);
+  const [newName, setNewName] = useState("");
+  const [newCompany, setNewCompany] = useState("");
+  const [newEmail, setNewEmail] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -182,6 +187,44 @@ export default function InvestorAccessAdmin() {
       .eq("id", code.id);
     if (error) toast.error("Could not revoke the code");
     else toast.success(`${code.code} can no longer be used`);
+    setBusyId(null);
+    load();
+  };
+
+  const issueDirect = async () => {
+    if (!user) return;
+    const name = newName.trim();
+    const email = newEmail.trim().toLowerCase();
+    if (name.length < 2) {
+      toast.error("Please enter their full name");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    setBusyId("direct");
+    const code = makeCode();
+    const { error } = await supabase.from("investor_access_codes").insert({
+      code,
+      label: `${name}${newCompany.trim() ? ` — ${newCompany.trim()}` : ""}`,
+      investor_name: name,
+      investor_email: email,
+      max_uses: 1,
+      used_count: 0,
+      is_active: true,
+      expires_at: new Date(Date.now() + 14 * 86400000).toISOString(),
+      created_by: user.id,
+    });
+    if (error) {
+      toast.error("Could not create the code");
+      setBusyId(null);
+      return;
+    }
+    await copyInvite(code, name);
+    setNewName("");
+    setNewCompany("");
+    setNewEmail("");
     setBusyId(null);
     load();
   };
