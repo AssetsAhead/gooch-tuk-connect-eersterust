@@ -70,6 +70,7 @@ import MarshalRadio from "./pages/MarshalRadio";
 import EersterustPilot from "./pages/EersterustPilot";
 import DriverHopper from "./pages/DriverHopper";
 import QuickHail from "./pages/QuickHail";
+import RemoteConcept from "./pages/RemoteConcept";
 import OAuthConsent from "./pages/OAuthConsent";
 import PatentStateMachineDisclosure from "./pages/PatentStateMachineDisclosure";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
@@ -126,6 +127,7 @@ const App = () => {
                   </ProtectedRoute>
                 } />
                 <Route path="/hail" element={<QuickHail />} />
+                <Route path="/remote" element={<RemoteConcept />} />
                 <Route path="/driver/hopper" element={
                   <ProtectedRoute requiredRole={['driver', 'admin']}>
                     <DriverHopper />
