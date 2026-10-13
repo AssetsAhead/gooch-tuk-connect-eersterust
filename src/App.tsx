@@ -68,6 +68,8 @@ import DriveToOwn from "./pages/DriveToOwn";
 import DriveToOwnVsMoove from "./pages/DriveToOwnVsMoove";
 import MarshalRadio from "./pages/MarshalRadio";
 import EersterustPilot from "./pages/EersterustPilot";
+import DriverHopper from "./pages/DriverHopper";
+import QuickHail from "./pages/QuickHail";
 import OAuthConsent from "./pages/OAuthConsent";
 import PatentStateMachineDisclosure from "./pages/PatentStateMachineDisclosure";
 import { GlobalPanicButton } from "./components/GlobalPanicButton";
@@ -121,6 +123,12 @@ const App = () => {
                 <Route path="/passenger" element={
                   <ProtectedRoute requiredRole={['passenger', 'admin']}>
                     <PassengerDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/hail" element={<QuickHail />} />
+                <Route path="/driver/hopper" element={
+                  <ProtectedRoute requiredRole={['driver', 'admin']}>
+                    <DriverHopper />
                   </ProtectedRoute>
                 } />
                 <Route path="/driver" element={
