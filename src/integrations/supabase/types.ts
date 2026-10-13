@@ -1220,6 +1220,54 @@ export type Database = {
         }
         Relationships: []
       }
+      hopper_exchange_events: {
+        Row: {
+          accuracy_m: number | null
+          created_at: string
+          driver_user_id: string
+          event_type: string
+          fare_amount: number
+          id: string
+          latitude: number | null
+          location_label: string | null
+          longitude: number | null
+          occupancy_after: number
+          passenger_count: number
+          payment_method: string
+          shift_id: string
+        }
+        Insert: {
+          accuracy_m?: number | null
+          created_at?: string
+          driver_user_id: string
+          event_type: string
+          fare_amount?: number
+          id?: string
+          latitude?: number | null
+          location_label?: string | null
+          longitude?: number | null
+          occupancy_after?: number
+          passenger_count?: number
+          payment_method?: string
+          shift_id: string
+        }
+        Update: {
+          accuracy_m?: number | null
+          created_at?: string
+          driver_user_id?: string
+          event_type?: string
+          fare_amount?: number
+          id?: string
+          latitude?: number | null
+          location_label?: string | null
+          longitude?: number | null
+          occupancy_after?: number
+          passenger_count?: number
+          payment_method?: string
+          shift_id?: string
+        }
+        Relationships: []
+      }
       insurance_quotes: {
         Row: {
           annual_premium_max: number
